@@ -1,0 +1,1 @@
+ALTER TABLE public.logements ALTER COLUMN pays SET DEFAULT 'Sénégal';

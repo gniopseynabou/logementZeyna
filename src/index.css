@@ -1,0 +1,158 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=DM+Sans:wght@300;400;500;600;700&family=Space+Grotesk:wght@300;400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Cream background */
+    --background: 30 24% 95%;
+    --foreground: 195 29% 16%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 195 29% 16%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 195 29% 16%;
+
+    /* Deep Teal primary #22796E */
+    --primary: 172 56% 30%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 30 20% 92%;
+    --secondary-foreground: 172 56% 30%;
+
+    --muted: 30 12% 90%;
+    --muted-foreground: 30 7% 45%;
+
+    /* Gold accent #D4952B */
+    --accent: 37 67% 50%;
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 30 15% 88%;
+    --input: 30 15% 88%;
+    --ring: 37 67% 50%;
+
+    --radius: 0.75rem;
+
+    /* Brand tokens */
+    --teal: 172 56% 30%;
+    --teal-dark: 174 50% 20%;
+    --teal-light: 168 46% 45%;
+    --gold: 37 67% 50%;
+    --gold-light: 37 54% 66%;
+    --gold-dark: 37 67% 40%;
+    --terracotta: 15 59% 54%;
+    --terracotta-light: 15 52% 71%;
+    --charcoal: 195 29% 16%;
+    --cream: 30 24% 95%;
+    --warm-gray: 25 5% 54%;
+
+    --sidebar-background: 174 50% 15%;
+    --sidebar-foreground: 0 0% 95%;
+    --sidebar-primary: 37 67% 50%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 172 35% 25%;
+    --sidebar-accent-foreground: 0 0% 95%;
+    --sidebar-border: 172 30% 25%;
+    --sidebar-ring: 37 67% 50%;
+  }
+
+  .dark {
+    --background: 195 35% 8%;
+    --foreground: 30 20% 95%;
+
+    --card: 195 35% 12%;
+    --card-foreground: 30 20% 95%;
+
+    --popover: 195 35% 12%;
+    --popover-foreground: 30 20% 95%;
+
+    --primary: 37 67% 50%;
+    --primary-foreground: 195 35% 8%;
+
+    --secondary: 172 35% 18%;
+    --secondary-foreground: 30 20% 95%;
+
+    --muted: 195 30% 15%;
+    --muted-foreground: 30 15% 60%;
+
+    --accent: 37 67% 50%;
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 62% 30%;
+    --destructive-foreground: 30 40% 98%;
+
+    --border: 195 30% 20%;
+    --input: 195 30% 20%;
+    --ring: 37 67% 50%;
+
+    --sidebar-background: 195 40% 6%;
+    --sidebar-foreground: 0 0% 95%;
+    --sidebar-primary: 37 67% 50%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 172 35% 15%;
+    --sidebar-accent-foreground: 0 0% 95%;
+    --sidebar-border: 195 30% 15%;
+    --sidebar-ring: 37 67% 50%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    font-family: 'DM Sans', sans-serif;
+  }
+
+  h1, h2, h3, h4 {
+    font-family: 'Playfair Display', serif;
+  }
+
+  /* UI elements: buttons, badges, labels, prices */
+  button, [role="button"], .badge, .label-ui, .price {
+    font-family: 'Space Grotesk', sans-serif;
+  }
+}
+
+@layer utilities {
+  .font-ui {
+    font-family: 'Space Grotesk', sans-serif;
+  }
+
+  .text-gradient-gold {
+    @apply bg-clip-text text-transparent;
+    background-image: linear-gradient(135deg, hsl(37 67% 50%), hsl(37 54% 66%));
+  }
+
+  .bg-gradient-teal {
+    background: linear-gradient(135deg, hsl(174 50% 20%), hsl(168 46% 45%));
+  }
+
+  .bg-gradient-navy {
+    background: linear-gradient(135deg, hsl(174 50% 20%), hsl(195 29% 16%));
+  }
+
+  .bg-gradient-gold {
+    background: linear-gradient(135deg, hsl(37 67% 50%), hsl(37 67% 40%));
+  }
+
+  .bg-gradient-hero {
+    background: linear-gradient(135deg, hsl(174 50% 20%), hsl(172 56% 30%), hsl(37 67% 50%));
+  }
+
+  .shadow-premium {
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  }
+
+  .shadow-gold {
+    box-shadow: 0 8px 30px -8px hsl(37 67% 50% / 0.3);
+  }
+}
