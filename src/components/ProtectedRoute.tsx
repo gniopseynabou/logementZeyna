@@ -19,7 +19,16 @@ const ProtectedRoute = ({ children, allowedRoles }: ProtectedRouteProps) => {
 
   if (!user) return <Navigate to="/login" replace />;
 
-  if (allowedRoles && role && !allowedRoles.includes(role)) {
+  // Attendre que le rôle soit chargé avant de rediriger
+  if (!role) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-background">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" />
+      </div>
+    );
+  }
+
+  if (allowedRoles && !allowedRoles.includes(role)) {
     const redirect = role === "admin" ? "/admin" : role === "bailleur" ? "/bailleur" : "/etudiant";
     return <Navigate to={redirect} replace />;
   }

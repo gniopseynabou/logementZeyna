@@ -29,12 +29,17 @@ const Register = () => {
     }
 
     setLoading(true);
-    const { error } = await supabase.auth.signUp({
+    const { data, error } = await supabase.auth.signUp({
       email: form.email,
       password: form.password,
       options: {
-        data: { nom: form.nom, prenom: form.prenom, role: form.role },
-        emailRedirectTo: window.location.origin,
+        data: {
+          nom: form.nom,
+          prenom: form.prenom,
+          telephone: form.telephone,
+          role: form.role,
+        },
+        emailRedirectTo: `${window.location.origin}/login`,
       },
     });
 

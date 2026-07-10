@@ -87,11 +87,20 @@ const DashboardLayout = ({ children }: { children: ReactNode }) => {
 
         <div className="p-4 border-t border-sidebar-border">
           <div className="flex items-center gap-3 mb-3">
-            <div className="h-8 w-8 rounded-full bg-sidebar-primary flex items-center justify-center text-sidebar-primary-foreground text-sm font-bold">
-              {profile?.prenom?.[0] || "U"}
+            <div className="h-9 w-9 rounded-full bg-sidebar-primary flex items-center justify-center text-sidebar-primary-foreground text-sm font-bold overflow-hidden shrink-0">
+              {profile?.avatar_url ? (
+                <img
+                  src={profile.avatar_url}
+                  alt={profile.prenom}
+                  className="w-full h-full object-cover"
+                />
+              ) : (
+                `${profile?.prenom?.[0] || ""}${profile?.nom?.[0] || ""}`.toUpperCase() || "U"
+              )}
             </div>
             <div className="flex-1 min-w-0">
               <p className="text-sm font-medium truncate">{profile?.prenom} {profile?.nom}</p>
+              <p className="text-xs text-sidebar-foreground/50 truncate">{roleLabel}</p>
             </div>
           </div>
           <Button variant="ghost" size="sm" className="w-full justify-start text-sidebar-foreground/60 hover:text-destructive" onClick={handleLogout}>

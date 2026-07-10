@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useState, ReactNode } from "react";
+import { createContext, useContext, useEffect, useState, ReactNode, useCallback } from "react";
 import { User, Session } from "@supabase/supabase-js";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -45,21 +45,31 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [isValidated, setIsValidated] = useState(false);
   const [loading, setLoading] = useState(true);
 
-  const fetchUserData = async (userId: string) => {
-    const [profileRes, roleRes] = await Promise.all([
-      supabase.from("profiles").select("*").eq("user_id", userId).single(),
-      supabase.from("user_roles").select("*").eq("user_id", userId).single(),
-    ]);
-    if (profileRes.data) setProfile(profileRes.data as Profile);
-    if (roleRes.data) {
-      setRole(roleRes.data.role as AppRole);
-      setIsValidated(roleRes.data.is_validated);
-    }
-  };
+  const fetchUserData = useCallback(async (userId: string) => {
+    try {
+      const [profileRes, roleRes] = await Promise.all([
+        supabase.from("profiles").select("*").eq("user_id", userId).maybeSingle(),
+        supabase.from("user_roles").select("*").eq("user_id", userId).maybeSingle(),
+      ]);
 
-  const refreshProfile = async () => {
+      if (profileRes.data) {
+        setProfile(profileRes.data as Profile);
+      }
+      if (roleRes.data) {
+        setRole(roleRes.data.role as AppRole);
+        setIsValidated(roleRes.data.is_validated);
+      } else {
+        // Si pas de rôle trouvé, on ne bloque pas l'utilisateur
+        setRole(null);
+      }
+    } catch (error) {
+      console.error("Erreur lors du chargement du profil:", error);
+    }
+  }, []);
+
+  const refreshProfile = useCallback(async () => {
     if (user) await fetchUserData(user.id);
-  };
+  }, [user, fetchUserData]);
 
   const signOut = async () => {
     await supabase.auth.signOut();
@@ -71,12 +81,28 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   };
 
   useEffect(() => {
+    // Initialisation de la session
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session);
+      setUser(session?.user ?? null);
+      if (session?.user) {
+        fetchUserData(session.user.id).finally(() => setLoading(false));
+      } else {
+        setLoading(false);
+      }
+    });
+
+    // Écouter les changements d'état
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (_event, session) => {
+      async (event, session) => {
         setSession(session);
         setUser(session?.user ?? null);
+
         if (session?.user) {
-          setTimeout(() => fetchUserData(session.user.id), 0);
+          if (event === "SIGNED_IN" || event === "TOKEN_REFRESHED") {
+            // Utiliser setTimeout pour éviter les deadlocks avec le client Supabase
+            setTimeout(() => fetchUserData(session.user.id), 0);
+          }
         } else {
           setProfile(null);
           setRole(null);
@@ -86,17 +112,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       }
     );
 
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-      setUser(session?.user ?? null);
-      if (session?.user) {
-        fetchUserData(session.user.id);
-      }
-      setLoading(false);
-    });
-
     return () => subscription.unsubscribe();
-  }, []);
+  }, [fetchUserData]);
 
   return (
     <AuthContext.Provider value={{ user, session, profile, role, isValidated, loading, signOut, refreshProfile }}>
