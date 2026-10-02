@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
+import { getStudentPaymentHistory } from "@/services/payment-service";
 import DashboardLayout from "@/components/dashboard/DashboardLayout";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -17,17 +17,9 @@ const METHODE_ICONS: Record<string, React.ReactNode> = {
 const EtudiantPaiements = () => {
   const { user } = useAuth();
 
-  const { data: paiements, isLoading } = useQuery({
+  const { data: paiements, isLoading, isError, error } = useQuery({
     queryKey: ["etudiant-paiements-full", user?.id],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from("paiements")
-        .select("*, reservations(logements(nom), chambres(nom))")
-        .eq("etudiant_id", user!.id)
-        .order("created_at", { ascending: false });
-      if (error) throw error;
-      return data || [];
-    },
+    queryFn: () => getStudentPaymentHistory(user!.id),
     enabled: !!user,
   });
 
@@ -40,11 +32,11 @@ const EtudiantPaiements = () => {
       <div className="space-y-6">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <h1 className="font-serif text-2xl font-bold">Mes paiements</h1>
-          {totalPaye > 0 && (
+          {(isError || totalPaye > 0) && (
             <div className="text-sm text-muted-foreground">
               Total payé :{" "}
               <span className="font-bold text-accent font-ui">
-                {totalPaye.toLocaleString()} FCFA
+                {isError ? "Indisponible" : `${totalPaye.toLocaleString()} FCFA`}
               </span>
             </div>
           )}
@@ -56,6 +48,16 @@ const EtudiantPaiements = () => {
               <div key={i} className="h-20 bg-muted animate-pulse rounded-xl" />
             ))}
           </div>
+        ) : isError ? (
+          <Card className="border-0 shadow-premium" role="alert">
+            <CardContent className="py-12 text-center">
+              <CreditCard className="h-10 w-10 mx-auto mb-3 opacity-30" />
+              <p>Impossible de charger vos paiements.</p>
+              <p className="text-xs text-muted-foreground mt-1">
+                {error instanceof Error ? error.message : "Une erreur inattendue est survenue."}
+              </p>
+            </CardContent>
+          </Card>
         ) : !paiements || paiements.length === 0 ? (
           <Card className="border-0 shadow-premium">
             <CardContent className="py-12 text-center text-muted-foreground">

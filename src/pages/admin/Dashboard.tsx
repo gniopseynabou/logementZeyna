@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
+import { getAdminDashboardStats } from "@/services/admin-dashboard-service";
 import DashboardLayout from "@/components/dashboard/DashboardLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Building, Users, BookOpen, TrendingUp, Percent, Home } from "lucide-react";
@@ -7,36 +7,9 @@ import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 
 const AdminDashboard = () => {
-  const { data: stats } = useQuery({
+  const { data: stats, isLoading, isError, error } = useQuery({
     queryKey: ["admin-stats"],
-    queryFn: async () => {
-      const [logements, reservations, paiements, bailleurs, chambres] = await Promise.all([
-        supabase.from("logements").select("id, statut"),
-        supabase.from("reservations").select("id, statut, montant_total"),
-        supabase.from("paiements").select("id, montant, est_confirme"),
-        supabase.from("user_roles").select("id, role, is_validated").eq("role", "bailleur"),
-        supabase.from("chambres").select("id, est_disponible"),
-      ]);
-
-      const totalChambres = chambres.data?.length || 0;
-      const chambresOccupees = chambres.data?.filter(c => !c.est_disponible).length || 0;
-
-      return {
-        totalLogements: logements.data?.length || 0,
-        logValides: logements.data?.filter(l => l.statut === "valide").length || 0,
-        logEnAttente: logements.data?.filter(l => l.statut === "en_attente").length || 0,
-        totalReservations: reservations.data?.length || 0,
-        resConfirmees: reservations.data?.filter(r => r.statut === "confirmee").length || 0,
-        resEnAttente: reservations.data?.filter(r => r.statut === "en_attente").length || 0,
-        revenus: paiements.data?.filter(p => p.est_confirme).reduce((s, p) => s + p.montant, 0) || 0,
-        totalBailleurs: bailleurs.data?.length || 0,
-        bailleursValides: bailleurs.data?.filter(b => b.is_validated).length || 0,
-        bailleursEnAttente: bailleurs.data?.filter(b => !b.is_validated).length || 0,
-        tauxOccupation: totalChambres > 0 ? Math.round((chambresOccupees / totalChambres) * 100) : 0,
-        totalChambres,
-        chambresOccupees,
-      };
-    },
+    queryFn: getAdminDashboardStats,
   });
 
   const cards = [
@@ -54,6 +27,21 @@ const AdminDashboard = () => {
           <p className="text-muted-foreground">Vue d'ensemble de la plateforme</p>
         </div>
 
+        {isLoading ? (
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            {[1, 2, 3, 4].map((item) => <div key={item} className="h-32 bg-muted animate-pulse rounded-xl" />)}
+          </div>
+        ) : isError ? (
+          <Card className="border-0 shadow-premium" role="alert">
+            <CardContent className="py-12 text-center">
+              <p>Impossible de charger les statistiques administratives.</p>
+              <p className="text-sm text-muted-foreground mt-1">
+                {error instanceof Error ? error.message : "Une erreur inattendue est survenue."}
+              </p>
+            </CardContent>
+          </Card>
+        ) : (
+        <>
         <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
           {cards.map((c) => (
             <Link to={c.href} key={c.label}>
@@ -112,6 +100,8 @@ const AdminDashboard = () => {
             </CardContent>
           </Card>
         </div>
+        </>
+        )}
       </div>
     </DashboardLayout>
   );

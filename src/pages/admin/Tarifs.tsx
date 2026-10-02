@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
+import { getValidatedLogementsForTariffs, updateRoomTariff } from "@/services/logement-service";
 import DashboardLayout from "@/components/dashboard/DashboardLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -12,22 +12,24 @@ const AdminTarifs = () => {
   const { toast } = useToast();
   const qc = useQueryClient();
 
-  const { data: logements } = useQuery({
+  const { data: logements, isLoading, isError, error } = useQuery({
     queryKey: ["admin-tarifs-logements"],
-    queryFn: async () => {
-      const { data } = await supabase.from("logements").select("id, nom, chambres(*)").eq("statut", "valide");
-      return data || [];
-    },
+    queryFn: getValidatedLogementsForTariffs,
   });
 
   const updatePrix = useMutation({
-    mutationFn: async ({ chambreId, prix_zeyna, marge }: { chambreId: string; prix_zeyna: number; marge: number }) => {
-      const { error } = await supabase.from("chambres").update({ prix_zeyna, marge }).eq("id", chambreId);
-      if (error) throw error;
-    },
+    mutationFn: ({ chambreId, prix_zeyna, marge }: { chambreId: string; prix_zeyna: number; marge: number }) =>
+      updateRoomTariff(chambreId, prix_zeyna, marge),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["admin-tarifs-logements"] });
       toast({ title: "Prix mis à jour ✅" });
+    },
+    onError: (mutationError) => {
+      toast({
+        title: "Erreur de mise à jour",
+        description: mutationError.message,
+        variant: "destructive",
+      });
     },
   });
 
@@ -48,7 +50,18 @@ const AdminTarifs = () => {
           <p className="text-muted-foreground">Définissez le prix Zeyna pour chaque chambre</p>
         </div>
 
-        {(!logements || logements.length === 0) ? (
+        {isLoading ? (
+          <div className="space-y-4">{[1, 2, 3].map((item) => <div key={item} className="h-40 bg-muted animate-pulse rounded-xl" />)}</div>
+        ) : isError ? (
+          <Card className="border-0 shadow-premium" role="alert">
+            <CardContent className="py-12 text-center">
+              <p>Impossible de charger les tarifs.</p>
+              <p className="text-sm text-muted-foreground mt-1">
+                {error instanceof Error ? error.message : "Une erreur inattendue est survenue."}
+              </p>
+            </CardContent>
+          </Card>
+        ) : (!logements || logements.length === 0) ? (
           <Card className="border-0 shadow-premium"><CardContent className="py-12 text-center text-muted-foreground">Aucun logement validé</CardContent></Card>
         ) : (
           logements.map(l => (

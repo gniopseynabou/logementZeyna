@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
+import { getAdminBailleurs, updateBailleurValidation, type AdminBailleur } from "@/services/admin-bailleur-service";
 import DashboardLayout from "@/components/dashboard/DashboardLayout";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -11,35 +11,31 @@ const AdminBailleurs = () => {
   const { toast } = useToast();
   const qc = useQueryClient();
 
-  const { data: bailleurs } = useQuery({
+  const { data: bailleurs, isLoading, isError, error } = useQuery({
     queryKey: ["admin-bailleurs"],
-    queryFn: async () => {
-      const { data: roles } = await supabase.from("user_roles").select("*").eq("role", "bailleur");
-      if (!roles || roles.length === 0) return [];
-      const userIds = roles.map(r => r.user_id);
-      const { data: profiles } = await supabase.from("profiles").select("*").in("user_id", userIds);
-      return roles.map(r => ({
-        ...r,
-        profile: profiles?.find(p => p.user_id === r.user_id),
-      }));
-    },
+    queryFn: getAdminBailleurs,
   });
 
   const toggleValidation = useMutation({
-    mutationFn: async ({ id, validated }: { id: string; validated: boolean }) => {
-      const { error } = await supabase.from("user_roles").update({ is_validated: validated }).eq("id", id);
-      if (error) throw error;
-    },
+    mutationFn: ({ id, validated }: { id: string; validated: boolean }) =>
+      updateBailleurValidation(id, validated),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["admin-bailleurs"] });
       toast({ title: "Statut mis à jour ✅" });
+    },
+    onError: (mutationError) => {
+      toast({
+        title: "Erreur de mise à jour",
+        description: mutationError.message,
+        variant: "destructive",
+      });
     },
   });
 
   const enAttente = bailleurs?.filter(b => !b.is_validated) || [];
   const valides = bailleurs?.filter(b => b.is_validated) || [];
 
-  const renderList = (list: any[]) => (
+  const renderList = (list: AdminBailleur[]) => (
     list.length === 0 ? (
       <p className="text-center py-8 text-muted-foreground">Aucun bailleur</p>
     ) : (
@@ -53,9 +49,9 @@ const AdminBailleurs = () => {
               </div>
               <div className="flex items-center gap-2">
                 {!b.is_validated ? (
-                  <Button size="sm" className="bg-gradient-gold text-accent-foreground" onClick={() => toggleValidation.mutate({ id: b.id, validated: true })}>Valider</Button>
+                  <Button size="sm" className="bg-gradient-gold text-accent-foreground" disabled={toggleValidation.isPending} onClick={() => toggleValidation.mutate({ id: b.id, validated: true })}>Valider</Button>
                 ) : (
-                  <Button size="sm" variant="outline" className="text-destructive" onClick={() => toggleValidation.mutate({ id: b.id, validated: false })}>Désactiver</Button>
+                  <Button size="sm" variant="outline" className="text-destructive" disabled={toggleValidation.isPending} onClick={() => toggleValidation.mutate({ id: b.id, validated: false })}>Désactiver</Button>
                 )}
                 <Badge variant={b.is_validated ? "default" : "secondary"}>{b.is_validated ? "Validé" : "En attente"}</Badge>
               </div>
@@ -70,6 +66,18 @@ const AdminBailleurs = () => {
     <DashboardLayout>
       <div className="space-y-6">
         <h1 className="font-serif text-2xl font-bold">Gestion des bailleurs</h1>
+        {isLoading ? (
+          <div className="space-y-4">{[1, 2, 3].map((item) => <div key={item} className="h-24 bg-muted animate-pulse rounded-xl" />)}</div>
+        ) : isError ? (
+          <Card className="border-0 shadow-premium" role="alert">
+            <CardContent className="py-12 text-center">
+              <p>Impossible de charger les bailleurs.</p>
+              <p className="text-sm text-muted-foreground mt-1">
+                {error instanceof Error ? error.message : "Une erreur inattendue est survenue."}
+              </p>
+            </CardContent>
+          </Card>
+        ) : (
         <Tabs defaultValue="en_attente">
           <TabsList>
             <TabsTrigger value="en_attente">En attente ({enAttente.length})</TabsTrigger>
@@ -78,6 +86,7 @@ const AdminBailleurs = () => {
           <TabsContent value="en_attente" className="mt-4">{renderList(enAttente)}</TabsContent>
           <TabsContent value="valides" className="mt-4">{renderList(valides)}</TabsContent>
         </Tabs>
+        )}
       </div>
     </DashboardLayout>
   );

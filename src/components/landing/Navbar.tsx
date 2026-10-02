@@ -3,19 +3,30 @@ import { Link, useNavigate } from "react-router-dom";
 import { Menu, X, LogOut, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
+import { useToast } from "@/hooks/use-toast";
 import logo from "@/assets/logo.jpeg";
+import { getDashboardPathByRole } from "@/lib/permissions";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const { user, role, profile, signOut } = useAuth();
   const navigate = useNavigate();
+  const { toast } = useToast();
 
-  const dashboardPath = role === "admin" ? "/admin" : role === "bailleur" ? "/bailleur" : "/etudiant";
+  const dashboardPath = getDashboardPathByRole(role);
 
   const handleLogout = async () => {
-    await signOut();
-    navigate("/");
-    setIsOpen(false);
+    try {
+      await signOut();
+      navigate("/");
+      setIsOpen(false);
+    } catch (error) {
+      toast({
+        title: "Erreur de déconnexion",
+        description: error instanceof Error ? error.message : "Une erreur inattendue est survenue.",
+        variant: "destructive",
+      });
+    }
   };
 
   return (

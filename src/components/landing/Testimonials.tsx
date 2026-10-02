@@ -1,19 +1,11 @@
 import { Star, Quote } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
+import { getVisibleTestimonials } from "@/services/public-content-service";
 
 const Testimonials = () => {
-  const { data: testimonials, isLoading } = useQuery({
+  const { data: testimonials, isLoading, isError } = useQuery({
     queryKey: ["temoignages"],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from("temoignages")
-        .select("*")
-        .eq("est_visible", true)
-        .order("created_at", { ascending: false });
-      if (error) throw error;
-      return data;
-    },
+    queryFn: getVisibleTestimonials,
   });
 
   if (isLoading) {
@@ -25,6 +17,16 @@ const Testimonials = () => {
               <div key={i} className="h-52 bg-muted animate-pulse rounded-2xl" />
             ))}
           </div>
+        </div>
+      </section>
+    );
+  }
+
+  if (isError) {
+    return (
+      <section className="py-12 bg-background" role="alert">
+        <div className="container mx-auto px-4 text-center text-sm text-muted-foreground">
+          Les témoignages sont temporairement indisponibles.
         </div>
       </section>
     );

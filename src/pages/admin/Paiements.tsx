@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
+import { confirmAdminPayment, getAdminPayments } from "@/services/payment-service";
 import DashboardLayout from "@/components/dashboard/DashboardLayout";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -13,45 +13,31 @@ const AdminPaiements = () => {
 
   const { data: paiements } = useQuery({
     queryKey: ["admin-paiements"],
-    queryFn: async () => {
-      const { data } = await supabase
-        .from("paiements")
-        .select("*, reservations(logements(nom), chambres(nom))")
-        .order("created_at", { ascending: false });
-      return data || [];
-    },
+    queryFn: getAdminPayments,
   });
 
   const confirmPaiement = useMutation({
     mutationFn: async (id: string) => {
       const paiement = paiements?.find(p => p.id === id);
-      if (!paiement) return;
+      if (!paiement) throw new Error("Paiement introuvable");
 
-      // Confirm payment
-      await supabase.from("paiements").update({ est_confirme: true }).eq("id", id);
-      // Confirm reservation
-      await supabase.from("reservations").update({ statut: "confirmee" }).eq("id", paiement.reservation_id);
-      // Block chambre
-      const { data: res } = await supabase.from("reservations").select("chambre_id").eq("id", paiement.reservation_id).single();
-      if (res) {
-        await supabase.from("chambres").update({ est_disponible: false }).eq("id", res.chambre_id);
-      }
-      // Create contract
-      await supabase.from("contrats").insert({
-        etudiant_id: paiement.etudiant_id,
-        reservation_id: paiement.reservation_id,
-        contenu: {
-          montant: paiement.montant,
-          reference: paiement.reference,
-          date: new Date().toISOString(),
-          logement: (paiement as any).reservations?.logements?.nom,
-          chambre: (paiement as any).reservations?.chambres?.nom,
-        },
+      const details = (paiement as any).reservations;
+      await confirmAdminPayment({
+        paymentId: paiement.id,
+        reservationId: paiement.reservation_id,
+        studentId: paiement.etudiant_id,
+        amount: paiement.montant,
+        reference: paiement.reference,
+        logementName: details?.logements?.nom ?? null,
+        roomName: details?.chambres?.nom ?? null,
       });
     },
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["admin-paiements"] });
       toast({ title: "Paiement confirmé ✅", description: "Réservation confirmée et chambre bloquée." });
+    },
+    onError: (error) => {
+      toast({ title: "Erreur de confirmation", description: error.message, variant: "destructive" });
     },
   });
 
@@ -79,7 +65,7 @@ const AdminPaiements = () => {
                   <Badge variant={p.est_confirme ? "default" : "secondary"}>{p.est_confirme ? "Confirmé" : "En attente"}</Badge>
                 </div>
                 {showConfirmBtn && (
-                  <Button size="sm" className="bg-gradient-gold text-accent-foreground" onClick={() => confirmPaiement.mutate(p.id)}>
+                  <Button size="sm" className="bg-gradient-gold text-accent-foreground" disabled={confirmPaiement.isPending} onClick={() => confirmPaiement.mutate(p.id)}>
                     Confirmer
                   </Button>
                 )}

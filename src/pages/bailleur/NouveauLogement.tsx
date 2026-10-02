@@ -8,7 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { supabase } from "@/integrations/supabase/client";
+import { createLandlordLogement } from "@/services/logement-service";
 import { useToast } from "@/hooks/use-toast";
 import { Plus, Trash2, Upload, ImageIcon } from "lucide-react";
 
@@ -80,74 +80,40 @@ const NouveauLogement = () => {
     setImagePreviews(prev => prev.filter((_, i) => i !== index));
   };
 
-  const uploadImages = async (logementId: string): Promise<string[]> => {
-    const urls: string[] = [];
-    for (const file of imageFiles) {
-      const ext = file.name.split(".").pop();
-      const path = `${logementId}/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
-      const { error } = await supabase.storage.from("logements").upload(path, file);
-      if (!error) {
-        const { data: urlData } = supabase.storage.from("logements").getPublicUrl(path);
-        urls.push(urlData.publicUrl);
-      }
-    }
-    return urls;
-  };
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!user) return;
 
     setSaving(true);
 
-    const { data: logement, error: logError } = await supabase.from("logements").insert({
-      nom: form.nom,
-      adresse: form.adresse,
-      ville: form.ville,
-      type: form.type,
-      description: form.description,
-      conditions_electricite: form.conditions_electricite,
-      latitude: form.latitude ? Number(form.latitude) : null,
-      longitude: form.longitude ? Number(form.longitude) : null,
-      bailleur_id: user.id,
-      pays: "Sénégal",
-    }).select().single();
+    try {
+      await createLandlordLogement({
+        nom: form.nom,
+        adresse: form.adresse,
+        ville: form.ville,
+        type: form.type,
+        description: form.description,
+        conditionsElectricite: form.conditions_electricite,
+        latitude: form.latitude ? Number(form.latitude) : null,
+        longitude: form.longitude ? Number(form.longitude) : null,
+        landlordId: user.id,
+        chambres,
+        images: imageFiles,
+        onUploadingImages: setUploading,
+      });
 
-    if (logError || !logement) {
-      toast({ title: "Erreur", description: logError?.message || "Erreur lors de la création", variant: "destructive" });
-      setSaving(false);
-      return;
-    }
-
-    // Upload images if any
-    if (imageFiles.length > 0) {
-      setUploading(true);
-      const imageUrls = await uploadImages(logement.id);
-      if (imageUrls.length > 0) {
-        await supabase.from("logements").update({ images: imageUrls }).eq("id", logement.id);
-      }
-      setUploading(false);
-    }
-
-    // Create chambres
-    const chambreInserts = chambres.map(c => ({
-      logement_id: logement.id,
-      nom: c.nom,
-      nombre_personnes: c.nombre_personnes,
-      prix_bailleur: c.prix_bailleur,
-      caution: c.caution,
-      description: c.description,
-    }));
-
-    const { error: chambreError } = await supabase.from("chambres").insert(chambreInserts);
-
-    if (chambreError) {
-      toast({ title: "Erreur chambres", description: chambreError.message, variant: "destructive" });
-    } else {
       toast({ title: "Logement soumis ✅", description: "Votre logement sera visible après validation par l'administrateur Zeyna." });
       navigate("/bailleur/logements");
+    } catch (error) {
+      toast({
+        title: "Erreur lors de la création",
+        description: error instanceof Error ? error.message : "Une erreur inattendue est survenue.",
+        variant: "destructive",
+      });
+    } finally {
+      setSaving(false);
+      setUploading(false);
     }
-    setSaving(false);
   };
 
   return (

@@ -1,6 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
+import { getStudentDashboardReservations } from "@/services/reservation-service";
+import { getStudentDashboardPayments } from "@/services/payment-service";
 import DashboardLayout from "@/components/dashboard/DashboardLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { BookOpen, CreditCard, FileText, Home } from "lucide-react";
@@ -10,28 +11,26 @@ import { Button } from "@/components/ui/button";
 const EtudiantDashboard = () => {
   const { user } = useAuth();
 
-  const { data: reservations } = useQuery({
+  const {
+    data: reservations,
+    isError: reservationsFailed,
+    error: reservationsError,
+  } = useQuery({
     queryKey: ["etudiant-reservations", user?.id],
-    queryFn: async () => {
-      const { data } = await supabase.from("reservations").select("*, logements(nom), chambres(nom)").eq("etudiant_id", user!.id);
-      return data || [];
-    },
+    queryFn: () => getStudentDashboardReservations(user!.id),
     enabled: !!user,
   });
 
-  const { data: paiements } = useQuery({
+  const { data: paiements, isError: paiementsFailed } = useQuery({
     queryKey: ["etudiant-paiements", user?.id],
-    queryFn: async () => {
-      const { data } = await supabase.from("paiements").select("*").eq("etudiant_id", user!.id);
-      return data || [];
-    },
+    queryFn: () => getStudentDashboardPayments(user!.id),
     enabled: !!user,
   });
 
   const stats = [
-    { label: "Réservations", value: reservations?.length || 0, icon: <BookOpen className="h-5 w-5" />, color: "text-primary" },
-    { label: "Confirmées", value: reservations?.filter(r => r.statut === "confirmee").length || 0, icon: <Home className="h-5 w-5" />, color: "text-green-600" },
-    { label: "Paiements", value: paiements?.length || 0, icon: <CreditCard className="h-5 w-5" />, color: "text-accent" },
+    { label: "Réservations", value: reservationsFailed ? "—" : reservations?.length || 0, icon: <BookOpen className="h-5 w-5" />, color: "text-primary" },
+    { label: "Confirmées", value: reservationsFailed ? "—" : reservations?.filter(r => r.statut === "confirmee").length || 0, icon: <Home className="h-5 w-5" />, color: "text-green-600" },
+    { label: "Paiements", value: paiementsFailed ? "—" : paiements?.length || 0, icon: <CreditCard className="h-5 w-5" />, color: "text-accent" },
   ];
 
   return (
@@ -40,6 +39,13 @@ const EtudiantDashboard = () => {
         <div>
           <h1 className="font-serif text-2xl font-bold">Bienvenue dans votre espace</h1>
           <p className="text-muted-foreground">Gérez vos réservations et paiements</p>
+          {(reservationsFailed || paiementsFailed) && (
+            <p role="alert" className="text-sm text-destructive mt-2">
+              {reservationsFailed && reservationsError instanceof Error
+                ? `Erreur de chargement des réservations : ${reservationsError.message}`
+                : "Certaines données du tableau de bord n’ont pas pu être chargées."}
+            </p>
+          )}
         </div>
 
         <div className="grid sm:grid-cols-3 gap-4">
@@ -63,7 +69,11 @@ const EtudiantDashboard = () => {
             <Button asChild variant="outline" size="sm"><Link to="/etudiant/reservations">Voir tout</Link></Button>
           </CardHeader>
           <CardContent>
-            {(!reservations || reservations.length === 0) ? (
+            {reservationsFailed ? (
+              <div role="alert" className="text-center py-8 text-destructive">
+                Impossible de charger vos réservations.
+              </div>
+            ) : !reservations || reservations.length === 0 ? (
               <div className="text-center py-8">
                 <p className="text-muted-foreground">Aucune réservation</p>
                 <Button asChild className="mt-4 bg-gradient-gold text-accent-foreground"><Link to="/logements">Trouver un logement</Link></Button>

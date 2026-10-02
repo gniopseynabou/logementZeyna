@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
+import { getLandlordPaymentReport } from "@/services/payment-service";
 import DashboardLayout from "@/components/dashboard/DashboardLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -10,46 +10,9 @@ import { METHODE_LABELS } from "@/lib/supabase-utils";
 const BailleurPaiements = () => {
   const { user } = useAuth();
 
-  const { data, isLoading } = useQuery({
+  const { data, isLoading, isError, error } = useQuery({
     queryKey: ["bailleur-paiements-detail", user?.id],
-    queryFn: async () => {
-      // 1. Récupérer les logements du bailleur
-      const { data: logements } = await supabase
-        .from("logements")
-        .select("id, nom")
-        .eq("bailleur_id", user!.id);
-
-      if (!logements || logements.length === 0) return { paiements: [], total: 0 };
-
-      const logementIds = logements.map((l) => l.id);
-
-      // 2. Récupérer les réservations confirmées pour ces logements
-      const { data: reservations } = await supabase
-        .from("reservations")
-        .select("id")
-        .in("logement_id", logementIds)
-        .eq("statut", "confirmee");
-
-      if (!reservations || reservations.length === 0) return { paiements: [], total: 0 };
-
-      const reservationIds = reservations.map((r) => r.id);
-
-      // 3. Récupérer les paiements pour ces réservations
-      const { data: paiements, error } = await supabase
-        .from("paiements")
-        .select(
-          "*, reservations(logement_id, logements(nom), chambres(nom))"
-        )
-        .in("reservation_id", reservationIds)
-        .order("created_at", { ascending: false });
-
-      if (error) throw error;
-
-      const confirmes = paiements?.filter((p) => p.est_confirme) || [];
-      const total = confirmes.reduce((s, p) => s + p.montant, 0);
-
-      return { paiements: paiements || [], total };
-    },
+    queryFn: () => getLandlordPaymentReport(user!.id),
     enabled: !!user,
   });
 
@@ -72,7 +35,7 @@ const BailleurPaiements = () => {
               <div>
                 <p className="text-xs text-muted-foreground">Total encaissé</p>
                 <p className="text-xl font-bold text-accent font-ui">
-                  {(data?.total || 0).toLocaleString()} FCFA
+                  {isError ? "Indisponible" : `${(data?.total ?? 0).toLocaleString()} FCFA`}
                 </p>
               </div>
             </CardContent>
@@ -85,6 +48,15 @@ const BailleurPaiements = () => {
               <div key={i} className="h-20 bg-muted animate-pulse rounded-xl" />
             ))}
           </div>
+        ) : isError ? (
+          <Card className="border-0 shadow-premium" role="alert">
+            <CardContent className="py-12 text-center">
+              <p>Impossible de charger les paiements.</p>
+              <p className="text-sm text-muted-foreground mt-1">
+                {error instanceof Error ? error.message : "Une erreur inattendue est survenue."}
+              </p>
+            </CardContent>
+          </Card>
         ) : !data?.paiements.length ? (
           <Card className="border-0 shadow-premium">
             <CardContent className="py-12 text-center text-muted-foreground">

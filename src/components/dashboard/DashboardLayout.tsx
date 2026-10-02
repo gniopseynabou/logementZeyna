@@ -2,11 +2,13 @@ import { ReactNode, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
+import { useToast } from "@/hooks/use-toast";
 import logo from "@/assets/logo.jpeg";
 import {
   Home, Building, Users, CreditCard, FileText, Settings, LogOut,
   Menu, X, BarChart3, CheckCircle, UserCheck, BookOpen
 } from "lucide-react";
+import { getRoleLabel } from "@/lib/permissions";
 
 interface NavItem {
   label: string;
@@ -16,6 +18,7 @@ interface NavItem {
 
 const DashboardLayout = ({ children }: { children: ReactNode }) => {
   const { profile, role, signOut } = useAuth();
+  const { toast } = useToast();
   const location = useLocation();
   const navigate = useNavigate();
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -47,11 +50,19 @@ const DashboardLayout = ({ children }: { children: ReactNode }) => {
       ];
 
   const handleLogout = async () => {
-    await signOut();
-    navigate("/");
+    try {
+      await signOut();
+      navigate("/");
+    } catch (error) {
+      toast({
+        title: "Erreur de déconnexion",
+        description: error instanceof Error ? error.message : "Une erreur inattendue est survenue.",
+        variant: "destructive",
+      });
+    }
   };
 
-  const roleLabel = role === "admin" ? "Administrateur" : role === "bailleur" ? "Bailleur" : "Étudiant";
+  const roleLabel = getRoleLabel(role);
 
   return (
     <div className="min-h-screen flex bg-background">

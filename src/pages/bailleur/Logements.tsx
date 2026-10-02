@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
+import { getLandlordLogements } from "@/services/logement-service";
 import DashboardLayout from "@/components/dashboard/DashboardLayout";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -11,12 +11,9 @@ import { MapPin } from "lucide-react";
 const BailleurLogements = () => {
   const { user } = useAuth();
 
-  const { data: logements, isLoading } = useQuery({
+  const { data: logements, isLoading, isError, error } = useQuery({
     queryKey: ["bailleur-logements-list", user?.id],
-    queryFn: async () => {
-      const { data } = await supabase.from("logements").select("*, chambres(*)").eq("bailleur_id", user!.id).order("created_at", { ascending: false });
-      return data || [];
-    },
+    queryFn: () => getLandlordLogements(user!.id),
     enabled: !!user,
   });
 
@@ -30,6 +27,15 @@ const BailleurLogements = () => {
 
         {isLoading ? (
           <div className="space-y-4">{[1,2].map(i => <div key={i} className="h-24 bg-muted animate-pulse rounded-xl" />)}</div>
+        ) : isError ? (
+          <Card className="border-0 shadow-premium" role="alert">
+            <CardContent className="py-12 text-center">
+              <p>Impossible de charger vos logements.</p>
+              <p className="text-sm text-muted-foreground mt-1">
+                {error instanceof Error ? error.message : "Une erreur inattendue est survenue."}
+              </p>
+            </CardContent>
+          </Card>
         ) : !logements || logements.length === 0 ? (
           <Card className="border-0 shadow-premium"><CardContent className="py-12 text-center text-muted-foreground">Aucun logement. <Button asChild variant="link" className="text-accent"><Link to="/bailleur/logements/nouveau">Ajouter un logement</Link></Button></CardContent></Card>
         ) : (

@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
+import { getPopularLogements } from "@/services/logement-service";
 import logement1 from "@/assets/logement-1.jpg";
 import logement2 from "@/assets/logement-2.jpg";
 import logement3 from "@/assets/logement-3.jpg";
@@ -15,17 +15,9 @@ import logement6 from "@/assets/logement-6.jpg";
 const fallbackImages = [logement1, logement2, logement3, logement4, logement5, logement6];
 
 const PopularLogements = () => {
-  const { data: logements, isLoading } = useQuery({
+  const { data: logements, isLoading, isError, refetch } = useQuery({
     queryKey: ["popular-logements"],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from("logements")
-        .select("*, chambres(*)")
-        .eq("statut", "valide")
-        .limit(6);
-      if (error) throw error;
-      return data;
-    },
+    queryFn: getPopularLogements,
   });
 
   const displayLogements = (logements || []).map((l, i) => ({
@@ -46,6 +38,20 @@ const PopularLogements = () => {
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {[1,2,3].map(i => <div key={i} className="h-72 bg-muted animate-pulse rounded-xl" />)}
           </div>
+        </div>
+      </section>
+    );
+  }
+
+  if (isError) {
+    return (
+      <section className="py-20 md:py-28 bg-secondary/50" role="alert">
+        <div className="container mx-auto px-4 text-center">
+          <h2 className="font-serif text-3xl md:text-4xl font-bold text-foreground">Logements populaires</h2>
+          <p className="text-muted-foreground mt-4">Impossible de charger les logements pour le moment.</p>
+          <Button className="mt-6 bg-gradient-gold text-accent-foreground" onClick={() => refetch()}>
+            Réessayer
+          </Button>
         </div>
       </section>
     );

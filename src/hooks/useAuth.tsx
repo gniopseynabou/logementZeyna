@@ -1,22 +1,13 @@
 import { createContext, useContext, useEffect, useState, ReactNode, useCallback } from "react";
 import { User, Session } from "@supabase/supabase-js";
 import { supabase } from "@/integrations/supabase/client";
-
-type AppRole = "admin" | "bailleur" | "etudiant";
-
-interface Profile {
-  id: string;
-  user_id: string;
-  nom: string;
-  prenom: string;
-  telephone: string | null;
-  avatar_url: string | null;
-}
+import type { AppRole } from "@/lib/permissions";
+import { getCurrentSession, getUserAuthData, signOutUser, type UserProfile } from "@/services/auth-service";
 
 interface AuthContextType {
   user: User | null;
   session: Session | null;
-  profile: Profile | null;
+  profile: UserProfile | null;
   role: AppRole | null;
   isValidated: boolean;
   loading: boolean;
@@ -40,30 +31,22 @@ export const useAuth = () => useContext(AuthContext);
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
-  const [profile, setProfile] = useState<Profile | null>(null);
+  const [profile, setProfile] = useState<UserProfile | null>(null);
   const [role, setRole] = useState<AppRole | null>(null);
   const [isValidated, setIsValidated] = useState(false);
   const [loading, setLoading] = useState(true);
 
   const fetchUserData = useCallback(async (userId: string) => {
     try {
-      const [profileRes, roleRes] = await Promise.all([
-        supabase.from("profiles").select("*").eq("user_id", userId).maybeSingle(),
-        supabase.from("user_roles").select("*").eq("user_id", userId).maybeSingle(),
-      ]);
-
-      if (profileRes.data) {
-        setProfile(profileRes.data as Profile);
-      }
-      if (roleRes.data) {
-        setRole(roleRes.data.role as AppRole);
-        setIsValidated(roleRes.data.is_validated);
-      } else {
-        // Si pas de rôle trouvé, on ne bloque pas l'utilisateur
-        setRole(null);
-      }
+      const authData = await getUserAuthData(userId);
+      setProfile(authData.profile);
+      setRole(authData.role);
+      setIsValidated(authData.isValidated);
     } catch (error) {
       console.error("Erreur lors du chargement du profil:", error);
+      setProfile(null);
+      setRole(null);
+      setIsValidated(false);
     }
   }, []);
 
@@ -72,7 +55,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   }, [user, fetchUserData]);
 
   const signOut = async () => {
-    await supabase.auth.signOut();
+    await signOutUser();
     setUser(null);
     setSession(null);
     setProfile(null);
@@ -81,27 +64,43 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   };
 
   useEffect(() => {
-    // Initialisation de la session
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-      setUser(session?.user ?? null);
-      if (session?.user) {
-        fetchUserData(session.user.id).finally(() => setLoading(false));
-      } else {
-        setLoading(false);
-      }
-    });
+    let isActive = true;
+    let authStateChanged = false;
+
+    void getCurrentSession()
+      .then((currentSession) => {
+        if (!isActive || authStateChanged) return;
+        setSession(currentSession);
+        setUser(currentSession?.user ?? null);
+        if (currentSession?.user) void fetchUserData(currentSession.user.id);
+      })
+      .catch((error) => {
+        if (!isActive || authStateChanged) return;
+        console.error("Erreur lors de l'initialisation de la session:", error);
+        setSession(null);
+        setUser(null);
+        setProfile(null);
+        setRole(null);
+        setIsValidated(false);
+      })
+      .finally(() => {
+        if (isActive) setLoading(false);
+      });
 
     // Écouter les changements d'état
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (event, session) => {
+      (event, session) => {
+        authStateChanged = true;
+        if (!isActive) return;
         setSession(session);
         setUser(session?.user ?? null);
 
         if (session?.user) {
           if (event === "SIGNED_IN" || event === "TOKEN_REFRESHED") {
             // Utiliser setTimeout pour éviter les deadlocks avec le client Supabase
-            setTimeout(() => fetchUserData(session.user.id), 0);
+            setTimeout(() => {
+              if (isActive) void fetchUserData(session.user.id);
+            }, 0);
           }
         } else {
           setProfile(null);
@@ -112,7 +111,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       }
     );
 
-    return () => subscription.unsubscribe();
+    return () => {
+      isActive = false;
+      subscription.unsubscribe();
+    };
   }, [fetchUserData]);
 
   return (

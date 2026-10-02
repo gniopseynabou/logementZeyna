@@ -2,25 +2,13 @@ import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Search, ArrowRight } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
+import { getHeroStats } from "@/services/public-content-service";
 import heroBg from "@/assets/hero-bg.jpg";
 
 const HeroSection = () => {
-  const { data: stats } = useQuery({
+  const { data: stats, isError } = useQuery({
     queryKey: ["hero-live-stats"],
-    queryFn: async () => {
-      const [logRes, chambreRes, villeRes] = await Promise.all([
-        supabase.from("logements").select("id", { count: "exact", head: true }).eq("statut", "valide"),
-        supabase.from("chambres").select("id", { count: "exact", head: true }),
-        supabase.from("logements").select("ville").eq("statut", "valide"),
-      ]);
-      const quartiers = new Set(villeRes.data?.map(l => l.ville) || []);
-      return [
-        { id: "1", valeur: `${logRes.count || 0}`, label: "Logements" },
-        { id: "2", valeur: `${chambreRes.count || 0}`, label: "Chambres" },
-        { id: "3", valeur: `${quartiers.size}`, label: "Quartiers" },
-      ];
-    },
+    queryFn: getHeroStats,
   });
 
   return (
@@ -60,7 +48,7 @@ const HeroSection = () => {
           </div>
 
           {/* Stats from DB */}
-          {stats && stats.length > 0 && (
+          {!isError && stats && stats.length > 0 && (
             <div className="mt-12 sm:mt-16 grid grid-cols-3 gap-3 sm:gap-6 max-w-lg mx-auto">
               {stats.map((stat) => (
                 <div key={stat.id} className="text-center">

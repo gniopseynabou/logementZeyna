@@ -4,10 +4,11 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { Eye, EyeOff, ArrowLeft } from "lucide-react";
 import logo from "@/assets/logo.jpeg";
+import { getDashboardPathByRole } from "@/lib/permissions";
+import { signInWithRole } from "@/services/auth-service";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -21,26 +22,18 @@ const Login = () => {
     e.preventDefault();
     setLoading(true);
 
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
+    try {
+      const { error, role } = await signInWithRole(email, password);
 
-    if (error) {
-      toast({ title: "Erreur de connexion", description: error.message, variant: "destructive" });
-    } else {
-      // Get user role to redirect
-      const { data: { user } } = await supabase.auth.getUser();
-      if (user) {
-        const { data: roleData } = await supabase
-          .from("user_roles")
-          .select("role")
-          .eq("user_id", user.id)
-          .single();
-        
-        const role = roleData?.role || "etudiant";
+      if (error) {
+        toast({ title: "Erreur de connexion", description: error.message, variant: "destructive" });
+      } else if (role) {
         toast({ title: "Connexion réussie", description: "Bienvenue !" });
-        navigate(role === "admin" ? "/admin" : role === "bailleur" ? "/bailleur" : "/etudiant");
+        navigate(getDashboardPathByRole(role));
       }
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   return (

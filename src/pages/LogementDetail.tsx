@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
+import { createReservation, getLogementDetail } from "@/services/logement-service";
 import { useAuth } from "@/hooks/useAuth";
 import Navbar from "@/components/landing/Navbar";
 import Footer from "@/components/landing/Footer";
@@ -27,15 +27,7 @@ const LogementDetail = () => {
 
   const { data: logement, isLoading } = useQuery({
     queryKey: ["logement-detail", id],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from("logements")
-        .select("*, chambres(*)")
-        .eq("id", id!)
-        .single();
-      if (error) throw error;
-      return data;
-    },
+    queryFn: () => getLogementDetail(id!),
     enabled: !!id,
   });
 
@@ -84,22 +76,23 @@ const LogementDetail = () => {
     const chambre = chambres.find((c: any) => c.id === selectedChambre);
     const montant = chambre?.caution || chambre?.prix_zeyna || 0;
 
-    const { error } = await supabase.from("reservations").insert({
-      etudiant_id: user.id,
-      chambre_id: selectedChambre,
-      logement_id: logement.id,
-      montant_total: montant,
-      date_debut: new Date().toISOString().split("T")[0],
-      statut: "en_attente",
-    });
+    try {
+      const { error } = await createReservation({
+        studentId: user.id,
+        roomId: selectedChambre,
+        logementId: logement.id,
+        amount: montant,
+      });
 
-    if (error) {
-      toast({ title: "Erreur", description: error.message, variant: "destructive" });
-    } else {
-      toast({ title: "Réservation créée !", description: "Procédez au paiement de la caution pour confirmer." });
-      navigate("/etudiant/reservations");
+      if (error) {
+        toast({ title: "Erreur", description: error.message, variant: "destructive" });
+      } else {
+        toast({ title: "Réservation créée !", description: "Procédez au paiement de la caution pour confirmer." });
+        navigate("/etudiant/reservations");
+      }
+    } finally {
+      setReserving(false);
     }
-    setReserving(false);
   };
 
   return (

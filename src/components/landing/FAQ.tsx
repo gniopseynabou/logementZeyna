@@ -1,19 +1,11 @@
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
+import { getVisibleFaqs } from "@/services/public-content-service";
 
 const FAQ = () => {
-  const { data: faqs, isLoading } = useQuery({
+  const { data: faqs, isLoading, isError } = useQuery({
     queryKey: ["faqs"],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from("faqs")
-        .select("*")
-        .eq("est_visible", true)
-        .order("ordre");
-      if (error) throw error;
-      return data;
-    },
+    queryFn: getVisibleFaqs,
   });
 
   if (isLoading) {
@@ -25,6 +17,16 @@ const FAQ = () => {
               <div key={i} className="h-16 bg-muted animate-pulse rounded-xl" />
             ))}
           </div>
+        </div>
+      </section>
+    );
+  }
+
+  if (isError) {
+    return (
+      <section className="py-12 bg-secondary/50" role="alert">
+        <div className="container mx-auto px-4 text-center text-sm text-muted-foreground">
+          La FAQ est temporairement indisponible.
         </div>
       </section>
     );

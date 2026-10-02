@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
+import { getAdminLogements, LogementStatus, updateAdminLogementStatus } from "@/services/logement-service";
 import DashboardLayout from "@/components/dashboard/DashboardLayout";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -12,22 +12,24 @@ const AdminLogements = () => {
   const { toast } = useToast();
   const qc = useQueryClient();
 
-  const { data: logements, isLoading } = useQuery({
+  const { data: logements, isLoading, isError, error } = useQuery({
     queryKey: ["admin-all-logements"],
-    queryFn: async () => {
-      const { data } = await supabase.from("logements").select("*, chambres(*)").order("created_at", { ascending: false });
-      return data || [];
-    },
+    queryFn: getAdminLogements,
   });
 
   const updateStatut = useMutation({
-    mutationFn: async ({ id, statut }: { id: string; statut: string }) => {
-      const { error } = await supabase.from("logements").update({ statut: statut as any }).eq("id", id);
-      if (error) throw error;
-    },
+    mutationFn: ({ id, statut }: { id: string; statut: LogementStatus }) =>
+      updateAdminLogementStatus(id, statut),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["admin-all-logements"] });
       toast({ title: "Statut mis à jour ✅" });
+    },
+    onError: (mutationError) => {
+      toast({
+        title: "Erreur de mise à jour",
+        description: mutationError.message,
+        variant: "destructive",
+      });
     },
   });
 
@@ -76,6 +78,18 @@ const AdminLogements = () => {
       <div className="space-y-6">
         <h1 className="font-serif text-2xl font-bold">Gestion des logements</h1>
 
+        {isError ? (
+          <Card className="border-0 shadow-premium" role="alert">
+            <CardContent className="py-12 text-center">
+              <p>Impossible de charger les logements.</p>
+              <p className="text-sm text-muted-foreground mt-1">
+                {error instanceof Error ? error.message : "Une erreur inattendue est survenue."}
+              </p>
+            </CardContent>
+          </Card>
+        ) : isLoading ? (
+          <div className="space-y-4">{[1, 2, 3].map((item) => <div key={item} className="h-24 bg-muted animate-pulse rounded-xl" />)}</div>
+        ) : (
         <Tabs defaultValue="en_attente">
           <TabsList>
             <TabsTrigger value="en_attente">En attente ({enAttente.length})</TabsTrigger>
@@ -86,6 +100,7 @@ const AdminLogements = () => {
           <TabsContent value="valides" className="mt-4">{renderList(valides)}</TabsContent>
           <TabsContent value="rejetes" className="mt-4">{renderList(rejetes)}</TabsContent>
         </Tabs>
+        )}
       </div>
     </DashboardLayout>
   );

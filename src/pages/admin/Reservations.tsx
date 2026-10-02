@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
+import { getAdminReservations, ReservationStatus, updateAdminReservationStatus } from "@/services/reservation-service";
 import DashboardLayout from "@/components/dashboard/DashboardLayout";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -13,28 +13,12 @@ const AdminReservations = () => {
 
   const { data: reservations } = useQuery({
     queryKey: ["admin-reservations"],
-    queryFn: async () => {
-      const { data } = await supabase
-        .from("reservations")
-        .select("*, logements(nom), chambres(nom)")
-        .order("created_at", { ascending: false });
-      return data || [];
-    },
+    queryFn: getAdminReservations,
   });
 
   const updateStatut = useMutation({
-    mutationFn: async ({ id, statut }: { id: string; statut: string }) => {
-      const { error } = await supabase.from("reservations").update({ statut: statut as any }).eq("id", id);
-      if (error) throw error;
-
-      // If cancelling, free the chambre
-      if (statut === "annulee") {
-        const reservation = reservations?.find(r => r.id === id);
-        if (reservation) {
-          await supabase.from("chambres").update({ est_disponible: true }).eq("id", reservation.chambre_id);
-        }
-      }
-    },
+    mutationFn: ({ id, statut }: { id: string; statut: ReservationStatus }) =>
+      updateAdminReservationStatus(id, statut, reservations?.find(r => r.id === id)?.chambre_id),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["admin-reservations"] });
       toast({ title: "Statut mis à jour ✅" });

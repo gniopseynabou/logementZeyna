@@ -1,92 +1,42 @@
 import { useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
+import { getReservationForPayment, PaymentMethod } from "@/services/payment-service";
 import DashboardLayout from "@/components/dashboard/DashboardLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
 import { CreditCard, Smartphone, Shield } from "lucide-react";
 
 const PaiementPage = () => {
   const { reservationId } = useParams();
-  const navigate = useNavigate();
   const { user } = useAuth();
   const { toast } = useToast();
-  const [methode, setMethode] = useState<string>("orange_money");
-  const [phone, setPhone] = useState("");
+  const [methode, setMethode] = useState<PaymentMethod>("orange_money");
   const [processing, setProcessing] = useState(false);
 
   const { data: reservation } = useQuery({
     queryKey: ["reservation-paiement", reservationId],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from("reservations")
-        .select("*, logements(nom), chambres(nom, prix_zeyna, caution)")
-        .eq("id", reservationId!)
-        .single();
-      if (error) throw error;
-      return data;
-    },
+    queryFn: () => getReservationForPayment(reservationId!),
     enabled: !!reservationId,
   });
 
   const handlePay = async () => {
     if (!user || !reservation) return;
-    if ((methode === "orange_money" || methode === "mtn_money" || methode === "moov_money") && !phone) {
-      toast({ title: "Erreur", description: "Entrez votre numéro de téléphone", variant: "destructive" });
-      return;
-    }
-
     setProcessing(true);
 
-    // Simulate payment processing
-    await new Promise(resolve => setTimeout(resolve, 2000));
-
-    const ref = `ZYN-${Date.now().toString(36).toUpperCase()}`;
-
-    // Create payment
-    const { error: payError } = await supabase.from("paiements").insert({
-      etudiant_id: user.id,
-      reservation_id: reservation.id,
-      montant: reservation.montant_total,
-      methode: methode as any,
-      reference: ref,
-      est_confirme: true,
-    });
-
-    if (payError) {
-      toast({ title: "Erreur de paiement", description: payError.message, variant: "destructive" });
+    try {
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      toast({
+        title: "Simulation terminée",
+        description: "Aucun paiement n’a été effectué. Votre réservation reste en attente.",
+      });
+    } finally {
       setProcessing(false);
-      return;
     }
-
-    // Update reservation status
-    await supabase.from("reservations").update({ statut: "confirmee" }).eq("id", reservation.id);
-
-    // Block chambre
-    await supabase.from("chambres").update({ est_disponible: false }).eq("id", reservation.chambre_id);
-
-    // Create contract
-    await supabase.from("contrats").insert({
-      etudiant_id: user.id,
-      reservation_id: reservation.id,
-      contenu: {
-        logement: (reservation as any).logements?.nom,
-        chambre: (reservation as any).chambres?.nom,
-        montant: reservation.montant_total,
-        reference: ref,
-        date: new Date().toISOString(),
-      },
-    });
-
-    toast({ title: "Paiement confirmé ! ✅", description: `Référence : ${ref}. Votre réservation est confirmée.` });
-    navigate("/etudiant/reservations");
-    setProcessing(false);
   };
 
   if (!reservation) {
@@ -113,10 +63,13 @@ const PaiementPage = () => {
 
         <Card className="border-0 shadow-premium">
           <CardHeader>
-            <CardTitle className="font-serif text-lg">Mode de paiement</CardTitle>
+            <CardTitle className="font-serif text-lg">Mode de paiement simulé</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
-            <RadioGroup value={methode} onValueChange={setMethode} className="space-y-3">
+            <p role="note" className="text-sm text-muted-foreground">
+              Mode démo : aucune transaction ne sera effectuée. Ne saisissez aucune donnée bancaire.
+            </p>
+            <RadioGroup value={methode} onValueChange={(value) => setMethode(value as PaymentMethod)} className="space-y-3">
               {[
                 { value: "orange_money", label: "Orange Money", icon: <Smartphone className="h-4 w-4 text-orange-500" /> },
                 { value: "mtn_money", label: "MTN Money", icon: <Smartphone className="h-4 w-4 text-yellow-500" /> },
@@ -131,29 +84,12 @@ const PaiementPage = () => {
               ))}
             </RadioGroup>
 
-            {methode !== "carte_bancaire" && (
-              <div className="space-y-2">
-                <Label>Numéro de téléphone</Label>
-                <Input placeholder="+221 77 000 00 00" value={phone} onChange={(e) => setPhone(e.target.value)} />
-              </div>
-            )}
-
-            {methode === "carte_bancaire" && (
-              <div className="space-y-3">
-                <div className="space-y-2"><Label>Numéro de carte</Label><Input placeholder="4242 4242 4242 4242" /></div>
-                <div className="grid grid-cols-2 gap-3">
-                  <div className="space-y-2"><Label>Expiration</Label><Input placeholder="MM/AA" /></div>
-                  <div className="space-y-2"><Label>CVV</Label><Input placeholder="123" /></div>
-                </div>
-              </div>
-            )}
-
             <Button className="w-full bg-gradient-gold text-accent-foreground shadow-gold" disabled={processing} onClick={handlePay}>
-              {processing ? "Traitement en cours..." : `Payer ${montant.toLocaleString()} FCFA`}
+              {processing ? "Simulation en cours..." : "Lancer la simulation"}
             </Button>
 
             <p className="text-xs text-center text-muted-foreground flex items-center justify-center gap-1">
-              <Shield className="h-3 w-3" /> Paiement sécurisé — Simulation
+              <Shield className="h-3 w-3" /> La réservation ne sera pas confirmée
             </p>
           </CardContent>
         </Card>

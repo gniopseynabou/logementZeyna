@@ -1,9 +1,10 @@
 import { Navigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
+import { AppRole, getDashboardPathByRole, isAllowedRole } from "@/lib/permissions";
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
-  allowedRoles?: ("admin" | "bailleur" | "etudiant")[];
+  allowedRoles?: AppRole[];
 }
 
 const ProtectedRoute = ({ children, allowedRoles }: ProtectedRouteProps) => {
@@ -28,9 +29,8 @@ const ProtectedRoute = ({ children, allowedRoles }: ProtectedRouteProps) => {
     );
   }
 
-  if (allowedRoles && !allowedRoles.includes(role)) {
-    const redirect = role === "admin" ? "/admin" : role === "bailleur" ? "/bailleur" : "/etudiant";
-    return <Navigate to={redirect} replace />;
+  if (allowedRoles && !isAllowedRole(role, allowedRoles)) {
+    return <Navigate to={getDashboardPathByRole(role)} replace />;
   }
 
   return <>{children}</>;

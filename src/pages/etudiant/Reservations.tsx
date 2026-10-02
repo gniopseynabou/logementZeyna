@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
+import { cancelStudentReservation, getStudentReservations } from "@/services/reservation-service";
 import { useAuth } from "@/hooks/useAuth";
 import DashboardLayout from "@/components/dashboard/DashboardLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -15,23 +15,12 @@ const EtudiantReservations = () => {
 
   const { data: reservations, isLoading } = useQuery({
     queryKey: ["etudiant-reservations-full", user?.id],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from("reservations")
-        .select("*, logements(nom, adresse), chambres(nom, prix_zeyna, caution)")
-        .eq("etudiant_id", user!.id)
-        .order("created_at", { ascending: false });
-      if (error) throw error;
-      return data || [];
-    },
+    queryFn: () => getStudentReservations(user!.id),
     enabled: !!user,
   });
 
   const cancelMutation = useMutation({
-    mutationFn: async (id: string) => {
-      const { error } = await supabase.from("reservations").update({ statut: "annulee" }).eq("id", id);
-      if (error) throw error;
-    },
+    mutationFn: cancelStudentReservation,
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["etudiant-reservations-full"] });
       toast({ title: "Réservation annulée" });

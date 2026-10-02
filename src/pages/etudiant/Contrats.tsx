@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
+import { getStudentContracts } from "@/services/contract-service";
 import DashboardLayout from "@/components/dashboard/DashboardLayout";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -9,16 +9,9 @@ import { FileText, Download } from "lucide-react";
 const EtudiantContrats = () => {
   const { user, profile } = useAuth();
 
-  const { data: contrats } = useQuery({
+  const { data: contrats, isLoading, isError, error } = useQuery({
     queryKey: ["etudiant-contrats", user?.id],
-    queryFn: async () => {
-      const { data } = await supabase
-        .from("contrats")
-        .select("*, reservations(logements(nom, adresse, ville), chambres(nom, prix_zeyna, caution, nombre_personnes))")
-        .eq("etudiant_id", user!.id)
-        .order("created_at", { ascending: false });
-      return data || [];
-    },
+    queryFn: () => getStudentContracts(user!.id),
     enabled: !!user,
   });
 
@@ -82,7 +75,18 @@ CONDITIONS GÉNÉRALES :
       <div className="space-y-6">
         <h1 className="font-serif text-2xl font-bold">Mes contrats</h1>
 
-        {!contrats || contrats.length === 0 ? (
+        {isLoading ? (
+          <div className="space-y-4">{[1, 2, 3].map((item) => <div key={item} className="h-24 bg-muted animate-pulse rounded-xl" />)}</div>
+        ) : isError ? (
+          <Card className="border-0 shadow-premium" role="alert">
+            <CardContent className="py-12 text-center">
+              <p>Impossible de charger vos contrats.</p>
+              <p className="text-sm text-muted-foreground mt-1">
+                {error instanceof Error ? error.message : "Une erreur inattendue est survenue."}
+              </p>
+            </CardContent>
+          </Card>
+        ) : !contrats || contrats.length === 0 ? (
           <Card className="border-0 shadow-premium"><CardContent className="py-12 text-center text-muted-foreground">Aucun contrat disponible. Un contrat est généré automatiquement après paiement de la caution.</CardContent></Card>
         ) : (
           <div className="space-y-4">

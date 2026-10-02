@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
+import { getPublicLogements } from "@/services/logement-service";
 import Navbar from "@/components/landing/Navbar";
 import Footer from "@/components/landing/Footer";
 import { Input } from "@/components/ui/input";
@@ -34,15 +34,7 @@ const Logements = () => {
 
   const { data: logements, isLoading } = useQuery({
     queryKey: ["logements-list"],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from("logements")
-        .select("*, chambres(*)")
-        .eq("statut", "valide")
-        .order("created_at", { ascending: false });
-      if (error) throw error;
-      return data || [];
-    },
+    queryFn: getPublicLogements,
   });
 
   const allLogements = (logements || []).map((l, i) => ({

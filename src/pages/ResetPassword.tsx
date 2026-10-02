@@ -1,10 +1,10 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { supabase } from "@/integrations/supabase/client";
+import { isPasswordRecoveryLink, resetUserPassword } from "@/services/auth-service";
 import { useToast } from "@/hooks/use-toast";
 import { Eye, EyeOff } from "lucide-react";
 import logo from "@/assets/logo.jpeg";
@@ -14,34 +14,47 @@ const ResetPassword = () => {
   const [confirm, setConfirm] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [isRecoveryLinkValid] = useState(() => isPasswordRecoveryLink(window.location.hash));
   const navigate = useNavigate();
   const { toast } = useToast();
 
   useEffect(() => {
-    // Check for recovery token in URL hash
-    const hash = window.location.hash;
-    if (!hash.includes("type=recovery")) {
+    if (!isRecoveryLinkValid) {
       toast({ title: "Lien invalide", description: "Ce lien de réinitialisation n'est pas valide.", variant: "destructive" });
     }
-  }, []);
+  }, [isRecoveryLinkValid, toast]);
 
   const handleReset = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!isRecoveryLinkValid) return;
     if (password !== confirm) {
       toast({ title: "Erreur", description: "Les mots de passe ne correspondent pas.", variant: "destructive" });
       return;
     }
+    if (password.length < 6) {
+      toast({ title: "Erreur", description: "Le mot de passe doit contenir au moins 6 caractères.", variant: "destructive" });
+      return;
+    }
     setLoading(true);
 
-    const { error } = await supabase.auth.updateUser({ password });
+    try {
+      const { error } = await resetUserPassword(password);
 
-    if (error) {
-      toast({ title: "Erreur", description: error.message, variant: "destructive" });
-    } else {
-      toast({ title: "Mot de passe mis à jour", description: "Vous pouvez maintenant vous connecter." });
-      navigate("/login");
+      if (error) {
+        toast({ title: "Erreur", description: error.message, variant: "destructive" });
+      } else {
+        toast({ title: "Mot de passe mis à jour", description: "Vous pouvez maintenant vous connecter." });
+        navigate("/login");
+      }
+    } catch (error) {
+      toast({
+        title: "Erreur",
+        description: error instanceof Error ? error.message : "Une erreur inattendue est survenue.",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   return (
@@ -57,6 +70,14 @@ const ResetPassword = () => {
             <CardDescription>Choisissez un nouveau mot de passe sécurisé</CardDescription>
           </CardHeader>
           <CardContent>
+            {!isRecoveryLinkValid ? (
+              <div className="space-y-3 text-center" role="alert">
+                <p className="text-sm text-destructive">Lien invalide ou expiré. Demandez un nouveau lien de réinitialisation.</p>
+                <Button asChild variant="outline" className="w-full">
+                  <Link to="/forgot-password">Demander un nouveau lien</Link>
+                </Button>
+              </div>
+            ) : (
             <form onSubmit={handleReset} className="space-y-4">
               <div className="space-y-2">
                 <Label>Nouveau mot de passe</Label>
@@ -75,6 +96,7 @@ const ResetPassword = () => {
                 {loading ? "Mise à jour..." : "Mettre à jour"}
               </Button>
             </form>
+            )}
           </CardContent>
         </Card>
       </div>

@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
-import { supabase } from "@/integrations/supabase/client";
+import { updateUserPassword, updateUserProfile, uploadUserAvatar } from "@/services/profile-service";
 import { useToast } from "@/hooks/use-toast";
 import { User, Mail, Phone, Shield, Camera, Loader2 } from "lucide-react";
 
@@ -51,56 +51,42 @@ const ProfilePage = () => {
     }
 
     setUploadingAvatar(true);
-    const ext = file.name.split(".").pop();
-    const path = `${user.id}/avatar.${ext}`;
-
-    const { error: uploadError } = await supabase.storage
-      .from("avatars")
-      .upload(path, file, { upsert: true });
-
-    if (uploadError) {
-      toast({ title: "Erreur upload", description: uploadError.message, variant: "destructive" });
-      setUploadingAvatar(false);
-      return;
-    }
-
-    const { data: urlData } = supabase.storage.from("avatars").getPublicUrl(path);
-    const newAvatarUrl = urlData.publicUrl;
-
-    const { error: updateError } = await supabase
-      .from("profiles")
-      .update({ avatar_url: newAvatarUrl })
-      .eq("user_id", user.id);
-
-    if (updateError) {
-      toast({ title: "Erreur", description: updateError.message, variant: "destructive" });
-    } else {
+    try {
+      const newAvatarUrl = await uploadUserAvatar(user.id, file);
       setAvatarUrl(newAvatarUrl);
       await refreshProfile();
       toast({ title: "Photo de profil mise à jour ✅" });
+    } catch (error) {
+      toast({
+        title: "Erreur upload",
+        description: error instanceof Error ? error.message : "Une erreur inattendue est survenue.",
+        variant: "destructive",
+      });
+    } finally {
+      setUploadingAvatar(false);
     }
-    setUploadingAvatar(false);
   };
 
   const handleSave = async () => {
     if (!profile) return;
     setSaving(true);
-    const { error } = await supabase
-      .from("profiles")
-      .update({
+    try {
+      await updateUserProfile(profile.user_id, {
         nom: form.nom,
         prenom: form.prenom,
         telephone: form.telephone,
-      })
-      .eq("user_id", profile.user_id);
-
-    if (error) {
-      toast({ title: "Erreur", description: error.message, variant: "destructive" });
-    } else {
+      });
       await refreshProfile();
       toast({ title: "Profil mis à jour ✅" });
+    } catch (error) {
+      toast({
+        title: "Erreur",
+        description: error instanceof Error ? error.message : "Une erreur inattendue est survenue.",
+        variant: "destructive",
+      });
+    } finally {
+      setSaving(false);
     }
-    setSaving(false);
   };
 
   const handleChangePassword = async () => {
@@ -113,14 +99,19 @@ const ProfilePage = () => {
       return;
     }
     setChangingPassword(true);
-    const { error } = await supabase.auth.updateUser({ password: passwordForm.newPass });
-    if (error) {
-      toast({ title: "Erreur", description: error.message, variant: "destructive" });
-    } else {
+    try {
+      await updateUserPassword(passwordForm.newPass);
       toast({ title: "Mot de passe mis à jour ✅" });
       setPasswordForm({ newPass: "", confirm: "" });
+    } catch (error) {
+      toast({
+        title: "Erreur",
+        description: error instanceof Error ? error.message : "Une erreur inattendue est survenue.",
+        variant: "destructive",
+      });
+    } finally {
+      setChangingPassword(false);
     }
-    setChangingPassword(false);
   };
 
   const roleLabel =

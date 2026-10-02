@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
+import { getAdminUsers, updateAdminUserValidation, type AdminUser } from "@/services/admin-user-service";
 import DashboardLayout from "@/components/dashboard/DashboardLayout";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -18,60 +18,30 @@ import { Search, Eye, UserCheck, UserX, Users, GraduationCap, Building, ShieldCh
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
 
-interface UserWithProfile {
-  id: string;
-  user_id: string;
-  role: "admin" | "bailleur" | "etudiant";
-  is_validated: boolean;
-  created_at: string;
-  profile?: {
-    nom: string;
-    prenom: string;
-    telephone: string | null;
-    avatar_url: string | null;
-    created_at: string;
-  };
-}
-
 const AdminUtilisateurs = () => {
   const { toast } = useToast();
   const qc = useQueryClient();
   const [search, setSearch] = useState("");
-  const [selectedUser, setSelectedUser] = useState<UserWithProfile | null>(null);
+  const [selectedUser, setSelectedUser] = useState<AdminUser | null>(null);
 
-  const { data: users, isLoading } = useQuery({
+  const { data: users, isLoading, isError, error } = useQuery({
     queryKey: ["admin-all-users"],
-    queryFn: async () => {
-      const { data: roles, error: rolesError } = await supabase
-        .from("user_roles")
-        .select("*");
-      if (rolesError) throw rolesError;
-      if (!roles || roles.length === 0) return [];
-
-      const userIds = roles.map((r) => r.user_id);
-      const { data: profiles } = await supabase
-        .from("profiles")
-        .select("*")
-        .in("user_id", userIds);
-
-      return roles.map((r) => ({
-        ...r,
-        profile: profiles?.find((p) => p.user_id === r.user_id),
-      })) as UserWithProfile[];
-    },
+    queryFn: getAdminUsers,
   });
 
   const toggleValidation = useMutation({
-    mutationFn: async ({ id, validated }: { id: string; validated: boolean }) => {
-      const { error } = await supabase
-        .from("user_roles")
-        .update({ is_validated: validated })
-        .eq("id", id);
-      if (error) throw error;
-    },
+    mutationFn: ({ id, validated }: { id: string; validated: boolean }) =>
+      updateAdminUserValidation(id, validated),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["admin-all-users"] });
       toast({ title: "Statut mis à jour ✅" });
+    },
+    onError: (mutationError) => {
+      toast({
+        title: "Erreur de mise à jour",
+        description: mutationError.message,
+        variant: "destructive",
+      });
     },
   });
 
@@ -103,7 +73,7 @@ const AdminUtilisateurs = () => {
     admin: { label: "Admin", color: "bg-purple-100 text-purple-800", icon: <ShieldCheck className="h-4 w-4" /> },
   };
 
-  const renderTable = (list: UserWithProfile[]) => (
+  const renderTable = (list: AdminUser[]) => (
     list.length === 0 ? (
       <p className="text-center py-8 text-muted-foreground">Aucun utilisateur trouvé</p>
     ) : (
@@ -158,11 +128,11 @@ const AdminUtilisateurs = () => {
                       </Button>
                       {u.role !== "admin" && (
                         u.is_validated ? (
-                          <Button size="icon" variant="ghost" className="text-destructive" onClick={() => toggleValidation.mutate({ id: u.id, validated: false })} title="Désactiver">
+                          <Button size="icon" variant="ghost" className="text-destructive" disabled={toggleValidation.isPending} onClick={() => toggleValidation.mutate({ id: u.id, validated: false })} title="Désactiver">
                             <UserX className="h-4 w-4" />
                           </Button>
                         ) : (
-                          <Button size="icon" variant="ghost" className="text-green-600" onClick={() => toggleValidation.mutate({ id: u.id, validated: true })} title="Valider">
+                          <Button size="icon" variant="ghost" className="text-green-600" disabled={toggleValidation.isPending} onClick={() => toggleValidation.mutate({ id: u.id, validated: true })} title="Valider">
                             <UserCheck className="h-4 w-4" />
                           </Button>
                         )
@@ -178,13 +148,30 @@ const AdminUtilisateurs = () => {
     )
   );
 
+  const renderQueryState = (role?: string) => {
+    if (isLoading) return <p className="p-8 text-center text-muted-foreground">Chargement...</p>;
+    if (isError) {
+      return (
+        <div className="p-8 text-center" role="alert">
+          <p>Impossible de charger les utilisateurs.</p>
+          <p className="text-sm text-muted-foreground mt-1">
+            {error instanceof Error ? error.message : "Une erreur inattendue est survenue."}
+          </p>
+        </div>
+      );
+    }
+    return renderTable(filtered(role));
+  };
+
+  const countLabel = (count: number) => isLoading || isError ? "—" : count;
+
   return (
     <DashboardLayout>
       <div className="space-y-6">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
             <h1 className="font-serif text-2xl font-bold">Gestion des utilisateurs</h1>
-            <p className="text-muted-foreground text-sm">{roleCounts.all} utilisateurs au total</p>
+            <p className="text-muted-foreground text-sm">{countLabel(roleCounts.all)} utilisateurs au total</p>
           </div>
           <div className="relative w-full sm:w-72">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
@@ -200,10 +187,10 @@ const AdminUtilisateurs = () => {
         {/* Stats cards */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
           {[
-            { label: "Total", count: roleCounts.all, icon: <Users className="h-5 w-5" />, color: "text-primary" },
-            { label: "Étudiants", count: roleCounts.etudiant, icon: <GraduationCap className="h-5 w-5" />, color: "text-blue-600" },
-            { label: "Bailleurs", count: roleCounts.bailleur, icon: <Building className="h-5 w-5" />, color: "text-amber-600" },
-            { label: "Admins", count: roleCounts.admin, icon: <ShieldCheck className="h-5 w-5" />, color: "text-purple-600" },
+            { label: "Total", count: countLabel(roleCounts.all), icon: <Users className="h-5 w-5" />, color: "text-primary" },
+            { label: "Étudiants", count: countLabel(roleCounts.etudiant), icon: <GraduationCap className="h-5 w-5" />, color: "text-blue-600" },
+            { label: "Bailleurs", count: countLabel(roleCounts.bailleur), icon: <Building className="h-5 w-5" />, color: "text-amber-600" },
+            { label: "Admins", count: countLabel(roleCounts.admin), icon: <ShieldCheck className="h-5 w-5" />, color: "text-purple-600" },
           ].map((s) => (
             <Card key={s.label} className="border-0 shadow-premium">
               <CardContent className="p-4 flex items-center gap-3">
@@ -219,30 +206,30 @@ const AdminUtilisateurs = () => {
 
         <Tabs defaultValue="tous">
           <TabsList className="flex-wrap">
-            <TabsTrigger value="tous">Tous ({roleCounts.all})</TabsTrigger>
-            <TabsTrigger value="etudiants">Étudiants ({roleCounts.etudiant})</TabsTrigger>
-            <TabsTrigger value="bailleurs">Bailleurs ({roleCounts.bailleur})</TabsTrigger>
-            <TabsTrigger value="admins">Admins ({roleCounts.admin})</TabsTrigger>
+            <TabsTrigger value="tous">Tous ({countLabel(roleCounts.all)})</TabsTrigger>
+            <TabsTrigger value="etudiants">Étudiants ({countLabel(roleCounts.etudiant)})</TabsTrigger>
+            <TabsTrigger value="bailleurs">Bailleurs ({countLabel(roleCounts.bailleur)})</TabsTrigger>
+            <TabsTrigger value="admins">Admins ({countLabel(roleCounts.admin)})</TabsTrigger>
           </TabsList>
 
           <TabsContent value="tous" className="mt-4">
             <Card className="border-0 shadow-premium">
-              <CardContent className="p-0 sm:p-2">{isLoading ? <p className="p-8 text-center text-muted-foreground">Chargement...</p> : renderTable(filtered())}</CardContent>
+              <CardContent className="p-0 sm:p-2">{renderQueryState()}</CardContent>
             </Card>
           </TabsContent>
           <TabsContent value="etudiants" className="mt-4">
             <Card className="border-0 shadow-premium">
-              <CardContent className="p-0 sm:p-2">{renderTable(filtered("etudiant"))}</CardContent>
+              <CardContent className="p-0 sm:p-2">{renderQueryState("etudiant")}</CardContent>
             </Card>
           </TabsContent>
           <TabsContent value="bailleurs" className="mt-4">
             <Card className="border-0 shadow-premium">
-              <CardContent className="p-0 sm:p-2">{renderTable(filtered("bailleur"))}</CardContent>
+              <CardContent className="p-0 sm:p-2">{renderQueryState("bailleur")}</CardContent>
             </Card>
           </TabsContent>
           <TabsContent value="admins" className="mt-4">
             <Card className="border-0 shadow-premium">
-              <CardContent className="p-0 sm:p-2">{renderTable(filtered("admin"))}</CardContent>
+              <CardContent className="p-0 sm:p-2">{renderQueryState("admin")}</CardContent>
             </Card>
           </TabsContent>
         </Tabs>

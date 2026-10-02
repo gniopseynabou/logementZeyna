@@ -5,13 +5,13 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { supabase } from "@/integrations/supabase/client";
+import { registerUser, type RegistrationRole } from "@/services/auth-service";
 import { useToast } from "@/hooks/use-toast";
 import { ArrowLeft, Eye, EyeOff, GraduationCap, Building } from "lucide-react";
 import logo from "@/assets/logo.jpeg";
 
 const Register = () => {
-  const [form, setForm] = useState({ nom: "", prenom: "", email: "", telephone: "", password: "", confirmPassword: "", role: "etudiant" as "etudiant" | "bailleur" });
+  const [form, setForm] = useState({ nom: "", prenom: "", email: "", telephone: "", password: "", confirmPassword: "", role: "etudiant" as RegistrationRole });
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
@@ -29,27 +29,26 @@ const Register = () => {
     }
 
     setLoading(true);
-    const { data, error } = await supabase.auth.signUp({
-      email: form.email,
-      password: form.password,
-      options: {
-        data: {
-          nom: form.nom,
-          prenom: form.prenom,
-          telephone: form.telephone,
-          role: form.role,
-        },
-        emailRedirectTo: `${window.location.origin}/login`,
-      },
-    });
+    try {
+      const { error } = await registerUser({
+        email: form.email,
+        password: form.password,
+        nom: form.nom,
+        prenom: form.prenom,
+        telephone: form.telephone,
+        role: form.role,
+        redirectTo: `${window.location.origin}/login`,
+      });
 
-    if (error) {
-      toast({ title: "Erreur d'inscription", description: error.message, variant: "destructive" });
-    } else {
-      toast({ title: "Inscription réussie !", description: "Vérifiez votre email pour confirmer votre compte." });
-      navigate("/login");
+      if (error) {
+        toast({ title: "Erreur d'inscription", description: error.message, variant: "destructive" });
+      } else {
+        toast({ title: "Inscription réussie !", description: "Vérifiez votre email pour confirmer votre compte." });
+        navigate("/login");
+      }
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   const update = (key: string, value: string) => setForm((prev) => ({ ...prev, [key]: value }));
