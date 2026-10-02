@@ -45,9 +45,9 @@ const BailleurDashboard = () => {
         </div>
 
         <div className="grid sm:grid-cols-3 gap-4">
-          <Card className="border-0 shadow-premium"><CardContent className="p-6 flex items-center gap-4"><div className="p-3 rounded-xl bg-muted text-primary"><Building className="h-5 w-5" /></div><div><p className="text-2xl font-bold font-ui">{isLoading || isError ? "—" : data?.totalLogements ?? 0}</p><p className="text-sm text-muted-foreground">Logements</p></div></CardContent></Card>
-          <Card className="border-0 shadow-premium"><CardContent className="p-6 flex items-center gap-4"><div className="p-3 rounded-xl bg-muted text-green-600"><CheckCircle className="h-5 w-5" /></div><div><p className="text-2xl font-bold font-ui">{isLoading || isError ? "—" : data?.logementsValides ?? 0}</p><p className="text-sm text-muted-foreground">Validés</p></div></CardContent></Card>
-          <Card className="border-0 shadow-premium"><CardContent className="p-6 flex items-center gap-4"><div className="p-3 rounded-xl bg-muted text-accent"><Clock className="h-5 w-5" /></div><div><p className="text-2xl font-bold font-ui">{isLoading || isError ? "—" : data?.logementsEnAttente ?? 0}</p><p className="text-sm text-muted-foreground">En attente</p></div></CardContent></Card>
+          <Card className="border-0 shadow-premium"><CardContent className="p-6 flex items-center gap-4"><div className="p-3 rounded-xl bg-muted text-primary"><Building className="h-5 w-5" /></div><div><p className="text-2xl font-bold font-ui">{isLoading || isError ? "-" : data?.totalLogements ?? 0}</p><p className="text-sm text-muted-foreground">Logements</p></div></CardContent></Card>
+          <Card className="border-0 shadow-premium"><CardContent className="p-6 flex items-center gap-4"><div className="p-3 rounded-xl bg-muted text-green-600"><CheckCircle className="h-5 w-5" /></div><div><p className="text-2xl font-bold font-ui">{isLoading || isError ? "-" : data?.logementsValides ?? 0}</p><p className="text-sm text-muted-foreground">Validés</p></div></CardContent></Card>
+          <Card className="border-0 shadow-premium"><CardContent className="p-6 flex items-center gap-4"><div className="p-3 rounded-xl bg-muted text-accent"><Clock className="h-5 w-5" /></div><div><p className="text-2xl font-bold font-ui">{isLoading || isError ? "-" : data?.logementsEnAttente ?? 0}</p><p className="text-sm text-muted-foreground">En attente</p></div></CardContent></Card>
         </div>
 
         <Card className="border-0 shadow-premium">

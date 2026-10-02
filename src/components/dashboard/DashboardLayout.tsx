@@ -66,7 +66,7 @@ const DashboardLayout = ({ children }: { children: ReactNode }) => {
 
   return (
     <div className="min-h-screen flex bg-background">
-      {/* Sidebar — fixed on all screen sizes */}
+      {/* Sidebar - fixed on all screen sizes */}
       <aside className={`fixed inset-y-0 left-0 z-50 w-64 bg-sidebar text-sidebar-foreground flex flex-col transform transition-transform duration-200 ${sidebarOpen ? "translate-x-0" : "-translate-x-full"} lg:translate-x-0`}>
         <div className="p-4 border-b border-sidebar-border">
           <Link to="/" className="flex items-center gap-3">
@@ -123,7 +123,7 @@ const DashboardLayout = ({ children }: { children: ReactNode }) => {
       {/* Overlay mobile */}
       {sidebarOpen && <div className="fixed inset-0 bg-black/50 z-40 lg:hidden" onClick={() => setSidebarOpen(false)} />}
 
-      {/* Main content — offset by sidebar width on lg */}
+      {/* Main content - offset by sidebar width on lg */}
       <div className="flex-1 flex flex-col min-h-screen lg:ml-64">
         <header className="h-14 border-b border-border bg-card flex items-center px-4 lg:px-6 sticky top-0 z-30">
           <button className="lg:hidden mr-4" onClick={() => setSidebarOpen(true)}>

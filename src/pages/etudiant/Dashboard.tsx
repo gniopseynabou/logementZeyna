@@ -28,9 +28,9 @@ const EtudiantDashboard = () => {
   });
 
   const stats = [
-    { label: "Réservations", value: reservationsFailed ? "—" : reservations?.length || 0, icon: <BookOpen className="h-5 w-5" />, color: "text-primary" },
-    { label: "Confirmées", value: reservationsFailed ? "—" : reservations?.filter(r => r.statut === "confirmee").length || 0, icon: <Home className="h-5 w-5" />, color: "text-green-600" },
-    { label: "Paiements", value: paiementsFailed ? "—" : paiements?.length || 0, icon: <CreditCard className="h-5 w-5" />, color: "text-accent" },
+    { label: "Réservations", value: reservationsFailed ? "-" : reservations?.length || 0, icon: <BookOpen className="h-5 w-5" />, color: "text-primary" },
+    { label: "Confirmées", value: reservationsFailed ? "-" : reservations?.filter(r => r.statut === "confirmee").length || 0, icon: <Home className="h-5 w-5" />, color: "text-green-600" },
+    { label: "Paiements", value: paiementsFailed ? "-" : paiements?.length || 0, icon: <CreditCard className="h-5 w-5" />, color: "text-accent" },
   ];
 
   return (

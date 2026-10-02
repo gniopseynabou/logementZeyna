@@ -27,7 +27,7 @@ const EtudiantContrats = () => {
     const text = `
 ══════════════════════════════════════════════════
       CONTRAT DE LOCATION
-      Les logements de Zeyna — Saint-Louis, Sénégal
+      Les logements de Zeyna - Saint-Louis, Sénégal
 ══════════════════════════════════════════════════
 
 LOCATAIRE :
@@ -98,7 +98,7 @@ CONDITIONS GÉNÉRALES :
                     <div>
                       <p className="font-medium">{(c as any).reservations?.logements?.nom || "Logement"}</p>
                       <p className="text-sm text-muted-foreground">{(c as any).reservations?.chambres?.nom}</p>
-                      <p className="text-xs text-muted-foreground">Réf: {(c.contenu as any)?.reference || "—"} · {new Date(c.created_at).toLocaleDateString("fr-FR")}</p>
+                      <p className="text-xs text-muted-foreground">Réf: {(c.contenu as any)?.reference || "-"} · {new Date(c.created_at).toLocaleDateString("fr-FR")}</p>
                     </div>
                   </div>
                   <Button variant="outline" size="sm" onClick={() => downloadContract(c)}>

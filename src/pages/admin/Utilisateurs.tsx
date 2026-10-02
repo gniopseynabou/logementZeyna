@@ -111,7 +111,7 @@ const AdminUtilisateurs = () => {
                     </span>
                   </TableCell>
                   <TableCell className="hidden md:table-cell text-sm text-muted-foreground">
-                    {u.profile?.telephone || "—"}
+                    {u.profile?.telephone || "-"}
                   </TableCell>
                   <TableCell className="hidden md:table-cell text-sm text-muted-foreground">
                     {format(new Date(u.created_at), "dd MMM yyyy", { locale: fr })}
@@ -163,7 +163,7 @@ const AdminUtilisateurs = () => {
     return renderTable(filtered(role));
   };
 
-  const countLabel = (count: number) => isLoading || isError ? "—" : count;
+  const countLabel = (count: number) => isLoading || isError ? "-" : count;
 
   return (
     <DashboardLayout>

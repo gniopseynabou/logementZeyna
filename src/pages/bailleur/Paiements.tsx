@@ -80,7 +80,7 @@ const BailleurPaiements = () => {
                           <p className="font-medium">{p.reservations?.logements?.nom || "Logement"}</p>
                           <p className="text-sm text-muted-foreground">{p.reservations?.chambres?.nom}</p>
                           <p className="text-xs text-muted-foreground mt-1">
-                            {METHODE_LABELS[p.methode] || p.methode} · Réf: {p.reference || "—"}
+                            {METHODE_LABELS[p.methode] || p.methode} · Réf: {p.reference || "-"}
                           </p>
                           <p className="text-xs text-muted-foreground">
                             {new Date(p.created_at).toLocaleDateString("fr-FR")}
@@ -112,7 +112,7 @@ const BailleurPaiements = () => {
                           <p className="font-medium">{p.reservations?.logements?.nom || "Logement"}</p>
                           <p className="text-sm text-muted-foreground">{p.reservations?.chambres?.nom}</p>
                           <p className="text-xs text-muted-foreground mt-1">
-                            {METHODE_LABELS[p.methode] || p.methode} · Réf: {p.reference || "—"}
+                            {METHODE_LABELS[p.methode] || p.methode} · Réf: {p.reference || "-"}
                           </p>
                         </div>
                         <div className="text-right">

@@ -96,7 +96,7 @@ const AdminTarifs = () => {
                             )}
                           </TableCell>
                           <TableCell className="font-ui">
-                            {c.marge ? `${c.marge.toLocaleString()} F` : "—"}
+                            {c.marge ? `${c.marge.toLocaleString()} F` : "-"}
                           </TableCell>
                           <TableCell>
                             {editingId === c.id ? (

@@ -52,7 +52,7 @@ const EtudiantReservations = () => {
                   <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                     <div>
                       <h3 className="font-serif font-bold text-lg">{(r as any).logements?.nom}</h3>
-                      <p className="text-sm text-muted-foreground">{(r as any).chambres?.nom} — {(r as any).logements?.adresse}</p>
+                      <p className="text-sm text-muted-foreground">{(r as any).chambres?.nom} - {(r as any).logements?.adresse}</p>
                       <p className="text-xs text-muted-foreground mt-1">
                         Du {new Date(r.date_debut).toLocaleDateString("fr-FR")}
                         {r.date_fin && ` au ${new Date(r.date_fin).toLocaleDateString("fr-FR")}`}
