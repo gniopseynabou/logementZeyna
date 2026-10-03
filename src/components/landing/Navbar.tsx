@@ -4,7 +4,7 @@ import { Menu, X, LogOut, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
-import logo from "@/assets/logo.jpeg";
+import logo from "@/assets/logo-zeyna.png";
 import { getDashboardPathByRole } from "@/lib/permissions";
 
 const Navbar = () => {
@@ -34,9 +34,9 @@ const Navbar = () => {
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16 md:h-20">
           <Link to="/" className="flex items-center gap-3">
-            <img src={logo} alt="Les logements de Zeyna" className="h-10 md:h-12 w-auto" />
+            <img src={logo} alt="Les Logements de Zeyna" className="h-10 w-10 md:h-12 md:w-12 object-contain drop-shadow-md" />
             <span className="font-serif text-lg md:text-xl font-bold text-primary hidden sm:block">
-              Les logements de Zeyna
+              Les Logements de Zeyna
             </span>
           </Link>
 
@@ -57,7 +57,7 @@ const Navbar = () => {
             ) : (
               <>
                 <Link to="/login" className="text-sm font-medium text-foreground hover:text-accent transition-colors">Connexion</Link>
-                <Button asChild className="bg-gradient-gold hover:opacity-90 text-accent-foreground shadow-gold">
+                <Button asChild className="bg-accent hover:bg-accent/90 text-white rounded-sm">
                   <Link to="/register">Créer un compte</Link>
                 </Button>
               </>

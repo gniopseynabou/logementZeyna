@@ -14,6 +14,8 @@ import logement1 from "@/assets/logement-1.jpg";
 import logement2 from "@/assets/logement-2.jpg";
 import logement3 from "@/assets/logement-3.jpg";
 
+import SEOHead from "@/components/SEOHead";
+
 const fallbackImages = [logement1, logement2, logement3];
 
 const LogementDetail = () => {
@@ -95,8 +97,27 @@ const LogementDetail = () => {
     }
   };
 
+  const getUnitLabel = (type: string) => {
+    switch (type.toLowerCase()) {
+      case "studio": return "Studio";
+      case "appartement": return "Appartement";
+      case "villa":
+      case "maison": return "Chambre";
+      case "résidence": return "Chambre";
+      default: return "Unité";
+    }
+  };
+
+  const unitLabel = getUnitLabel(logement.type);
+
   return (
     <div className="min-h-screen bg-background">
+      <SEOHead 
+        title={logement.nom}
+        description={logement.description ? logement.description.slice(0, 150) : `Logement ${logement.type} disponible à ${logement.ville}`}
+        canonical={`/logements/${id}`}
+        ogImage={images[0]}
+      />
       <Navbar />
       <div className="pt-20 md:pt-24">
         <div className="container mx-auto px-4 py-8">
@@ -104,7 +125,7 @@ const LogementDetail = () => {
             <ArrowLeft className="h-4 w-4" /> Retour aux logements
           </Link>
 
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:grid-cols-3 gap-6 lg:gap-8">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
             <div className="lg:col-span-2 space-y-6">
               {/* Gallery */}
               <div className="relative rounded-xl overflow-hidden bg-muted aspect-[16/9]">
@@ -145,17 +166,21 @@ const LogementDetail = () => {
                 <Badge className="mt-3" variant="secondary">{logement.type}</Badge>
               </div>
 
-              <div className="space-y-4">
-                <h2 className="font-serif text-xl font-semibold">Description</h2>
-                <p className="text-muted-foreground leading-relaxed">{logement.description || "Logement étudiant de qualité à Saint-Louis."}</p>
-              </div>
+              {logement.description && (
+                <div className="space-y-4">
+                  <h2 className="font-serif text-xl font-semibold">Description</h2>
+                  <p className="text-muted-foreground leading-relaxed">{logement.description}</p>
+                </div>
+              )}
 
-              <div className="space-y-4">
-                <h2 className="font-serif text-xl font-semibold flex items-center gap-2">
-                  <Zap className="h-5 w-5 text-accent" /> Conditions d'électricité
-                </h2>
-                <p className="text-muted-foreground">{logement.conditions_electricite || "Éclairage et chauffe-eau inclus."}</p>
-              </div>
+              {logement.conditions_electricite && (
+                <div className="space-y-4">
+                  <h2 className="font-serif text-xl font-semibold flex items-center gap-2">
+                    <Zap className="h-5 w-5 text-accent" /> Conditions d'électricité
+                  </h2>
+                  <p className="text-muted-foreground">{logement.conditions_electricite}</p>
+                </div>
+              )}
 
               {logement.latitude && logement.longitude && (
                 <div className="space-y-4">
@@ -187,7 +212,7 @@ const LogementDetail = () => {
             <div className="space-y-4">
               <Card className="borlg:sticky lg:hadow-premium sticky top-24">
                 <CardHeader>
-                  <CardTitle className="font-serif">Chambres disponibles</CardTitle>
+                  <CardTitle className="font-serif">{unitLabel}s disponibles</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-3">
                   {chambres.length === 0 ? (

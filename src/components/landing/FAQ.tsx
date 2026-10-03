@@ -8,56 +8,43 @@ const FAQ = () => {
     queryFn: getVisibleFaqs,
   });
 
-  if (isLoading) {
-    return (
-      <section className="py-20 md:py-28 bg-secondary/50">
-        <div className="container mx-auto px-4">
-          <div className="max-w-3xl mx-auto space-y-3">
-            {[1, 2, 3].map((i) => (
-              <div key={i} className="h-16 bg-muted animate-pulse rounded-xl" />
-            ))}
-          </div>
-        </div>
-      </section>
-    );
-  }
-
-  if (isError) {
-    return (
-      <section className="py-12 bg-secondary/50" role="alert">
-        <div className="container mx-auto px-4 text-center text-sm text-muted-foreground">
-          La FAQ est temporairement indisponible.
-        </div>
-      </section>
-    );
-  }
-
-  if (!faqs || faqs.length === 0) return null;
+  if (isLoading || isError || !faqs || faqs.length === 0) return null;
 
   return (
-    <section className="py-20 md:py-28 bg-secondary/50">
+    <section className="py-24 md:py-32 bg-secondary/30">
       <div className="container mx-auto px-4">
-        <div className="text-center mb-12">
-          <span className="text-sm font-semibold text-accent uppercase tracking-wider">FAQ</span>
-          <h2 className="font-serif text-3xl md:text-4xl font-bold text-foreground mt-3">
-            Questions fréquentes
-          </h2>
+        
+        <div className="flex flex-col md:flex-row gap-16 max-w-6xl mx-auto">
+          {/* Header left */}
+          <div className="md:w-1/3">
+            <div className="sticky top-32">
+              <p className="text-xs font-bold text-accent uppercase tracking-widest mb-3">Support</p>
+              <h2 className="font-serif text-3xl md:text-4xl font-bold text-foreground mb-4">
+                Questions fréquentes
+              </h2>
+              <p className="text-muted-foreground leading-relaxed">
+                Retrouvez les réponses aux questions les plus posées par nos locataires.
+              </p>
+            </div>
+          </div>
+
+          {/* Accordion right */}
+          <div className="md:w-2/3">
+            <Accordion type="single" collapsible className="w-full">
+              {faqs.map((faq) => (
+                <AccordionItem key={faq.id} value={faq.id} className="border-b border-border/60 mb-2">
+                  <AccordionTrigger className="text-left font-serif font-bold text-lg hover:text-accent hover:no-underline py-6">
+                    {faq.question}
+                  </AccordionTrigger>
+                  <AccordionContent className="text-muted-foreground leading-relaxed pb-6 text-base">
+                    {faq.reponse}
+                  </AccordionContent>
+                </AccordionItem>
+              ))}
+            </Accordion>
+          </div>
         </div>
 
-        <div className="max-w-3xl mx-auto">
-          <Accordion type="single" collapsible className="space-y-3">
-            {faqs.map((faq) => (
-              <AccordionItem key={faq.id} value={faq.id} className="bg-card rounded-xl border-0 shadow-sm px-6 data-[state=open]:shadow-premium transition-shadow">
-                <AccordionTrigger className="text-left font-semibold text-foreground hover:text-accent hover:no-underline py-5">
-                  {faq.question}
-                </AccordionTrigger>
-                <AccordionContent className="text-muted-foreground leading-relaxed pb-5">
-                  {faq.reponse}
-                </AccordionContent>
-              </AccordionItem>
-            ))}
-          </Accordion>
-        </div>
       </div>
     </section>
   );

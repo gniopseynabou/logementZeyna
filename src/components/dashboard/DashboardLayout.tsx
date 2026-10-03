@@ -3,17 +3,19 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
-import logo from "@/assets/logo.jpeg";
+import logo from "@/assets/logo-zeyna.png";
 import {
   Home, Building, Users, CreditCard, FileText, Settings, LogOut,
-  Menu, X, BarChart3, CheckCircle, UserCheck, BookOpen
+  Menu, X, BarChart3, CheckCircle, UserCheck, BookOpen, GraduationCap,
+  TrendingUp, ArrowLeftRight, AlertTriangle
 } from "lucide-react";
 import { getRoleLabel } from "@/lib/permissions";
 
 interface NavItem {
   label: string;
-  href: string;
-  icon: ReactNode;
+  href?: string;
+  icon?: ReactNode;
+  isSection?: boolean;
 }
 
 const DashboardLayout = ({ children }: { children: ReactNode }) => {
@@ -27,11 +29,18 @@ const DashboardLayout = ({ children }: { children: ReactNode }) => {
     ? [
         { label: "Tableau de bord", href: "/admin", icon: <BarChart3 className="h-4 w-4" /> },
         { label: "Logements", href: "/admin/logements", icon: <Building className="h-4 w-4" /> },
-        { label: "Utilisateurs", href: "/admin/utilisateurs", icon: <Users className="h-4 w-4" /> },
         { label: "Bailleurs", href: "/admin/bailleurs", icon: <UserCheck className="h-4 w-4" /> },
+        { label: "Clients", href: "/admin/clients", icon: <GraduationCap className="h-4 w-4" /> },
+        { label: "FINANCIER", isSection: true },
         { label: "Réservations", href: "/admin/reservations", icon: <BookOpen className="h-4 w-4" /> },
-        { label: "Paiements", href: "/admin/paiements", icon: <CreditCard className="h-4 w-4" /> },
-        { label: "Tarifs", href: "/admin/tarifs", icon: <Settings className="h-4 w-4" /> },
+        { label: "Paiements & Cautions", href: "/admin/paiements", icon: <CreditCard className="h-4 w-4" /> },
+        { label: "Prix & Marges", href: "/admin/tarifs", icon: <TrendingUp className="h-4 w-4" /> },
+        { label: "Reversements", href: "/admin/reversements", icon: <ArrowLeftRight className="h-4 w-4" /> },
+        { label: "OPÉRATIONNEL", isSection: true },
+        { label: "Incidents", href: "/admin/incidents", icon: <AlertTriangle className="h-4 w-4" /> },
+        { label: "Documents", href: "/admin/documents", icon: <FileText className="h-4 w-4" /> },
+        { label: "SYSTÈME", isSection: true },
+        { label: "Utilisateurs", href: "/admin/utilisateurs", icon: <Users className="h-4 w-4" /> },
       ]
     : role === "bailleur"
     ? [
@@ -46,6 +55,7 @@ const DashboardLayout = ({ children }: { children: ReactNode }) => {
         { label: "Mes réservations", href: "/etudiant/reservations", icon: <BookOpen className="h-4 w-4" /> },
         { label: "Paiements", href: "/etudiant/paiements", icon: <CreditCard className="h-4 w-4" /> },
         { label: "Contrats", href: "/etudiant/contrats", icon: <FileText className="h-4 w-4" /> },
+        { label: "Incidents", href: "/etudiant/incidents", icon: <AlertTriangle className="h-4 w-4" /> },
         { label: "Profil", href: "/etudiant/profil", icon: <Settings className="h-4 w-4" /> },
       ];
 
@@ -70,29 +80,37 @@ const DashboardLayout = ({ children }: { children: ReactNode }) => {
       <aside className={`fixed inset-y-0 left-0 z-50 w-64 bg-sidebar text-sidebar-foreground flex flex-col transform transition-transform duration-200 ${sidebarOpen ? "translate-x-0" : "-translate-x-full"} lg:translate-x-0`}>
         <div className="p-4 border-b border-sidebar-border">
           <Link to="/" className="flex items-center gap-3">
-            <img src={logo} alt="Zeyna" className="h-10 w-auto rounded" />
+            <img src={logo} alt="Zeyna" className="h-10 w-10 object-contain drop-shadow-md" />
             <div>
-              <span className="font-serif text-sm font-bold text-sidebar-foreground block">Les logements de Zeyna</span>
+              <span className="font-serif text-sm font-bold text-sidebar-foreground block">Les Logements de Zeyna</span>
               <span className="text-xs text-sidebar-accent-foreground/60">{roleLabel}</span>
             </div>
           </Link>
         </div>
 
         <nav className="flex-1 p-4 space-y-1 overflow-y-auto">
-          {navItems.map((item) => (
-            <Link
-              key={item.href}
-              to={item.href}
-              onClick={() => setSidebarOpen(false)}
-              className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
-                location.pathname === item.href
-                  ? "bg-sidebar-accent text-sidebar-primary"
-                  : "text-sidebar-foreground/70 hover:bg-sidebar-accent/50 hover:text-sidebar-foreground"
-              }`}
-            >
-              {item.icon}
-              {item.label}
-            </Link>
+          {navItems.map((item, i) => (
+            item.isSection ? (
+              <div key={`section-${i}`} className="pt-4 pb-1">
+                <p className="px-3 text-xs uppercase tracking-widest font-semibold text-sidebar-foreground/40">
+                  {item.label}
+                </p>
+              </div>
+            ) : (
+              <Link
+                key={item.href}
+                to={item.href!}
+                onClick={() => setSidebarOpen(false)}
+                className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
+                  location.pathname === item.href
+                    ? "bg-sidebar-accent text-sidebar-primary"
+                    : "text-sidebar-foreground/70 hover:bg-sidebar-accent/50 hover:text-sidebar-foreground"
+                }`}
+              >
+                {item.icon}
+                {item.label}
+              </Link>
+            )
           ))}
         </nav>
 

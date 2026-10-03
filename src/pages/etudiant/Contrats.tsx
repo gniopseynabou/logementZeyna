@@ -5,6 +5,7 @@ import DashboardLayout from "@/components/dashboard/DashboardLayout";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { FileText, Download } from "lucide-react";
+import { generateContratClientHTML } from "@/pages/admin/Documents";
 
 const EtudiantContrats = () => {
   const { user, profile } = useAuth();
@@ -12,7 +13,6 @@ const EtudiantContrats = () => {
   const { data: contrats, isLoading, isError, error } = useQuery({
     queryKey: ["etudiant-contrats", user?.id],
     queryFn: () => getStudentContracts(user!.id),
-    enabled: !!user,
   });
 
   const downloadContract = (contrat: any) => {
@@ -24,50 +24,37 @@ const EtudiantContrats = () => {
     const ref = content?.reference || "N/A";
     const date = content?.date ? new Date(content.date).toLocaleDateString("fr-FR") : new Date(contrat.created_at).toLocaleDateString("fr-FR");
 
-    const text = `
-══════════════════════════════════════════════════
-      CONTRAT DE LOCATION
-      Les logements de Zeyna - Saint-Louis, Sénégal
-══════════════════════════════════════════════════
+    const htmlContent = generateContratClientHTML({
+      refContrat: ref,
+      dateEmission: date,
+      client: { prenom: profile?.prenom || "", nom: profile?.nom || "", telephone: profile?.telephone },
+      logement: {
+        nom: logNom,
+        adresse: res?.logements?.adresse || "N/A",
+        ville: res?.logements?.ville || "Saint-Louis",
+        type: res?.logements?.type || "Non spécifié"
+      },
+      chambre: {
+        nom: chNom,
+        nombre_personnes: res?.chambres?.nombre_personnes,
+        prix_zeyna: res?.chambres?.prix_zeyna
+      },
+      caution: montant,
+      dateDebut: res?.date_debut ? new Date(res.date_debut).toLocaleDateString("fr-FR") : date
+    });
 
-LOCATAIRE :
-  Nom complet : ${profile?.prenom || ""} ${profile?.nom || ""}
-  Téléphone   : ${profile?.telephone || "N/A"}
-
-LOGEMENT :
-  Nom         : ${logNom}
-  Adresse     : ${res?.logements?.adresse || "N/A"}, ${res?.logements?.ville || "Saint-Louis"}
-  Chambre     : ${chNom}
-  Capacité    : ${res?.chambres?.nombre_personnes || "N/A"} personne(s)
-  Loyer       : ${res?.chambres?.prix_zeyna?.toLocaleString() || "N/A"} FCFA / mois
-
-PAIEMENT :
-  Caution payée : ${montant.toLocaleString()} FCFA
-  Référence     : ${ref}
-  Date paiement : ${date}
-
-CONDITIONS GÉNÉRALES :
-  1. L'électricité pour l'éclairage et le chauffe-eau est incluse.
-  2. Les équipements supplémentaires (ventilateur, réfrigérateur, etc.)
-     sont à la charge du propriétaire.
-  3. La caution est remboursable sous conditions de bon état des lieux.
-  4. Le locataire s'engage à respecter le règlement intérieur.
-  5. Toute sous-location est interdite sans accord de Zeyna.
-
-══════════════════════════════════════════════════
-  Plateforme : Les logements de Zeyna
-  Contact    : +221 33 961 00 00
-  Email      : contact@logementsdezeyna.sn
-══════════════════════════════════════════════════
-    `.trim();
-
-    const blob = new Blob([text], { type: "text/plain" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = `contrat-zeyna-${ref}.txt`;
-    a.click();
-    URL.revokeObjectURL(url);
+    // Ouvrir dans une nouvelle fenêtre pour imprimer / sauvegarder en PDF
+    const printWindow = window.open("", "_blank");
+    if (printWindow) {
+      printWindow.document.write(htmlContent);
+      printWindow.document.close();
+      
+      // Auto-print une fois chargé
+      printWindow.onload = () => {
+        printWindow.focus();
+        printWindow.print();
+      };
+    }
   };
 
   return (

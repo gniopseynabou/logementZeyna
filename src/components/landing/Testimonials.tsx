@@ -8,55 +8,39 @@ const Testimonials = () => {
     queryFn: getVisibleTestimonials,
   });
 
-  if (isLoading) {
-    return (
-      <section className="py-20 md:py-28 bg-background">
-        <div className="container mx-auto px-4">
-          <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
-            {[1, 2, 3].map((i) => (
-              <div key={i} className="h-52 bg-muted animate-pulse rounded-2xl" />
-            ))}
-          </div>
-        </div>
-      </section>
-    );
+  if (isLoading || isError || !testimonials || testimonials.length === 0) {
+    return null; // On cache silencieusement si pas prêt, au lieu de montrer des loaders moches
   }
-
-  if (isError) {
-    return (
-      <section className="py-12 bg-background" role="alert">
-        <div className="container mx-auto px-4 text-center text-sm text-muted-foreground">
-          Les témoignages sont temporairement indisponibles.
-        </div>
-      </section>
-    );
-  }
-
-  if (!testimonials || testimonials.length === 0) return null;
 
   return (
-    <section className="py-20 md:py-28 bg-background">
+    <section className="py-24 md:py-32 bg-background border-y border-border/40">
       <div className="container mx-auto px-4">
-        <div className="text-center mb-16">
-          <span className="text-sm font-semibold text-accent uppercase tracking-wider">Témoignages</span>
-          <h2 className="font-serif text-3xl md:text-4xl font-bold text-foreground mt-3">
-            Ce que disent nos étudiants
+        
+        <div className="max-w-2xl mx-auto text-center mb-16">
+          <p className="text-xs font-bold text-accent uppercase tracking-widest mb-3">Témoignages</p>
+          <h2 className="font-serif text-3xl md:text-4xl font-bold text-foreground">
+            L'expérience Zeyna
           </h2>
         </div>
 
-        <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+        <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
           {testimonials.map((t) => (
-            <div key={t.id} className="bg-card rounded-2xl p-8 shadow-premium hover:shadow-gold transition-all duration-300 relative">
-              <Quote className="absolute top-6 right-6 h-8 w-8 text-accent/15" />
-              <div className="flex gap-1 mb-4">
+            <div key={t.id} className="relative p-8 border border-border/50 bg-secondary/20 hover:bg-secondary/40 transition-colors">
+              <Quote className="absolute top-6 right-6 h-6 w-6 text-accent/20" />
+              
+              <div className="flex gap-1 mb-6">
                 {Array.from({ length: 5 }).map((_, i) => (
                   <Star key={i} className={`h-4 w-4 ${i < t.note ? "text-accent fill-accent" : "text-muted"}`} />
                 ))}
               </div>
-              <p className="text-foreground/80 text-sm leading-relaxed mb-6 italic">"{t.contenu}"</p>
-              <div>
-                <div className="font-semibold text-foreground">{t.nom}</div>
-                <div className="text-xs text-muted-foreground">{t.role}</div>
+              
+              <p className="text-foreground/80 leading-relaxed mb-8 italic">
+                "{t.contenu}"
+              </p>
+              
+              <div className="mt-auto">
+                <div className="font-bold text-foreground font-ui uppercase tracking-wider text-sm">{t.nom}</div>
+                <div className="text-xs text-muted-foreground mt-1">{t.role}</div>
               </div>
             </div>
           ))}

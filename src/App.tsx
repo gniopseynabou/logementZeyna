@@ -20,6 +20,7 @@ const EtudiantReservations = lazy(() => import("./pages/etudiant/Reservations"))
 const PaiementPage = lazy(() => import("./pages/etudiant/Paiement"));
 const EtudiantPaiements = lazy(() => import("./pages/etudiant/Paiements"));
 const EtudiantContrats = lazy(() => import("./pages/etudiant/Contrats"));
+const EtudiantIncidents = lazy(() => import("./pages/etudiant/Incidents"));
 const BailleurDashboard = lazy(() => import("./pages/bailleur/Dashboard"));
 const BailleurLogements = lazy(() => import("./pages/bailleur/Logements"));
 const NouveauLogement = lazy(() => import("./pages/bailleur/NouveauLogement"));
@@ -31,6 +32,10 @@ const AdminReservations = lazy(() => import("./pages/admin/Reservations"));
 const AdminPaiements = lazy(() => import("./pages/admin/Paiements"));
 const AdminTarifs = lazy(() => import("./pages/admin/Tarifs"));
 const AdminUtilisateurs = lazy(() => import("./pages/admin/Utilisateurs"));
+const AdminIncidents = lazy(() => import("./pages/admin/Incidents"));
+const AdminReversements = lazy(() => import("./pages/admin/Reversements"));
+const AdminDocuments = lazy(() => import("./pages/admin/Documents"));
+const AdminClients = lazy(() => import("./pages/admin/Clients"));
 const ProfilePage = lazy(() => import("./pages/shared/Profile"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 
@@ -51,13 +56,16 @@ const queryClient = new QueryClient({
   },
 });
 
+import { HelmetProvider } from "react-helmet-async";
+
 const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <AuthProvider>
-      <TooltipProvider>
-        <Toaster />
-        <Sonner />
-        <BrowserRouter>
+  <HelmetProvider>
+    <QueryClientProvider client={queryClient}>
+      <AuthProvider>
+        <TooltipProvider>
+          <Toaster />
+          <Sonner />
+          <BrowserRouter>
           <Suspense fallback={<PageLoader />}>
             <Routes>
               {/* Public */}
@@ -75,6 +83,7 @@ const App = () => (
               <Route path="/etudiant/paiement/:reservationId" element={<ProtectedRoute allowedRoles={["etudiant"]}><PaiementPage /></ProtectedRoute>} />
               <Route path="/etudiant/paiements" element={<ProtectedRoute allowedRoles={["etudiant"]}><EtudiantPaiements /></ProtectedRoute>} />
               <Route path="/etudiant/contrats" element={<ProtectedRoute allowedRoles={["etudiant"]}><EtudiantContrats /></ProtectedRoute>} />
+              <Route path="/etudiant/incidents" element={<ProtectedRoute allowedRoles={["etudiant"]}><EtudiantIncidents /></ProtectedRoute>} />
               <Route path="/etudiant/profil" element={<ProtectedRoute allowedRoles={["etudiant"]}><ProfilePage /></ProtectedRoute>} />
 
               {/* Bailleur */}
@@ -92,6 +101,10 @@ const App = () => (
               <Route path="/admin/paiements" element={<ProtectedRoute allowedRoles={["admin"]}><AdminPaiements /></ProtectedRoute>} />
               <Route path="/admin/tarifs" element={<ProtectedRoute allowedRoles={["admin"]}><AdminTarifs /></ProtectedRoute>} />
               <Route path="/admin/utilisateurs" element={<ProtectedRoute allowedRoles={["admin"]}><AdminUtilisateurs /></ProtectedRoute>} />
+              <Route path="/admin/incidents" element={<ProtectedRoute allowedRoles={["admin"]}><AdminIncidents /></ProtectedRoute>} />
+              <Route path="/admin/reversements" element={<ProtectedRoute allowedRoles={["admin"]}><AdminReversements /></ProtectedRoute>} />
+              <Route path="/admin/documents" element={<ProtectedRoute allowedRoles={["admin"]}><AdminDocuments /></ProtectedRoute>} />
+              <Route path="/admin/clients" element={<ProtectedRoute allowedRoles={["admin"]}><AdminClients /></ProtectedRoute>} />
 
               <Route path="*" element={<NotFound />} />
             </Routes>
@@ -100,6 +113,7 @@ const App = () => (
       </TooltipProvider>
     </AuthProvider>
   </QueryClientProvider>
+  </HelmetProvider>
 );
 
 export default App;

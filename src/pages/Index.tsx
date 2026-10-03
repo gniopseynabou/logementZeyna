@@ -10,6 +10,8 @@ const Testimonials = lazy(() => import("@/components/landing/Testimonials"));
 const FAQ = lazy(() => import("@/components/landing/FAQ"));
 const Footer = lazy(() => import("@/components/landing/Footer"));
 
+import SEOHead from "@/components/SEOHead";
+
 const SectionLoader = () => (
   <div className="py-20 flex items-center justify-center">
     <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-primary" />
@@ -19,7 +21,7 @@ const SectionLoader = () => (
 const jsonLd = {
   "@context": "https://schema.org",
   "@type": "RealEstateAgent",
-  name: "Les logements de Zeyna",
+  name: "Les Logements de Zeyna",
   description: "Plateforme N°1 du logement étudiant à Saint-Louis du Sénégal",
   url: "https://leslogementsdezeyna.com",
   areaServed: {
@@ -33,9 +35,10 @@ const jsonLd = {
 const Index = memo(() => {
   return (
     <div className="min-h-screen">
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      <SEOHead 
+        title="Accueil" 
+        canonical="/"
+        jsonLd={jsonLd}
       />
       <Navbar />
       <HeroSection />

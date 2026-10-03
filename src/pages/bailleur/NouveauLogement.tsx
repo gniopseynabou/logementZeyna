@@ -215,19 +215,23 @@ const NouveauLogement = () => {
 
           <Card className="border-0 shadow-premium">
             <CardHeader className="flex flex-row items-center justify-between">
-              <CardTitle className="font-serif text-lg">Chambres</CardTitle>
+              <CardTitle className="font-serif text-lg">
+                {form.type === "studio" || form.type === "appartement" ? "Unités" : "Chambres"}
+              </CardTitle>
               <Button type="button" variant="outline" size="sm" onClick={addChambre}><Plus className="h-4 w-4 mr-1" /> Ajouter</Button>
             </CardHeader>
             <CardContent className="space-y-4">
               {chambres.map((c, i) => (
                 <div key={i} className="p-4 border rounded-xl space-y-3">
                   <div className="flex items-center justify-between">
-                    <h4 className="font-medium">Chambre {i + 1}</h4>
+                    <h4 className="font-medium">
+                      {form.type === "studio" || form.type === "appartement" ? `Unité ${i + 1}` : `Chambre ${i + 1}`}
+                    </h4>
                     {chambres.length > 1 && (
                       <Button type="button" variant="ghost" size="icon" className="text-destructive" onClick={() => removeChambre(i)}><Trash2 className="h-4 w-4" /></Button>
                     )}
                   </div>
-                  <div className="1 sm:grid-cols-grid grid-cols-2 gap-3">
+                  <div className="grid grid-cols-2 gap-3">
                     <div className="space-y-1">
                       <Label className="text-xs">Nom</Label>
                       <Input value={c.nom} onChange={(e) => updateChambre(i, "nom", e.target.value)} />

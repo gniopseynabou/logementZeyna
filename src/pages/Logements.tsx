@@ -17,6 +17,8 @@ import logement4 from "@/assets/logement-4.jpg";
 import logement5 from "@/assets/logement-5.jpg";
 import logement6 from "@/assets/logement-6.jpg";
 
+import SEOHead from "@/components/SEOHead";
+
 const fallbackImages = [logement1, logement2, logement3, logement4, logement5, logement6];
 
 const Logements = () => {
@@ -70,6 +72,11 @@ const Logements = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      <SEOHead 
+        title="Tous nos logements" 
+        description="Parcourez notre catalogue de logements étudiants à Saint-Louis : résidences, chambres, studios et appartements."
+        canonical="/logements"
+      />
       <Navbar />
       <div className="pt-20 md:pt-24">
         <div className="bg-gradient-teal py-12 md:py-16">
@@ -121,16 +128,14 @@ const Logements = () => {
                 </Select>
               </div>
               <div>
-                <label className="text-xs font-medium text-muted-foreground mb-1 block">Quartier</label>
+                <label className="text-xs font-medium text-muted-foreground mb-1 block">Quartier / Adresse</label>
                 <Select value={quartier} onValueChange={(v) => { setQuartier(v); setPage(1); }}>
                   <SelectTrigger><SelectValue /></SelectTrigger>
                   <SelectContent>
                     <SelectItem value="all">Tous</SelectItem>
-                    <SelectItem value="sanar">Sanar</SelectItem>
-                    <SelectItem value="diaminar">Diaminar</SelectItem>
-                    <SelectItem value="ngallèle">Ngallèle</SelectItem>
-                    <SelectItem value="pikine">Pikine</SelectItem>
-                    <SelectItem value="bango">Bango</SelectItem>
+                    {Array.from(new Set(allLogements.map(l => l.adresse))).filter(Boolean).map(addr => (
+                      <SelectItem key={addr} value={addr}>{addr}</SelectItem>
+                    ))}
                   </SelectContent>
                 </Select>
               </div>

@@ -6,7 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 import { Eye, EyeOff, ArrowLeft } from "lucide-react";
-import logo from "@/assets/logo.jpeg";
+import logo from "@/assets/logo-zeyna.png";
 import { getDashboardPathByRole } from "@/lib/permissions";
 import { signInWithRole } from "@/services/auth-service";
 

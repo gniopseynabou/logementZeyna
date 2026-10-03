@@ -1,56 +1,67 @@
-import { Search, CreditCard, Home } from "lucide-react";
+import { Search, CreditCard, Home, ArrowRight } from "lucide-react";
 
 const steps = [
   {
     icon: Search,
+    num: "01",
     title: "Recherchez",
-    description: "Parcourez nos logements vérifiés à Saint-Louis et Sanar, filtrés selon vos critères : quartier, budget, capacité.",
-    step: "01",
+    description: "Parcourez les logements vérifiés à Saint-Louis et Sanar. Filtrez par quartier, budget ou capacité.",
   },
   {
     icon: CreditCard,
-    title: "Réservez & Payez",
-    description: "Réservez en ligne et payez facilement via Mobile Money ou carte bancaire. C'est sécurisé.",
-    step: "02",
+    num: "02",
+    title: "Réservez & payez",
+    description: "Réservez en ligne et payez via Mobile Money ou carte. Votre caution est sécurisée.",
   },
   {
     icon: Home,
+    num: "03",
     title: "Emménagez",
-    description: "Recevez votre contrat, récupérez vos clés et profitez de votre nouveau logement étudiant.",
-    step: "03",
+    description: "Recevez votre contrat, récupérez vos clés et profitez de votre logement.",
   },
 ];
 
 const HowItWorks = () => {
   return (
-    <section className="py-20 md:py-28 bg-background">
+    <section className="py-24 md:py-32 bg-background">
       <div className="container mx-auto px-4">
-        <div className="text-center mb-16">
-          <span className="text-sm font-semibold text-accent uppercase tracking-wider">Simple & rapide</span>
-          <h2 className="font-serif text-3xl md:text-4xl font-bold text-foreground mt-3">
+
+        {/* En-tête */}
+        <div className="max-w-xl mb-16">
+          <p className="text-xs font-bold text-accent uppercase tracking-widest mb-3">Simple & rapide</p>
+          <h2 className="font-serif text-3xl md:text-4xl font-bold text-foreground">
             Comment ça marche ?
           </h2>
-          <p className="text-muted-foreground mt-4 max-w-xl mx-auto">
-            Trois étapes simples pour trouver et réserver votre logement étudiant.
+          <p className="text-muted-foreground mt-4 leading-relaxed">
+            Trois étapes suffisent pour trouver et sécuriser votre logement étudiant.
           </p>
         </div>
 
-        <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
-          {steps.map((step, index) => (
-            <div key={step.title} className="relative group">
-              {/* Connector line */}
-              {index < steps.length - 1 && (
-                <div className="hidden md:block absolute top-12 left-[60%] w-[80%] h-[2px] bg-gradient-to-r from-accent/40 to-transparent" />
+        {/* Étapes */}
+        <div className="grid md:grid-cols-3 gap-0 max-w-5xl">
+          {steps.map((step, i) => (
+            <div key={step.num} className="flex md:flex-col items-start gap-6 md:gap-0 relative pr-8 md:pr-0 pb-8 md:pb-0">
+
+              {/* Connecteur horizontal (desktop) */}
+              {i < steps.length - 1 && (
+                <div className="hidden md:block absolute top-6 left-[calc(50%+28px)] right-0 h-px bg-border" />
               )}
-              
-              <div className="bg-card rounded-2xl p-8 shadow-premium hover:shadow-gold transition-all duration-300 hover:-translate-y-1 text-center relative">
-                <div className="absolute -top-4 -right-2 text-5xl font-serif font-bold text-accent/10">
-                  {step.step}
+              {/* Connecteur vertical (mobile) */}
+              {i < steps.length - 1 && (
+                <div className="md:hidden absolute top-12 left-6 bottom-0 w-px bg-border" />
+              )}
+
+              {/* Icône + numéro */}
+              <div className="relative shrink-0 md:mb-6">
+                <div className="w-12 h-12 rounded-sm bg-accent flex items-center justify-center text-white relative z-10">
+                  <step.icon className="h-5 w-5" />
                 </div>
-                <div className="w-16 h-16 mx-auto mb-6 rounded-2xl bg-gradient-gold flex items-center justify-center shadow-gold">
-                  <step.icon className="h-7 w-7 text-accent-foreground" />
-                </div>
-                <h3 className="font-serif text-xl font-bold text-foreground mb-3">{step.title}</h3>
+                <span className="absolute -top-2 -right-3 text-xs font-bold font-ui text-muted-foreground/40">{step.num}</span>
+              </div>
+
+              {/* Texte */}
+              <div className="md:mt-4">
+                <h3 className="font-serif text-lg font-bold text-foreground mb-2">{step.title}</h3>
                 <p className="text-muted-foreground text-sm leading-relaxed">{step.description}</p>
               </div>
             </div>

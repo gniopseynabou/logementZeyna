@@ -7,7 +7,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { isPasswordRecoveryLink, resetUserPassword } from "@/services/auth-service";
 import { useToast } from "@/hooks/use-toast";
 import { Eye, EyeOff } from "lucide-react";
-import logo from "@/assets/logo.jpeg";
+import logo from "@/assets/logo-zeyna.png";
 
 const ResetPassword = () => {
   const [password, setPassword] = useState("");

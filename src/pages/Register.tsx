@@ -8,7 +8,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { registerUser, type RegistrationRole } from "@/services/auth-service";
 import { useToast } from "@/hooks/use-toast";
 import { ArrowLeft, Eye, EyeOff, GraduationCap, Building } from "lucide-react";
-import logo from "@/assets/logo.jpeg";
+import logo from "@/assets/logo-zeyna.png";
 
 const Register = () => {
   const [form, setForm] = useState({ nom: "", prenom: "", email: "", telephone: "", password: "", confirmPassword: "", role: "etudiant" as RegistrationRole });

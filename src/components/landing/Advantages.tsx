@@ -4,64 +4,68 @@ const advantages = [
   {
     icon: Shield,
     title: "Logements vérifiés",
-    description: "Chaque logement est inspecté et validé par notre équipe avant d'être proposé aux étudiants.",
+    description: "Chaque bien est inspecté et validé par notre équipe avant d'être proposé.",
   },
   {
     icon: Wallet,
-    title: "Prix justes & transparents",
+    title: "Prix transparents",
     description: "Pas de frais cachés. Le prix affiché est le prix final, tout compris.",
   },
   {
     icon: MapPin,
     title: "Bien situés",
-    description: "Proches de l'UGB et des commodités, dans les meilleurs quartiers de Saint-Louis et Sanar.",
+    description: "Proches de l'UGB, dans les meilleurs quartiers de Saint-Louis et Sanar.",
   },
   {
     icon: Zap,
     title: "Réservation rapide",
-    description: "Réservez en quelques clics avec Mobile Money ou carte bancaire. Simple et instantané.",
+    description: "Réservez en ligne via Mobile Money ou carte. Simple, sécurisé, instantané.",
   },
   {
     icon: CheckCircle,
     title: "Contrat automatique",
-    description: "Un contrat de bail est généré automatiquement après confirmation de votre paiement.",
+    description: "Un contrat est généré et signable dès confirmation de votre paiement.",
   },
   {
     icon: HeadphonesIcon,
     title: "Support dédié",
-    description: "Notre équipe est disponible pour vous accompagner avant, pendant et après votre location.",
+    description: "Notre équipe vous accompagne avant, pendant et après votre installation.",
   },
 ];
 
 const Advantages = () => {
   return (
-    <section className="py-20 md:py-28 bg-gradient-navy text-primary-foreground relative overflow-hidden">
-      {/* Decorative elements */}
-      <div className="absolute top-0 right-0 w-96 h-96 bg-accent/5 rounded-full blur-3xl" />
-      <div className="absolute bottom-0 left-0 w-64 h-64 bg-accent/5 rounded-full blur-3xl" />
+    <section className="py-24 md:py-32 bg-foreground text-background">
+      <div className="container mx-auto px-4">
 
-      <div className="container mx-auto px-4 relative z-10">
-        <div className="text-center mb-16">
-          <span className="text-sm font-semibold text-accent uppercase tracking-wider">Pourquoi nous choisir</span>
-          <h2 className="font-serif text-3xl md:text-4xl font-bold mt-3">
-            Vos avantages avec Zeyna
-          </h2>
-          <p className="text-primary-foreground/70 mt-4 max-w-xl mx-auto">
-            Nous simplifions la recherche de logement étudiant à Saint-Louis du Sénégal.
-          </p>
-        </div>
-
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-5xl mx-auto">
-          {advantages.map((adv) => (
-            <div key={adv.title} className="bg-primary-foreground/5 backdrop-blur-sm border border-primary-foreground/10 rounded-2xl p-6 hover:bg-primary-foreground/10 transition-all duration-300 group">
-              <div className="w-12 h-12 rounded-xl bg-accent/20 flex items-center justify-center mb-4 group-hover:bg-accent/30 transition-colors">
-                <adv.icon className="h-6 w-6 text-accent" />
-              </div>
-              <h3 className="font-serif text-lg font-bold mb-2">{adv.title}</h3>
-              <p className="text-primary-foreground/70 text-sm leading-relaxed">{adv.description}</p>
+        <div className="grid lg:grid-cols-2 gap-16 items-start">
+          {/* Texte gauche */}
+          <div className="lg:sticky lg:top-32">
+            <p className="text-xs font-bold text-accent uppercase tracking-widest mb-3">Pourquoi nous</p>
+            <h2 className="font-serif text-3xl md:text-4xl font-bold mb-6">
+              Ce que Zeyna vous apporte
+            </h2>
+            <p className="text-background/60 leading-relaxed max-w-sm">
+              Nous simplifions la recherche de logement étudiant à Saint-Louis en combinant rigueur de sélection, clarté financière et accompagnement humain.
+            </p>
+            <div className="mt-8 pt-8 border-t border-background/10">
+              <p className="text-4xl font-bold font-ui text-accent">100%</p>
+              <p className="text-sm text-background/50 mt-1">des logements inspectés avant mise en ligne</p>
             </div>
-          ))}
+          </div>
+
+          {/* Grille avantages droite */}
+          <div className="grid sm:grid-cols-2 gap-px bg-background/10 border border-background/10">
+            {advantages.map((adv) => (
+              <div key={adv.title} className="bg-foreground p-6 hover:bg-background/5 transition-colors">
+                <adv.icon className="h-5 w-5 text-accent mb-4" />
+                <h3 className="font-serif font-bold text-background mb-2">{adv.title}</h3>
+                <p className="text-background/55 text-sm leading-relaxed">{adv.description}</p>
+              </div>
+            ))}
+          </div>
         </div>
+
       </div>
     </section>
   );

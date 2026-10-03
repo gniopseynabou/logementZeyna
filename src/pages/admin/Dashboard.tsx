@@ -2,7 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { getAdminDashboardStats } from "@/services/admin-dashboard-service";
 import DashboardLayout from "@/components/dashboard/DashboardLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Building, Users, BookOpen, TrendingUp, Percent, Home } from "lucide-react";
+import { Building, Users, BookOpen, TrendingUp, Percent, Home, CreditCard } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 
@@ -63,11 +63,11 @@ const AdminDashboard = () => {
           <Card className="border-0 shadow-premium">
             <CardHeader><CardTitle className="font-serif">Actions rapides</CardTitle></CardHeader>
             <CardContent className="space-y-2">
-              <Button asChild variant="outline" className="w-full justify-start"><Link to="/admin/logements">📋 Valider les logements en attente ({stats?.logEnAttente || 0})</Link></Button>
-              <Button asChild variant="outline" className="w-full justify-start"><Link to="/admin/bailleurs">👤 Valider les bailleurs ({stats?.bailleursEnAttente || 0})</Link></Button>
-              <Button asChild variant="outline" className="w-full justify-start"><Link to="/admin/tarifs">💰 Gérer les tarifs Zeyna</Link></Button>
-              <Button asChild variant="outline" className="w-full justify-start"><Link to="/admin/reservations">📖 Gérer les réservations</Link></Button>
-              <Button asChild variant="outline" className="w-full justify-start"><Link to="/admin/paiements">💳 Superviser les paiements</Link></Button>
+              <Button asChild variant="outline" className="w-full justify-start"><Link to="/admin/logements"><Building className="mr-2 h-4 w-4" /> Valider les logements en attente ({stats?.logEnAttente || 0})</Link></Button>
+              <Button asChild variant="outline" className="w-full justify-start"><Link to="/admin/bailleurs"><Users className="mr-2 h-4 w-4" /> Valider les bailleurs ({stats?.bailleursEnAttente || 0})</Link></Button>
+              <Button asChild variant="outline" className="w-full justify-start"><Link to="/admin/tarifs"><TrendingUp className="mr-2 h-4 w-4" /> Gérer les prix et marges</Link></Button>
+              <Button asChild variant="outline" className="w-full justify-start"><Link to="/admin/reservations"><BookOpen className="mr-2 h-4 w-4" /> Gérer les réservations</Link></Button>
+              <Button asChild variant="outline" className="w-full justify-start"><Link to="/admin/paiements"><CreditCard className="mr-2 h-4 w-4" /> Superviser les paiements</Link></Button>
             </CardContent>
           </Card>
 
