@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -7,8 +8,12 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { registerUser, type RegistrationRole } from "@/services/auth-service";
 import { useToast } from "@/hooks/use-toast";
-import { ArrowLeft, Eye, EyeOff, GraduationCap, Building } from "lucide-react";
-import logo from "@/assets/logo-zeyna.png";
+import { Eye, EyeOff, GraduationCap, Building, Loader2 } from "lucide-react";
+
+const itemVariants = {
+  hidden: { y: 10, opacity: 0 },
+  visible: { y: 0, opacity: 1, transition: { duration: 0.4, ease: [0.22, 1, 0.36, 1] } }
+};
 
 const Register = () => {
   const [form, setForm] = useState({ nom: "", prenom: "", email: "", telephone: "", password: "", confirmPassword: "", role: "etudiant" as RegistrationRole });
@@ -54,97 +59,121 @@ const Register = () => {
   const update = (key: string, value: string) => setForm((prev) => ({ ...prev, [key]: value }));
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-navy px-4 py-12">
-      <div className="w-full max-w-md">
-        <div className="text-center mb-8">
-          <Link to="/" className="inline-flex items-center gap-2 text-primary-foreground/60 hover:text-accent transition-colors mb-6">
-            <ArrowLeft className="h-4 w-4" /> Retour à l'accueil
+    <Card className="border-0 shadow-premium w-full bg-card overflow-hidden">
+      <div className="h-1 w-full bg-gradient-to-r from-accent/50 to-accent" />
+      <CardHeader className="pb-4">
+        <motion.div initial="hidden" animate="visible" variants={itemVariants}>
+          <CardTitle className="font-serif text-2xl">Inscription</CardTitle>
+          <CardDescription className="mt-1.5">Rejoignez la communauté Zeyna</CardDescription>
+        </motion.div>
+      </CardHeader>
+      
+      <CardContent>
+        <motion.form 
+          onSubmit={handleRegister} 
+          className="space-y-4"
+          initial="hidden"
+          animate="visible"
+          transition={{ staggerChildren: 0.05, delayChildren: 0.1 }}
+        >
+          {/* Role selection */}
+          <motion.div variants={itemVariants} className="space-y-3">
+            <Label className="text-muted-foreground text-xs uppercase tracking-wider font-semibold">Je suis</Label>
+            <RadioGroup value={form.role} onValueChange={(v) => update("role", v)} className="grid grid-cols-2 gap-3">
+              <Label 
+                htmlFor="r-etudiant" 
+                className={`flex items-center gap-3 p-3 rounded-lg border cursor-pointer transition-all ${
+                  form.role === "etudiant" 
+                    ? "border-accent bg-accent/5 text-foreground ring-1 ring-accent" 
+                    : "border-border hover:border-accent/50 text-muted-foreground"
+                }`}
+              >
+                <RadioGroupItem value="etudiant" id="r-etudiant" className="sr-only" />
+                <GraduationCap className={`h-5 w-5 ${form.role === "etudiant" ? "text-accent" : ""}`} />
+                <span className="font-medium text-sm">Étudiant</span>
+              </Label>
+              <Label 
+                htmlFor="r-bailleur" 
+                className={`flex items-center gap-3 p-3 rounded-lg border cursor-pointer transition-all ${
+                  form.role === "bailleur" 
+                    ? "border-accent bg-accent/5 text-foreground ring-1 ring-accent" 
+                    : "border-border hover:border-accent/50 text-muted-foreground"
+                }`}
+              >
+                <RadioGroupItem value="bailleur" id="r-bailleur" className="sr-only" />
+                <Building className={`h-5 w-5 ${form.role === "bailleur" ? "text-accent" : ""}`} />
+                <span className="font-medium text-sm">Bailleur</span>
+              </Label>
+            </RadioGroup>
+          </motion.div>
+
+          <motion.div variants={itemVariants} className="grid grid-cols-2 gap-3 pt-2">
+            <div className="space-y-2 group">
+              <Label htmlFor="nom" className="transition-colors group-focus-within:text-accent">Nom</Label>
+              <Input id="nom" placeholder="Diallo" value={form.nom} onChange={(e) => update("nom", e.target.value)} required className="transition-all duration-300 focus:border-accent focus:ring-1 focus:ring-accent" />
+            </div>
+            <div className="space-y-2 group">
+              <Label htmlFor="prenom" className="transition-colors group-focus-within:text-accent">Prénom</Label>
+              <Input id="prenom" placeholder="Aminata" value={form.prenom} onChange={(e) => update("prenom", e.target.value)} required className="transition-all duration-300 focus:border-accent focus:ring-1 focus:ring-accent" />
+            </div>
+          </motion.div>
+
+          <motion.div variants={itemVariants} className="space-y-2 group">
+            <Label htmlFor="email" className="transition-colors group-focus-within:text-accent">Email</Label>
+            <Input id="email" type="email" placeholder="votre@email.com" value={form.email} onChange={(e) => update("email", e.target.value)} required className="transition-all duration-300 focus:border-accent focus:ring-1 focus:ring-accent" />
+          </motion.div>
+
+          <motion.div variants={itemVariants} className="space-y-2 group">
+            <Label htmlFor="telephone" className="transition-colors group-focus-within:text-accent">Téléphone</Label>
+            <Input id="telephone" placeholder="+221 77 000 00 00" value={form.telephone} onChange={(e) => update("telephone", e.target.value)} className="transition-all duration-300 focus:border-accent focus:ring-1 focus:ring-accent" />
+          </motion.div>
+
+          <motion.div variants={itemVariants} className="grid grid-cols-2 gap-3">
+            <div className="space-y-2 group">
+              <Label htmlFor="password" className="transition-colors group-focus-within:text-accent">Mot de passe</Label>
+              <div className="relative">
+                <Input id="password" type={showPassword ? "text" : "password"} placeholder="Min. 6 caractères" value={form.password} onChange={(e) => update("password", e.target.value)} required className="transition-all duration-300 focus:border-accent focus:ring-1 focus:ring-accent pr-10" />
+                <button type="button" className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors" onClick={() => setShowPassword(!showPassword)} tabIndex={-1}>
+                  {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                </button>
+              </div>
+            </div>
+            <div className="space-y-2 group">
+              <Label htmlFor="confirm" className="transition-colors group-focus-within:text-accent truncate">Confirmer mot de passe</Label>
+              <Input id="confirm" type="password" placeholder="••••••••" value={form.confirmPassword} onChange={(e) => update("confirmPassword", e.target.value)} required className="transition-all duration-300 focus:border-accent focus:ring-1 focus:ring-accent" />
+            </div>
+          </motion.div>
+
+          <motion.div variants={itemVariants} className="pt-4">
+            <Button 
+              type="submit" 
+              className="w-full bg-accent hover:bg-accent/90 text-white rounded-sm h-11 relative overflow-hidden transition-all" 
+              disabled={loading}
+            >
+              {loading ? (
+                <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex items-center justify-center gap-2">
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                  <span>Inscription en cours...</span>
+                </motion.div>
+              ) : (
+                "Créer mon compte"
+              )}
+            </Button>
+          </motion.div>
+        </motion.form>
+
+        <motion.p 
+          className="text-center text-sm text-muted-foreground mt-8"
+          initial="hidden" animate="visible" variants={itemVariants}
+          transition={{ delay: 0.5 }}
+        >
+          Déjà un compte ?{" "}
+          <Link to="/login" className="text-foreground font-medium hover:text-accent transition-colors">
+            Se connecter
           </Link>
-          <div className="flex justify-center mb-4">
-            <img src={logo} alt="Zeyna" className="h-16 w-auto" />
-          </div>
-          <h1 className="font-serif text-2xl font-bold text-primary-foreground">Créer un compte</h1>
-        </div>
-
-        <Card className="border-0 shadow-premium">
-          <CardHeader className="pb-4">
-            <CardTitle className="font-serif text-xl">Inscription</CardTitle>
-            <CardDescription>Rejoignez la communauté Zeyna</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <form onSubmit={handleRegister} className="space-y-4">
-              {/* Role selection */}
-              <div className="space-y-3">
-                <Label>Je suis</Label>
-                <RadioGroup value={form.role} onValueChange={(v) => update("role", v)} className="grid grid-cols-2 gap-3">
-                  <Label htmlFor="r-etudiant" className={`flex items-center gap-3 p-4 rounded-xl border-2 cursor-pointer transition-all ${form.role === "etudiant" ? "border-accent bg-accent/5" : "border-border hover:border-accent/30"}`}>
-                    <RadioGroupItem value="etudiant" id="r-etudiant" />
-                    <div className="flex items-center gap-2">
-                      <GraduationCap className="h-5 w-5 text-accent" />
-                      <span className="font-medium">Étudiant</span>
-                    </div>
-                  </Label>
-                  <Label htmlFor="r-bailleur" className={`flex items-center gap-3 p-4 rounded-xl border-2 cursor-pointer transition-all ${form.role === "bailleur" ? "border-accent bg-accent/5" : "border-border hover:border-accent/30"}`}>
-                    <RadioGroupItem value="bailleur" id="r-bailleur" />
-                    <div className="flex items-center gap-2">
-                      <Building className="h-5 w-5 text-accent" />
-                      <span className="font-medium">Bailleur</span>
-                    </div>
-                  </Label>
-                </RadioGroup>
-              </div>
-
-              <div className="grid grid-cols-2 gap-3">
-                <div className="space-y-2">
-                  <Label htmlFor="nom">Nom</Label>
-                  <Input id="nom" placeholder="Diallo" value={form.nom} onChange={(e) => update("nom", e.target.value)} required />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="prenom">Prénom</Label>
-                  <Input id="prenom" placeholder="Aminata" value={form.prenom} onChange={(e) => update("prenom", e.target.value)} required />
-                </div>
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="email">Email</Label>
-                <Input id="email" type="email" placeholder="votre@email.com" value={form.email} onChange={(e) => update("email", e.target.value)} required />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="telephone">Téléphone</Label>
-                <Input id="telephone" placeholder="+221 77 000 00 00" value={form.telephone} onChange={(e) => update("telephone", e.target.value)} />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="password">Mot de passe</Label>
-                <div className="relative">
-                  <Input id="password" type={showPassword ? "text" : "password"} placeholder="Min. 6 caractères" value={form.password} onChange={(e) => update("password", e.target.value)} required />
-                  <button type="button" className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground" onClick={() => setShowPassword(!showPassword)}>
-                    {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                  </button>
-                </div>
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="confirm">Confirmer le mot de passe</Label>
-                <Input id="confirm" type="password" placeholder="••••••••" value={form.confirmPassword} onChange={(e) => update("confirmPassword", e.target.value)} required />
-              </div>
-
-              <Button type="submit" className="w-full bg-gradient-gold text-accent-foreground shadow-gold" disabled={loading}>
-                {loading ? "Inscription..." : "Créer mon compte"}
-              </Button>
-            </form>
-
-            <p className="text-center text-sm text-muted-foreground mt-6">
-              Déjà un compte ?{" "}
-              <Link to="/login" className="text-accent font-medium hover:underline">
-                Se connecter
-              </Link>
-            </p>
-          </CardContent>
-        </Card>
-      </div>
-    </div>
+        </motion.p>
+      </CardContent>
+    </Card>
   );
 };
 
