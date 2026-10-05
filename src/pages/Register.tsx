@@ -5,10 +5,9 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { registerUser, type RegistrationRole } from "@/services/auth-service";
 import { useToast } from "@/hooks/use-toast";
-import { Eye, EyeOff, GraduationCap, Building, Loader2 } from "lucide-react";
+import { Eye, EyeOff, Loader2 } from "lucide-react";
 
 const itemVariants = {
   hidden: { y: 10, opacity: 0 },
@@ -41,7 +40,7 @@ const Register = () => {
         nom: form.nom,
         prenom: form.prenom,
         telephone: form.telephone,
-        role: form.role,
+        role: "etudiant", // Seuls les locataires peuvent s'inscrire publiquement
         redirectTo: `${window.location.origin}/login`,
       });
 
@@ -76,36 +75,7 @@ const Register = () => {
           animate="visible"
           transition={{ staggerChildren: 0.05, delayChildren: 0.1 }}
         >
-          {/* Role selection */}
-          <motion.div variants={itemVariants} className="space-y-3">
-            <Label className="text-muted-foreground text-xs uppercase tracking-wider font-semibold">Je suis</Label>
-            <RadioGroup value={form.role} onValueChange={(v) => update("role", v)} className="grid grid-cols-2 gap-3">
-              <Label 
-                htmlFor="r-etudiant" 
-                className={`flex items-center gap-3 p-3 rounded-lg border cursor-pointer transition-all ${
-                  form.role === "etudiant" 
-                    ? "border-accent bg-accent/5 text-foreground ring-1 ring-accent" 
-                    : "border-border hover:border-accent/50 text-muted-foreground"
-                }`}
-              >
-                <RadioGroupItem value="etudiant" id="r-etudiant" className="sr-only" />
-                <GraduationCap className={`h-5 w-5 ${form.role === "etudiant" ? "text-accent" : ""}`} />
-                <span className="font-medium text-sm">Étudiant</span>
-              </Label>
-              <Label 
-                htmlFor="r-bailleur" 
-                className={`flex items-center gap-3 p-3 rounded-lg border cursor-pointer transition-all ${
-                  form.role === "bailleur" 
-                    ? "border-accent bg-accent/5 text-foreground ring-1 ring-accent" 
-                    : "border-border hover:border-accent/50 text-muted-foreground"
-                }`}
-              >
-                <RadioGroupItem value="bailleur" id="r-bailleur" className="sr-only" />
-                <Building className={`h-5 w-5 ${form.role === "bailleur" ? "text-accent" : ""}`} />
-                <span className="font-medium text-sm">Bailleur</span>
-              </Label>
-            </RadioGroup>
-          </motion.div>
+
 
           <motion.div variants={itemVariants} className="grid grid-cols-2 gap-3 pt-2">
             <div className="space-y-2 group">

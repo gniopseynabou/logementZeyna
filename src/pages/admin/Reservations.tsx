@@ -1,3 +1,4 @@
+import { invalidateGroups } from "@/lib/invalidate-helpers";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { getAdminReservations, ReservationStatus, updateAdminReservationStatus } from "@/services/reservation-service";
 import DashboardLayout from "@/components/dashboard/DashboardLayout";
@@ -19,8 +20,8 @@ const AdminReservations = () => {
   const updateStatut = useMutation({
     mutationFn: ({ id, statut }: { id: string; statut: ReservationStatus }) =>
       updateAdminReservationStatus(id, statut, reservations?.find(r => r.id === id)?.chambre_id),
-    onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ["admin-reservations"] });
+    onSuccess: async () => {
+      await invalidateGroups(qc, ["RESERVATION_CHANGED"]);
       toast({ title: "Statut mis à jour ✅" });
     },
   });

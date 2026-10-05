@@ -15,7 +15,7 @@ const HeroSection = () => {
     <section className="relative min-h-screen flex items-center overflow-hidden">
       {/* Background photo avec overlay sombre */}
       <div className="absolute inset-0">
-        <img src={heroBg} alt="" className="w-full h-full object-cover" />
+        <img src={heroBg} alt="" className="w-full h-full object-cover" fetchpriority="high" />
         <div className="absolute inset-0 bg-black/65" />
       </div>
 

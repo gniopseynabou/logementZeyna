@@ -7,11 +7,11 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "@/hooks/useAuth";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import Index from "./pages/Index";
+import AuthLayout from "./components/auth/AuthLayout";
+import Login from "./pages/Login";
+import Register from "./pages/Register";
 
 // Lazy-loaded pages for code splitting
-const AuthLayout = lazy(() => import("./components/auth/AuthLayout"));
-const Login = lazy(() => import("./pages/Login"));
-const Register = lazy(() => import("./pages/Register"));
 const ForgotPassword = lazy(() => import("./pages/ForgotPassword"));
 const ResetPassword = lazy(() => import("./pages/ResetPassword"));
 const Logements = lazy(() => import("./pages/Logements"));
@@ -28,6 +28,7 @@ const NouveauLogement = lazy(() => import("./pages/bailleur/NouveauLogement"));
 const BailleurPaiements = lazy(() => import("./pages/bailleur/Paiements"));
 const AdminDashboard = lazy(() => import("./pages/admin/Dashboard"));
 const AdminLogements = lazy(() => import("./pages/admin/Logements"));
+const AdminNouveauLogement = lazy(() => import("./pages/admin/NouveauLogement"));
 const AdminBailleurs = lazy(() => import("./pages/admin/Bailleurs"));
 const AdminReservations = lazy(() => import("./pages/admin/Reservations"));
 const AdminPaiements = lazy(() => import("./pages/admin/Paiements"));
@@ -66,7 +67,7 @@ const App = () => (
         <TooltipProvider>
           <Toaster />
           <Sonner />
-          <BrowserRouter>
+          <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
           <Suspense fallback={<PageLoader />}>
             <Routes>
               {/* Public */}
@@ -99,6 +100,7 @@ const App = () => (
               {/* Admin */}
               <Route path="/admin" element={<ProtectedRoute allowedRoles={["admin"]}><AdminDashboard /></ProtectedRoute>} />
               <Route path="/admin/logements" element={<ProtectedRoute allowedRoles={["admin"]}><AdminLogements /></ProtectedRoute>} />
+              <Route path="/admin/logements/nouveau" element={<ProtectedRoute allowedRoles={["admin"]}><AdminNouveauLogement /></ProtectedRoute>} />
               <Route path="/admin/bailleurs" element={<ProtectedRoute allowedRoles={["admin"]}><AdminBailleurs /></ProtectedRoute>} />
               <Route path="/admin/reservations" element={<ProtectedRoute allowedRoles={["admin"]}><AdminReservations /></ProtectedRoute>} />
               <Route path="/admin/paiements" element={<ProtectedRoute allowedRoles={["admin"]}><AdminPaiements /></ProtectedRoute>} />

@@ -1,5 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { cancelStudentReservation, getStudentReservations } from "@/services/reservation-service";
+import { invalidateEtudiantData, invalidateGroup } from "@/lib/invalidate-helpers";
 import { useAuth } from "@/hooks/useAuth";
 import DashboardLayout from "@/components/dashboard/DashboardLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -21,8 +22,9 @@ const EtudiantReservations = () => {
 
   const cancelMutation = useMutation({
     mutationFn: cancelStudentReservation,
-    onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ["etudiant-reservations-full"] });
+    onSuccess: async () => {
+      if (user?.id) await invalidateEtudiantData(qc, user.id);
+      await invalidateGroup(qc, "RESERVATION_CHANGED");
       toast({ title: "Réservation annulée" });
     },
   });

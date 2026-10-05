@@ -17,6 +17,7 @@ interface NewLogementInput {
     nom: string;
     nombre_personnes: number;
     prix_bailleur: number;
+    prix_zeyna: number;
     caution: number;
     description: string;
   }>;
@@ -88,6 +89,7 @@ export const createLandlordLogement = async ({
       nom: chambre.nom,
       nombre_personnes: chambre.nombre_personnes,
       prix_bailleur: chambre.prix_bailleur,
+      prix_zeyna: chambre.prix_zeyna,
       caution: chambre.caution,
       description: chambre.description,
     }))

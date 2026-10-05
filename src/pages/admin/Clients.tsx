@@ -1,3 +1,4 @@
+import { invalidateGroup } from "@/lib/invalidate-helpers";
 // Page : Admin - Clients / Étudiants
 // Route : /admin/clients
 import { useState } from "react";
@@ -53,8 +54,8 @@ const AdminClients = () => {
   const toggleValidation = useMutation({
     mutationFn: ({ id, validated }: { id: string; validated: boolean }) =>
       updateAdminUserValidation(id, validated),
-    onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ["admin-all-users"] });
+    onSuccess: async () => {
+      await invalidateGroup(qc, "BAILLEUR_CHANGED");
       toast({ title: "Statut mis à jour" });
     },
     onError: (e) =>

@@ -1,15 +1,24 @@
+import { invalidateGroup } from "@/lib/invalidate-helpers";
+import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { getAdminBailleurs, updateBailleurValidation, type AdminBailleur } from "@/services/admin-bailleur-service";
+import { inviteUser } from "@/services/admin-user-service";
 import DashboardLayout from "@/components/dashboard/DashboardLayout";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Mail, Plus, Loader2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 const AdminBailleurs = () => {
   const { toast } = useToast();
   const qc = useQueryClient();
+  const [inviteEmail, setInviteEmail] = useState("");
+  const [isInviteOpen, setIsInviteOpen] = useState(false);
 
   const { data: bailleurs, isLoading, isError, error } = useQuery({
     queryKey: ["admin-bailleurs"],
@@ -19,8 +28,8 @@ const AdminBailleurs = () => {
   const toggleValidation = useMutation({
     mutationFn: ({ id, validated }: { id: string; validated: boolean }) =>
       updateBailleurValidation(id, validated),
-    onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ["admin-bailleurs"] });
+    onSuccess: async () => {
+      await invalidateGroup(qc, "BAILLEUR_CHANGED");
       toast({ title: "Statut mis à jour ✅" });
     },
     onError: (mutationError) => {
@@ -31,6 +40,21 @@ const AdminBailleurs = () => {
       });
     },
   });
+
+  const handleInvite = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!inviteEmail) return;
+    
+    try {
+      await inviteUser(inviteEmail, "bailleur");
+      await invalidateGroup(qc, "BAILLEUR_CHANGED");
+      toast({ title: "Invitation envoyée", description: `Un email a été envoyé à ${inviteEmail}` });
+      setInviteEmail("");
+      setIsInviteOpen(false);
+    } catch (err: any) {
+      toast({ title: "Erreur lors de l'envoi", description: err.message, variant: "destructive" });
+    }
+  };
 
   const enAttente = bailleurs?.filter(b => !b.is_validated) || [];
   const valides = bailleurs?.filter(b => b.is_validated) || [];
@@ -65,7 +89,42 @@ const AdminBailleurs = () => {
   return (
     <DashboardLayout>
       <div className="space-y-6">
-        <h1 className="font-serif text-2xl font-bold">Gestion des bailleurs</h1>
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+          <h1 className="font-serif text-2xl font-bold">Gestion des bailleurs</h1>
+          
+          <Dialog open={isInviteOpen} onOpenChange={setIsInviteOpen}>
+            <DialogTrigger asChild>
+              <Button className="bg-accent hover:bg-accent/90 text-white gap-2">
+                <Plus className="h-4 w-4" /> Inviter un bailleur
+              </Button>
+            </DialogTrigger>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle className="font-serif text-xl">Envoyer une invitation</DialogTitle>
+                <DialogDescription>
+                  Un lien d'inscription unique sera envoyé à cette adresse email.
+                  Ce lien permettra au bailleur de créer son mot de passe et de finaliser son profil.
+                </DialogDescription>
+              </DialogHeader>
+              <form onSubmit={handleInvite} className="space-y-4 mt-4">
+                <div className="space-y-2">
+                  <Label>Email du bailleur</Label>
+                  <Input 
+                    type="email" 
+                    placeholder="email@exemple.com" 
+                    value={inviteEmail} 
+                    onChange={(e) => setInviteEmail(e.target.value)}
+                    required
+                  />
+                </div>
+                <Button type="submit" className="w-full bg-accent hover:bg-accent/90 text-white">
+                  <Mail className="h-4 w-4 mr-2" /> Envoyer l'invitation
+                </Button>
+              </form>
+            </DialogContent>
+          </Dialog>
+        </div>
+
         {isLoading ? (
           <div className="space-y-4">{[1, 2, 3].map((item) => <div key={item} className="h-24 bg-muted animate-pulse rounded-xl" />)}</div>
         ) : isError ? (

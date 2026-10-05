@@ -36,3 +36,14 @@ export const updateAdminUserValidation = async (roleId: string, validated: boole
 
   if (error) throw error;
 };
+
+export const inviteUser = async (email: string, role: string) => {
+  const { data, error } = await supabase.functions.invoke('invite-user', {
+    body: { email, role, redirectTo: `${window.location.origin}/reset-password` }
+  });
+
+  if (error) throw error;
+  if (data?.error) throw new Error(data.error);
+
+  return data;
+};
