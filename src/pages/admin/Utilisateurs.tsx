@@ -1,3 +1,4 @@
+import { invalidateGroup } from "@/lib/invalidate-helpers";
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { getAdminUsers, updateAdminUserValidation, type AdminUser } from "@/services/admin-user-service";
@@ -32,8 +33,8 @@ const AdminUtilisateurs = () => {
   const toggleValidation = useMutation({
     mutationFn: ({ id, validated }: { id: string; validated: boolean }) =>
       updateAdminUserValidation(id, validated),
-    onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ["admin-all-users"] });
+    onSuccess: async () => {
+      await invalidateGroup(qc, "BAILLEUR_CHANGED");
       toast({ title: "Statut mis à jour ✅" });
     },
     onError: (mutationError) => {

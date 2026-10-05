@@ -1,8 +1,6 @@
+import { invalidateGroup } from "@/lib/invalidate-helpers";
 import { useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "@/hooks/useAuth";
-import { useQueryClient } from "@tanstack/react-query";
-import { invalidateGroups, invalidateBailleurData } from "@/lib/invalidate-helpers";
 import DashboardLayout from "@/components/dashboard/DashboardLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -12,18 +10,21 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { createLandlordLogement } from "@/services/logement-service";
 import { useToast } from "@/hooks/use-toast";
-import { Plus, Trash2, Upload, ImageIcon } from "lucide-react";
+import { Plus, Trash2, Upload, ArrowLeft, CheckCircle } from "lucide-react";
+import { useQueryClient } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 
 interface ChambreForm {
   nom: string;
   nombre_personnes: number;
   prix_bailleur: number;
+  prix_zeyna: number;
+  marge: number;
   caution: number;
   description: string;
 }
 
-const NouveauLogement = () => {
-  const { user } = useAuth();
+const AdminNouveauLogement = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const qc = useQueryClient();
@@ -39,26 +40,40 @@ const NouveauLogement = () => {
     ville: "Saint-Louis",
     type: "résidence",
     description: "",
-    conditions_electricite: "Éclairage et chauffe-eau inclus. Équipements supplémentaires à charge du propriétaire.",
+    conditions_electricite: "Éclairage et chauffe-eau inclus.",
     latitude: "",
     longitude: "",
   });
 
   const [chambres, setChambres] = useState<ChambreForm[]>([
-    { nom: "Chambre 1", nombre_personnes: 1, prix_bailleur: 15000, caution: 15000, description: "" },
+    { nom: "Chambre 1", nombre_personnes: 1, prix_bailleur: 15000, prix_zeyna: 16500, marge: 1500, caution: 15000, description: "" },
   ]);
 
   const addChambre = () => {
-    setChambres([...chambres, { nom: `Chambre ${chambres.length + 1}`, nombre_personnes: 1, prix_bailleur: 15000, caution: 15000, description: "" }]);
+    setChambres([...chambres, {
+      nom: `Chambre ${chambres.length + 1}`,
+      nombre_personnes: 1,
+      prix_bailleur: 15000,
+      prix_zeyna: 16500,
+      marge: 1500,
+      caution: 15000,
+      description: ""
+    }]);
   };
 
   const removeChambre = (index: number) => {
     if (chambres.length > 1) setChambres(chambres.filter((_, i) => i !== index));
   };
 
-  const updateChambre = (index: number, key: keyof ChambreForm, value: any) => {
+  const updateChambre = (index: number, key: keyof ChambreForm, value: string | number) => {
     const updated = [...chambres];
     (updated[index] as any)[key] = value;
+    
+    // Auto-calcul de la marge si prix_bailleur ou prix_zeyna change
+    if (key === "prix_bailleur" || key === "prix_zeyna") {
+      updated[index].marge = updated[index].prix_zeyna - updated[index].prix_bailleur;
+    }
+    
     setChambres(updated);
   };
 
@@ -85,12 +100,16 @@ const NouveauLogement = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!user) return;
-
     setSaving(true);
 
     try {
-      await createLandlordLogement({
+      // L'admin crée le logement et l'approuve immédiatement
+      // On récupère le premier bailleur disponible ou on crée le logement sans bailleur
+      // Pour l'admin, on peut utiliser son propre user ID comme propriétaire interne
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error("Non authentifié");
+
+      const logement = await createLandlordLogement({
         nom: form.nom,
         adresse: form.adresse,
         ville: form.ville,
@@ -105,10 +124,20 @@ const NouveauLogement = () => {
         onUploadingImages: setUploading,
       });
 
-      toast({ title: "Logement soumis ✅", description: "Votre logement sera visible après validation par l'administrateur Zeyna." });
-      navigate("/bailleur/logements");
-      if (user?.id) await invalidateBailleurData(qc, user.id);
-      await invalidateGroups(qc, ["LOGEMENT_CHANGED"]);
+      // L'admin valide le logement immédiatement
+      await supabase
+        .from("logements")
+        .update({ statut: "valide" })
+        .eq("id", logement.id);
+
+      // Invalider tous les caches liés aux logements
+      await invalidateGroup(qc, "LOGEMENT_CHANGED");
+
+      toast({
+        title: "Logement ajouté et validé ✅",
+        description: "Le logement est immédiatement visible dans le catalogue.",
+      });
+      navigate("/admin/logements");
     } catch (error) {
       toast({
         title: "Erreur lors de la création",
@@ -124,9 +153,21 @@ const NouveauLogement = () => {
   return (
     <DashboardLayout>
       <div className="max-w-2xl mx-auto space-y-6">
-        <h1 className="font-serif text-2xl font-bold">Ajouter un logement</h1>
+        <div className="flex items-center gap-4">
+          <Button variant="ghost" size="icon" onClick={() => navigate("/admin/logements")}>
+            <ArrowLeft className="h-5 w-5" />
+          </Button>
+          <div>
+            <h1 className="font-serif text-2xl font-bold">Ajouter un logement</h1>
+            <p className="text-sm text-muted-foreground flex items-center gap-1.5 mt-0.5">
+              <CheckCircle className="h-3.5 w-3.5 text-accent" />
+              Ce logement sera validé et publié immédiatement
+            </p>
+          </div>
+        </div>
 
         <form onSubmit={handleSubmit} className="space-y-6">
+          {/* Informations générales */}
           <Card className="border-0 shadow-premium">
             <CardHeader><CardTitle className="font-serif text-lg">Informations du logement</CardTitle></CardHeader>
             <CardContent className="space-y-4">
@@ -144,7 +185,7 @@ const NouveauLogement = () => {
                   <Input value={form.ville} onChange={(e) => setForm({ ...form, ville: e.target.value })} />
                 </div>
                 <div className="space-y-2">
-                  <Label>Type</Label>
+                  <Label>Type de bien</Label>
                   <Select value={form.type} onValueChange={(v) => setForm({ ...form, type: v })}>
                     <SelectTrigger><SelectValue /></SelectTrigger>
                     <SelectContent>
@@ -153,13 +194,14 @@ const NouveauLogement = () => {
                       <SelectItem value="chambre">Chambre</SelectItem>
                       <SelectItem value="villa">Villa</SelectItem>
                       <SelectItem value="appartement">Appartement</SelectItem>
+                      <SelectItem value="maison">Maison</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
               </div>
               <div className="space-y-2">
                 <Label>Description</Label>
-                <Textarea placeholder="Décrivez votre logement..." value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} rows={3} />
+                <Textarea placeholder="Décrivez le logement..." value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} rows={3} />
               </div>
               <div className="space-y-2">
                 <Label>Conditions d'électricité</Label>
@@ -178,19 +220,12 @@ const NouveauLogement = () => {
             </CardContent>
           </Card>
 
-          {/* Image Upload */}
+          {/* Photos */}
           <Card className="border-0 shadow-premium">
             <CardHeader><CardTitle className="font-serif text-lg">Photos du logement</CardTitle></CardHeader>
             <CardContent className="space-y-4">
-              <input
-                type="file"
-                accept="image/*"
-                multiple
-                ref={fileInputRef}
-                onChange={handleImageSelect}
-                className="hidden"
-              />
-              <div className="grid grid-cols-2 sm:grid-cols-2 sm:grid-cols-3 gap-3">
+              <input type="file" accept="image/*" multiple ref={fileInputRef} onChange={handleImageSelect} className="hidden" />
+              <div className="grid grid-cols-3 gap-3">
                 {imagePreviews.map((preview, i) => (
                   <div key={i} className="relative aspect-video rounded-lg overflow-hidden border">
                     <img src={preview} alt="" className="w-full h-full object-cover" />
@@ -214,26 +249,31 @@ const NouveauLogement = () => {
                   </button>
                 )}
               </div>
-              <p className="text-xs text-muted-foreground">Maximum 6 photos. Formats acceptés : JPG, PNG, WebP</p>
+              <p className="text-xs text-muted-foreground">Maximum 6 photos. Formats : JPG, PNG, WebP</p>
             </CardContent>
           </Card>
 
+          {/* Chambres / Unités */}
           <Card className="border-0 shadow-premium">
             <CardHeader className="flex flex-row items-center justify-between">
               <CardTitle className="font-serif text-lg">
-                {form.type === "studio" || form.type === "appartement" ? "Unités" : "Chambres"}
+                {form.type === "studio" || form.type === "appartement" ? "Unités" : "Chambres / Espaces"}
               </CardTitle>
-              <Button type="button" variant="outline" size="sm" onClick={addChambre}><Plus className="h-4 w-4 mr-1" /> Ajouter</Button>
+              <Button type="button" variant="outline" size="sm" onClick={addChambre}>
+                <Plus className="h-4 w-4 mr-1" /> Ajouter
+              </Button>
             </CardHeader>
             <CardContent className="space-y-4">
               {chambres.map((c, i) => (
-                <div key={i} className="p-4 border rounded-xl space-y-3">
+                <div key={i} className="p-4 border rounded-xl space-y-3 bg-muted/30">
                   <div className="flex items-center justify-between">
-                    <h4 className="font-medium">
-                      {form.type === "studio" || form.type === "appartement" ? `Unité ${i + 1}` : `Chambre ${i + 1}`}
+                    <h4 className="font-medium text-sm">
+                      {form.type === "studio" ? `Unité ${i + 1}` : `Chambre ${i + 1}`}
                     </h4>
                     {chambres.length > 1 && (
-                      <Button type="button" variant="ghost" size="icon" className="text-destructive" onClick={() => removeChambre(i)}><Trash2 className="h-4 w-4" /></Button>
+                      <Button type="button" variant="ghost" size="icon" className="text-destructive h-8 w-8" onClick={() => removeChambre(i)}>
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
                     )}
                   </div>
                   <div className="grid grid-cols-2 gap-3">
@@ -250,27 +290,34 @@ const NouveauLogement = () => {
                       <Input type="number" value={c.prix_bailleur} onChange={(e) => updateChambre(i, "prix_bailleur", Number(e.target.value))} />
                     </div>
                     <div className="space-y-1">
+                      <Label className="text-xs">Prix Zeyna (FCFA)</Label>
+                      <Input type="number" value={c.prix_zeyna} onChange={(e) => updateChambre(i, "prix_zeyna", Number(e.target.value))} />
+                    </div>
+                    <div className="space-y-1">
                       <Label className="text-xs">Caution (FCFA)</Label>
                       <Input type="number" value={c.caution} onChange={(e) => updateChambre(i, "caution", Number(e.target.value))} />
                     </div>
                   </div>
                   <div className="space-y-1">
                     <Label className="text-xs">Description</Label>
-                    <Input placeholder="Description de la chambre" value={c.description} onChange={(e) => updateChambre(i, "description", e.target.value)} />
+                    <Input placeholder="Description optionnelle" value={c.description} onChange={(e) => updateChambre(i, "description", e.target.value)} />
                   </div>
                 </div>
               ))}
             </CardContent>
           </Card>
 
-          <Button type="submit" className="w-full bg-gradient-gold text-accent-foreground shadow-gold" disabled={saving || uploading}>
-            {uploading ? "Upload des images..." : saving ? "Envoi en cours..." : "Soumettre le logement"}
+          <Button
+            type="submit"
+            className="w-full bg-accent hover:bg-accent/90 text-white h-12 text-base"
+            disabled={saving || uploading}
+          >
+            {uploading ? "Upload des photos en cours..." : saving ? "Publication en cours..." : "Publier le logement"}
           </Button>
-          <p className="text-xs text-center text-muted-foreground">Le logement sera visible après validation par l'administrateur</p>
         </form>
       </div>
     </DashboardLayout>
   );
 };
 
-export default NouveauLogement;
+export default AdminNouveauLogement;

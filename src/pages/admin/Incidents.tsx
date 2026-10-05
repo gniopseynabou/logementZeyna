@@ -1,3 +1,4 @@
+import { invalidateGroup } from "@/lib/invalidate-helpers";
 // Page : Admin - Incidents
 // Route : /admin/incidents
 import DashboardLayout from "@/components/dashboard/DashboardLayout";
@@ -55,8 +56,8 @@ const AdminIncidents = () => {
 
   const mutationStatut = useMutation({
     mutationFn: ({ id, statut }: { id: string; statut: IncidentStatut }) => updateIncidentStatut(id, statut),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["admin-incidents"] });
+    onSuccess: async () => {
+      await invalidateGroup(queryClient, "INCIDENT_CHANGED");
       toast({ title: "Statut mis à jour", description: "L'incident a été mis à jour avec succès." });
     },
     onError: (error) => {

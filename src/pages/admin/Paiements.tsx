@@ -1,3 +1,4 @@
+import { invalidateGroups } from "@/lib/invalidate-helpers";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { confirmAdminPayment, getAdminPayments } from "@/services/payment-service";
 import DashboardLayout from "@/components/dashboard/DashboardLayout";
@@ -32,8 +33,8 @@ const AdminPaiements = () => {
         roomName: details?.chambres?.nom ?? null,
       });
     },
-    onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ["admin-paiements"] });
+    onSuccess: async () => {
+      await invalidateGroups(qc, ["PAIEMENT_CHANGED"]);
       toast({ title: "Paiement confirmé ✅", description: "Réservation confirmée et chambre bloquée." });
     },
     onError: (error) => {

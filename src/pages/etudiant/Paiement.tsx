@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { useParams } from "react-router-dom";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useAuth } from "@/hooks/useAuth";
+import { invalidateEtudiantData, invalidateGroup } from "@/lib/invalidate-helpers";
 import { getReservationForPayment, PaymentMethod } from "@/services/payment-service";
 import DashboardLayout from "@/components/dashboard/DashboardLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -15,6 +16,7 @@ const PaiementPage = () => {
   const { reservationId } = useParams();
   const { user } = useAuth();
   const { toast } = useToast();
+  const qc = useQueryClient();
   const [methode, setMethode] = useState<PaymentMethod>("orange_money");
   const [processing, setProcessing] = useState(false);
 
@@ -30,6 +32,8 @@ const PaiementPage = () => {
 
     try {
       await new Promise(resolve => setTimeout(resolve, 2000));
+      if (user?.id) await invalidateEtudiantData(qc, user.id);
+      await invalidateGroup(qc, "PAIEMENT_CHANGED");
       toast({
         title: "Simulation terminée",
         description: "Aucun paiement n’a été effectué. Votre réservation reste en attente.",

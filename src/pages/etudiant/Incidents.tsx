@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useAuth } from "@/hooks/useAuth";
+import { invalidateEtudiantData, invalidateGroup } from "@/lib/invalidate-helpers";
 import { getEtudiantIncidents, createIncident, IncidentCategorie, IncidentPriorite } from "@/services/incident-service";
 import { getStudentDashboardReservations } from "@/services/reservation-service";
 import DashboardLayout from "@/components/dashboard/DashboardLayout";
@@ -43,8 +44,9 @@ const EtudiantIncidents = () => {
 
   const createMutation = useMutation({
     mutationFn: (data: any) => createIncident(data),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["etudiant-incidents", user?.id] });
+    onSuccess: async () => {
+      if (user?.id) await invalidateEtudiantData(queryClient, user.id);
+      await invalidateGroup(queryClient, "INCIDENT_CHANGED");
       toast({ title: "Incident signalé", description: "Votre signalement a été envoyé avec succès." });
       setIsDialogOpen(false);
       setTitre("");

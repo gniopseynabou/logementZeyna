@@ -1,3 +1,4 @@
+import { invalidateGroups } from "@/lib/invalidate-helpers";
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { getValidatedLogementsForTariffs, updateRoomTariff } from "@/services/logement-service";
@@ -20,8 +21,8 @@ const AdminTarifs = () => {
   const updatePrix = useMutation({
     mutationFn: ({ chambreId, prix_zeyna, marge }: { chambreId: string; prix_zeyna: number; marge: number }) =>
       updateRoomTariff(chambreId, prix_zeyna, marge),
-    onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ["admin-tarifs-logements"] });
+    onSuccess: async () => {
+      await invalidateGroups(qc, ["LOGEMENT_CHANGED"]);
       toast({ title: "Prix mis à jour ✅" });
     },
     onError: (mutationError) => {
