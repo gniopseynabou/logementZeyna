@@ -44,7 +44,7 @@ USING (
 
 CREATE POLICY "Les admins peuvent tout voir sur les incidents" 
 ON incidents FOR ALL 
-USING (public.has_role('admin', auth.uid()));
+USING (public.has_role(auth.uid(), 'admin'));
 
 
 CREATE TYPE reversement_statut AS ENUM ('en_attente', 'traite', 'annule');
@@ -70,7 +70,7 @@ USING (auth.uid() = bailleur_id);
 
 CREATE POLICY "Les admins peuvent tout faire sur les reversements" 
 ON reversements FOR ALL 
-USING (public.has_role('admin', auth.uid()));
+USING (public.has_role(auth.uid(), 'admin'));
 
 -- Ajouter un trigger pour updated_at sur incidents
 CREATE OR REPLACE FUNCTION update_incidents_updated_at()
