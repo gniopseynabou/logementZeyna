@@ -1,13 +1,18 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { requestPasswordReset } from "@/services/auth-service";
 import { useToast } from "@/hooks/use-toast";
-import { ArrowLeft, Mail } from "lucide-react";
-import logo from "@/assets/logo-zeyna.png";
+import { Mail, Loader2 } from "lucide-react";
+
+const itemVariants = {
+  hidden: { y: 10, opacity: 0 },
+  visible: { y: 0, opacity: 1, transition: { duration: 0.4, ease: [0.22, 1, 0.36, 1] } }
+};
 
 const ForgotPassword = () => {
   const [email, setEmail] = useState("");
@@ -40,46 +45,82 @@ const ForgotPassword = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-navy px-4 py-12">
-      <div className="w-full max-w-md">
-        <div className="text-center mb-8">
-          <Link to="/login" className="inline-flex items-center gap-2 text-primary-foreground/60 hover:text-accent transition-colors mb-6">
-            <ArrowLeft className="h-4 w-4" /> Retour à la connexion
-          </Link>
-          <div className="flex justify-center mb-4">
-            <img src={logo} alt="Zeyna" className="h-16 w-auto" />
-          </div>
-        </div>
+    <Card className="border-0 shadow-premium w-full bg-card overflow-hidden">
+      <div className="h-1 w-full bg-gradient-to-r from-accent/50 to-accent" />
+      <CardHeader className="pb-6">
+        <motion.div initial="hidden" animate="visible" variants={itemVariants}>
+          <CardTitle className="font-serif text-2xl">Mot de passe oublié</CardTitle>
+          <CardDescription className="mt-1.5">Entrez votre email pour recevoir un lien de réinitialisation</CardDescription>
+        </motion.div>
+      </CardHeader>
+      
+      <CardContent>
+        {sent ? (
+          <motion.div 
+            initial="hidden" animate="visible" variants={itemVariants} 
+            className="text-center py-8"
+          >
+            <div className="mx-auto w-16 h-16 bg-accent/10 rounded-full flex items-center justify-center mb-4 text-accent">
+              <Mail className="h-8 w-8" />
+            </div>
+            <p className="font-medium text-lg">Email envoyé !</p>
+            <p className="text-sm text-muted-foreground mt-2 max-w-[250px] mx-auto">
+              Vérifiez votre boîte mail et cliquez sur le lien de réinitialisation.
+            </p>
+            <Button asChild variant="outline" className="mt-6 w-full">
+              <Link to="/login">Retour à la connexion</Link>
+            </Button>
+          </motion.div>
+        ) : (
+          <motion.form 
+            onSubmit={handleReset} 
+            className="space-y-5"
+            initial="hidden"
+            animate="visible"
+            transition={{ staggerChildren: 0.1, delayChildren: 0.1 }}
+          >
+            <motion.div variants={itemVariants} className="space-y-2 group">
+              <Label htmlFor="email" className="transition-colors group-focus-within:text-accent">Email</Label>
+              <Input 
+                id="email" 
+                type="email" 
+                placeholder="votre@email.com" 
+                value={email} 
+                onChange={(e) => setEmail(e.target.value)} 
+                required 
+                className="transition-all duration-300 focus:border-accent focus:ring-1 focus:ring-accent"
+              />
+            </motion.div>
 
-        <Card className="border-0 shadow-premium">
-          <CardHeader>
-            <CardTitle className="font-serif text-xl">Mot de passe oublié</CardTitle>
-            <CardDescription>Entrez votre email pour recevoir un lien de réinitialisation</CardDescription>
-          </CardHeader>
-          <CardContent>
-            {sent ? (
-              <div className="text-center py-6">
-                <Mail className="h-12 w-12 text-accent mx-auto mb-4" />
-                <p className="font-medium">Email envoyé !</p>
-                <p className="text-sm text-muted-foreground mt-2">
-                  Vérifiez votre boîte mail et cliquez sur le lien de réinitialisation.
-                </p>
-              </div>
-            ) : (
-              <form onSubmit={handleReset} className="space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="email">Email</Label>
-                  <Input id="email" type="email" placeholder="votre@email.com" value={email} onChange={(e) => setEmail(e.target.value)} required />
-                </div>
-                <Button type="submit" className="w-full bg-gradient-gold text-accent-foreground" disabled={loading}>
-                  {loading ? "Envoi..." : "Envoyer le lien"}
-                </Button>
-              </form>
-            )}
-          </CardContent>
-        </Card>
-      </div>
-    </div>
+            <motion.div variants={itemVariants} className="pt-2">
+              <Button 
+                type="submit" 
+                className="w-full bg-accent hover:bg-accent/90 text-white rounded-sm h-11 relative overflow-hidden transition-all" 
+                disabled={loading}
+              >
+                {loading ? (
+                  <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex items-center justify-center gap-2">
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                    <span>Envoi en cours...</span>
+                  </motion.div>
+                ) : (
+                  "Envoyer le lien"
+                )}
+              </Button>
+            </motion.div>
+            
+            <motion.p 
+              className="text-center text-sm text-muted-foreground mt-6"
+              variants={itemVariants}
+            >
+              <Link to="/login" className="text-foreground font-medium hover:text-accent transition-colors">
+                Retour à la connexion
+              </Link>
+            </motion.p>
+          </motion.form>
+        )}
+      </CardContent>
+    </Card>
   );
 };
 
