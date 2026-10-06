@@ -38,6 +38,7 @@ const AdminIncidents = lazy(() => import("./pages/admin/Incidents"));
 const AdminReversements = lazy(() => import("./pages/admin/Reversements"));
 const AdminDocuments = lazy(() => import("./pages/admin/Documents"));
 const AdminClients = lazy(() => import("./pages/admin/Clients"));
+const SuperAdminDashboard = lazy(() => import("./pages/super-admin/Dashboard"));
 const ProfilePage = lazy(() => import("./pages/shared/Profile"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 
@@ -58,6 +59,7 @@ const queryClient = new QueryClient({
   },
 });
 
+import MaintenanceGuard from "./components/MaintenanceGuard";
 import { HelmetProvider } from "react-helmet-async";
 
 const App = () => (
@@ -68,8 +70,9 @@ const App = () => (
           <Toaster />
           <Sonner />
           <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
-          <Suspense fallback={<PageLoader />}>
-            <Routes>
+            <MaintenanceGuard>
+              <Suspense fallback={<PageLoader />}>
+                <Routes>
               {/* Public */}
               <Route path="/" element={<Index />} />
               <Route element={<AuthLayout />}>
@@ -111,10 +114,14 @@ const App = () => (
               <Route path="/admin/documents" element={<ProtectedRoute allowedRoles={["admin"]}><AdminDocuments /></ProtectedRoute>} />
               <Route path="/admin/clients" element={<ProtectedRoute allowedRoles={["admin"]}><AdminClients /></ProtectedRoute>} />
 
+              {/* Super-Admin */}
+              <Route path="/super-admin" element={<ProtectedRoute allowedRoles={["super_admin"]}><SuperAdminDashboard /></ProtectedRoute>} />
+
               <Route path="*" element={<NotFound />} />
             </Routes>
-          </Suspense>
-        </BrowserRouter>
+              </Suspense>
+            </MaintenanceGuard>
+          </BrowserRouter>
       </TooltipProvider>
     </AuthProvider>
   </QueryClientProvider>

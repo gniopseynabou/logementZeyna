@@ -1,6 +1,7 @@
 import { supabase } from "@/integrations/supabase/client";
-import type { AppRole } from "@/lib/permissions";
+import type { AppRole, RegistrationRole } from "@/lib/permissions";
 import type { Database } from "@/integrations/supabase/types";
+
 
 export type UserProfile = Database["public"]["Tables"]["profiles"]["Row"];
 
@@ -42,7 +43,7 @@ export interface SignInResult {
   role: AppRole | null;
 }
 
-export type RegistrationRole = Extract<AppRole, "etudiant" | "bailleur">;
+
 
 export const requestPasswordReset = async (email: string, redirectTo: string) => {
   const { error } = await supabase.auth.resetPasswordForEmail(email, { redirectTo });

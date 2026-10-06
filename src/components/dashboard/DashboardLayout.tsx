@@ -25,7 +25,12 @@ const DashboardLayout = ({ children }: { children: ReactNode }) => {
   const navigate = useNavigate();
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
-  const navItems: NavItem[] = role === "admin"
+  const navItems: NavItem[] = role === "super_admin"
+    ? [
+        { label: "Tableau de bord", href: "/super-admin", icon: <BarChart3 className="h-4 w-4" /> },
+        { label: "Profil", href: "/super-admin/profil", icon: <Settings className="h-4 w-4" /> }, // Redirige vers un profil partagé si nécessaire, ou on peut l'omettre. Pour l'instant, disons juste Tableau de bord
+      ]
+    : role === "admin"
     ? [
         { label: "Tableau de bord", href: "/admin", icon: <BarChart3 className="h-4 w-4" /> },
         { label: "Logements", href: "/admin/logements", icon: <Building className="h-4 w-4" /> },
