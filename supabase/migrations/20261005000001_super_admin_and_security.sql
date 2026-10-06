@@ -75,7 +75,7 @@ AS $$
   SELECT EXISTS (
     SELECT 1 FROM public.user_roles
     WHERE user_id = _user_id
-      AND role = 'super_admin'
+      AND role::text = 'super_admin'
       AND is_validated = true
   )
 $$;
@@ -94,7 +94,7 @@ AS $$
   SELECT EXISTS (
     SELECT 1 FROM public.user_roles
     WHERE user_id = _user_id
-      AND role IN ('admin', 'super_admin')
+      AND role::text IN ('admin', 'super_admin')
       AND is_validated = true
   )
 $$;
