@@ -23,18 +23,33 @@ export interface Incident {
 }
 
 export const getAdminIncidents = async (): Promise<Incident[]> => {
-  const { data, error } = await supabase
+  // Étape 1 : récupérer les incidents avec les jointures logement et chambre (FK directes valides)
+  const { data: incidents, error } = await supabase
     .from("incidents")
     .select(`
       *,
-      etudiant:profiles!incidents_etudiant_id_fkey(prenom, nom, telephone),
-      logement:logements!incidents_logement_id_fkey(nom, adresse),
-      chambre:chambres!incidents_chambre_id_fkey(nom)
+      logement:logements(nom, adresse),
+      chambre:chambres(nom)
     `)
     .order("created_at", { ascending: false });
 
   if (error) throw error;
-  return data || [];
+  if (!incidents?.length) return [];
+
+  // Étape 2 : récupérer les profils des étudiants séparément (etudiant_id → auth.users, pas profiles directement)
+  const etudiantIds = [...new Set(incidents.map(i => i.etudiant_id).filter(Boolean))];
+  const { data: profiles, error: profilesError } = await supabase
+    .from("profiles")
+    .select("user_id, prenom, nom, telephone")
+    .in("user_id", etudiantIds);
+
+  if (profilesError) throw profilesError;
+
+  // Étape 3 : assembler
+  return incidents.map(inc => ({
+    ...inc,
+    etudiant: profiles?.find(p => p.user_id === inc.etudiant_id),
+  })) as Incident[];
 };
 
 export const getEtudiantIncidents = async (etudiantId: string): Promise<Incident[]> => {
@@ -42,8 +57,8 @@ export const getEtudiantIncidents = async (etudiantId: string): Promise<Incident
     .from("incidents")
     .select(`
       *,
-      logement:logements!incidents_logement_id_fkey(nom, adresse),
-      chambre:chambres!incidents_chambre_id_fkey(nom)
+      logement:logements(nom, adresse),
+      chambre:chambres(nom)
     `)
     .eq("etudiant_id", etudiantId)
     .order("created_at", { ascending: false });

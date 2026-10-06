@@ -23,7 +23,7 @@ const AdminReversements = () => {
   const queryClient = useQueryClient();
 
   // Utilise les paiements confirmés comme base de calcul (avant peuplement de la table reversements)
-  const { data: paiements, isLoading } = useQuery({
+  const { data: paiements, isLoading, isError, error } = useQuery({
     queryKey: ["reversements-estimes"],
     queryFn: getReversementsEstimes,
   });
@@ -151,8 +151,18 @@ const AdminReversements = () => {
           </CardHeader>
           <CardContent className="p-0">
             {isLoading ? (
-              <div className="p-12 flex items-center justify-center gap-2 text-muted-foreground">
-                <Loader2 className="h-4 w-4 animate-spin" /> Chargement...
+              <div className="p-6 space-y-3">
+                {[1, 2, 3, 4].map((i) => (
+                  <div key={i} className="h-12 bg-muted animate-pulse rounded" />
+                ))}
+              </div>
+            ) : isError ? (
+              <div className="p-12 text-center" role="alert">
+                <ArrowLeftRight className="h-8 w-8 mx-auto mb-3 text-destructive opacity-60" />
+                <p className="font-medium">Impossible de charger les reversements.</p>
+                <p className="text-sm text-muted-foreground mt-1">
+                  {error instanceof Error ? error.message : "Une erreur inattendue est survenue."}
+                </p>
               </div>
             ) : filtered.length === 0 ? (
               <div className="py-12 text-center text-muted-foreground">

@@ -49,7 +49,7 @@ const AdminIncidents = () => {
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
-  const { data: incidents, isLoading } = useQuery({
+  const { data: incidents, isLoading, isError, error } = useQuery({
     queryKey: ["admin-incidents"],
     queryFn: getAdminIncidents,
   });
@@ -141,9 +141,24 @@ const AdminIncidents = () => {
 
         <Card className="border-0 shadow-premium overflow-hidden">
           {isLoading ? (
-            <div className="p-12 text-center text-muted-foreground flex items-center justify-center gap-2"><Loader2 className="h-4 w-4 animate-spin" /> Chargement...</div>
+            <div className="p-6 space-y-3">
+              {[1, 2, 3, 4].map((i) => (
+                <div key={i} className="h-14 bg-muted animate-pulse rounded" />
+              ))}
+            </div>
+          ) : isError ? (
+            <div className="p-12 text-center" role="alert">
+              <AlertTriangle className="h-8 w-8 mx-auto mb-3 text-destructive opacity-60" />
+              <p className="font-medium">Impossible de charger les incidents.</p>
+              <p className="text-sm text-muted-foreground mt-1">
+                {error instanceof Error ? error.message : "Une erreur inattendue est survenue."}
+              </p>
+            </div>
           ) : filteredIncidents.length === 0 ? (
-            <div className="p-12 text-center text-muted-foreground">Aucun incident trouvé.</div>
+            <div className="p-12 text-center text-muted-foreground">
+              <AlertTriangle className="h-8 w-8 mx-auto mb-3 opacity-30" />
+              <p>Aucun incident trouvé.</p>
+            </div>
           ) : (
             <div className="overflow-x-auto">
               <Table>

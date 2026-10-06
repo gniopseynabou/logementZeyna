@@ -206,7 +206,7 @@ const ProfilePage = () => {
                   id="telephone"
                   value={form.telephone}
                   onChange={(e) => setForm({ ...form, telephone: e.target.value })}
-                  placeholder="+221 77 000 00 00"
+                  placeholder="+221 78 432 64 86"
                 />
               </div>
               <div className="space-y-2">

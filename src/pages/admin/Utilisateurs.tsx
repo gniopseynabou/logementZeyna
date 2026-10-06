@@ -1,7 +1,11 @@
-import { invalidateGroup } from "@/lib/invalidate-helpers";
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { getAdminUsers, updateAdminUserValidation, type AdminUser } from "@/services/admin-user-service";
+import { 
+  getAdminUsers, 
+  updateAdminUserValidation, 
+  getAdminUserStats,
+  type AdminUser 
+} from "@/services/admin-user-service";
 import DashboardLayout from "@/components/dashboard/DashboardLayout";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -18,23 +22,44 @@ import {
 import { Search, Eye, UserCheck, UserX, Users, GraduationCap, Building, ShieldCheck } from "lucide-react";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
+import { PaginationControls } from "@/components/ui/PaginationControls";
+import { useDebounce } from "@/hooks/use-debounce";
 
 const AdminUtilisateurs = () => {
   const { toast } = useToast();
   const qc = useQueryClient();
+  
+  // États pour la pagination et filtres
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(20);
   const [search, setSearch] = useState("");
+  const [roleFilter, setRoleFilter] = useState("all");
+  
+  const debouncedSearch = useDebounce(search, 500);
   const [selectedUser, setSelectedUser] = useState<AdminUser | null>(null);
 
-  const { data: users, isLoading, isError, error } = useQuery({
-    queryKey: ["admin-all-users"],
-    queryFn: getAdminUsers,
+  // Requête pour les utilisateurs (paginée, gérée côté serveur)
+  const { data: usersData, isLoading, isError, error } = useQuery({
+    queryKey: ["admin-users", page, pageSize, debouncedSearch, roleFilter],
+    queryFn: () => getAdminUsers({
+      page,
+      pageSize,
+      search: debouncedSearch,
+      roleFilter
+    }),
+  });
+
+  // Requête pour les compteurs (légère, juste un count par rôle)
+  const { data: stats } = useQuery({
+    queryKey: ["admin-users-stats"],
+    queryFn: getAdminUserStats,
   });
 
   const toggleValidation = useMutation({
     mutationFn: ({ id, validated }: { id: string; validated: boolean }) =>
       updateAdminUserValidation(id, validated),
-    onSuccess: async () => {
-      await invalidateGroup(qc, "BAILLEUR_CHANGED");
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["admin-users"] });
       toast({ title: "Statut mis à jour ✅" });
     },
     onError: (mutationError) => {
@@ -46,32 +71,16 @@ const AdminUtilisateurs = () => {
     },
   });
 
-  const filtered = (role?: string) => {
-    let list = users || [];
-    if (role) list = list.filter((u) => u.role === role);
-    if (search.trim()) {
-      const s = search.toLowerCase();
-      list = list.filter(
-        (u) =>
-          u.profile?.nom?.toLowerCase().includes(s) ||
-          u.profile?.prenom?.toLowerCase().includes(s) ||
-          u.profile?.telephone?.toLowerCase().includes(s)
-      );
-    }
-    return list;
+  const handleTabChange = (value: string) => {
+    setRoleFilter(value);
+    setPage(1); // Reset page on filter change
   };
 
-  const roleCounts = {
-    all: (users || []).length,
-    etudiant: (users || []).filter((u) => u.role === "etudiant").length,
-    bailleur: (users || []).filter((u) => u.role === "bailleur").length,
-    admin: (users || []).filter((u) => u.role === "admin").length,
-  };
-
-  const roleConfig = {
+  const roleConfig: Record<string, { label: string; color: string; icon: JSX.Element }> = {
     etudiant: { label: "Étudiant", color: "bg-blue-100 text-blue-800", icon: <GraduationCap className="h-4 w-4" /> },
     bailleur: { label: "Bailleur", color: "bg-amber-100 text-amber-800", icon: <Building className="h-4 w-4" /> },
     admin: { label: "Admin", color: "bg-purple-100 text-purple-800", icon: <ShieldCheck className="h-4 w-4" /> },
+    super_admin: { label: "Super Admin", color: "bg-red-100 text-red-800", icon: <ShieldCheck className="h-4 w-4" /> },
   };
 
   const renderTable = (list: AdminUser[]) => (
@@ -92,7 +101,7 @@ const AdminUtilisateurs = () => {
           </TableHeader>
           <TableBody>
             {list.map((u) => {
-              const rc = roleConfig[u.role];
+              const rc = roleConfig[u.role] || roleConfig.etudiant;
               return (
                 <TableRow key={u.id}>
                   <TableCell>
@@ -127,7 +136,7 @@ const AdminUtilisateurs = () => {
                       <Button size="icon" variant="ghost" onClick={() => setSelectedUser(u)} title="Détails">
                         <Eye className="h-4 w-4" />
                       </Button>
-                      {u.role !== "admin" && (
+                      {(u.role !== "admin" && u.role !== "super_admin") && (
                         u.is_validated ? (
                           <Button size="icon" variant="ghost" className="text-destructive" disabled={toggleValidation.isPending} onClick={() => toggleValidation.mutate({ id: u.id, validated: false })} title="Désactiver">
                             <UserX className="h-4 w-4" />
@@ -149,7 +158,7 @@ const AdminUtilisateurs = () => {
     )
   );
 
-  const renderQueryState = (role?: string) => {
+  const renderContent = () => {
     if (isLoading) return <p className="p-8 text-center text-muted-foreground">Chargement...</p>;
     if (isError) {
       return (
@@ -161,10 +170,31 @@ const AdminUtilisateurs = () => {
         </div>
       );
     }
-    return renderTable(filtered(role));
+    
+    return (
+      <>
+        {renderTable(usersData?.data || [])}
+        {usersData && usersData.pagination.totalPages > 0 && (
+          <div className="border-t">
+            <PaginationControls
+              currentPage={usersData.pagination.page}
+              totalPages={usersData.pagination.totalPages}
+              pageSize={usersData.pagination.pageSize}
+              totalItems={usersData.pagination.total}
+              onPageChange={setPage}
+              onPageSizeChange={(size) => {
+                setPageSize(size);
+                setPage(1);
+              }}
+              isLoading={isLoading}
+            />
+          </div>
+        )}
+      </>
+    );
   };
 
-  const countLabel = (count: number) => isLoading || isError ? "-" : count;
+  const countLabel = (count?: number) => count !== undefined ? count : "-";
 
   return (
     <DashboardLayout>
@@ -172,7 +202,7 @@ const AdminUtilisateurs = () => {
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
             <h1 className="font-serif text-2xl font-bold">Gestion des utilisateurs</h1>
-            <p className="text-muted-foreground text-sm">{countLabel(roleCounts.all)} utilisateurs au total</p>
+            <p className="text-muted-foreground text-sm">{countLabel(stats?.all)} utilisateurs au total</p>
           </div>
           <div className="relative w-full sm:w-72">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
@@ -188,10 +218,10 @@ const AdminUtilisateurs = () => {
         {/* Stats cards */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
           {[
-            { label: "Total", count: countLabel(roleCounts.all), icon: <Users className="h-5 w-5" />, color: "text-primary" },
-            { label: "Étudiants", count: countLabel(roleCounts.etudiant), icon: <GraduationCap className="h-5 w-5" />, color: "text-blue-600" },
-            { label: "Bailleurs", count: countLabel(roleCounts.bailleur), icon: <Building className="h-5 w-5" />, color: "text-amber-600" },
-            { label: "Admins", count: countLabel(roleCounts.admin), icon: <ShieldCheck className="h-5 w-5" />, color: "text-purple-600" },
+            { label: "Total", count: countLabel(stats?.all), icon: <Users className="h-5 w-5" />, color: "text-primary" },
+            { label: "Étudiants", count: countLabel(stats?.etudiant), icon: <GraduationCap className="h-5 w-5" />, color: "text-blue-600" },
+            { label: "Bailleurs", count: countLabel(stats?.bailleur), icon: <Building className="h-5 w-5" />, color: "text-amber-600" },
+            { label: "Admins", count: countLabel(stats?.admin), icon: <ShieldCheck className="h-5 w-5" />, color: "text-purple-600" },
           ].map((s) => (
             <Card key={s.label} className="border-0 shadow-premium">
               <CardContent className="p-4 flex items-center gap-3">
@@ -205,34 +235,19 @@ const AdminUtilisateurs = () => {
           ))}
         </div>
 
-        <Tabs defaultValue="tous">
+        <Tabs value={roleFilter} onValueChange={handleTabChange}>
           <TabsList className="flex-wrap">
-            <TabsTrigger value="tous">Tous ({countLabel(roleCounts.all)})</TabsTrigger>
-            <TabsTrigger value="etudiants">Étudiants ({countLabel(roleCounts.etudiant)})</TabsTrigger>
-            <TabsTrigger value="bailleurs">Bailleurs ({countLabel(roleCounts.bailleur)})</TabsTrigger>
-            <TabsTrigger value="admins">Admins ({countLabel(roleCounts.admin)})</TabsTrigger>
+            <TabsTrigger value="all">Tous ({countLabel(stats?.all)})</TabsTrigger>
+            <TabsTrigger value="etudiant">Étudiants ({countLabel(stats?.etudiant)})</TabsTrigger>
+            <TabsTrigger value="bailleur">Bailleurs ({countLabel(stats?.bailleur)})</TabsTrigger>
+            <TabsTrigger value="admin">Admins ({countLabel(stats?.admin)})</TabsTrigger>
           </TabsList>
 
-          <TabsContent value="tous" className="mt-4">
+          <div className="mt-4">
             <Card className="border-0 shadow-premium">
-              <CardContent className="p-0 sm:p-2">{renderQueryState()}</CardContent>
+              <CardContent className="p-0 sm:p-2">{renderContent()}</CardContent>
             </Card>
-          </TabsContent>
-          <TabsContent value="etudiants" className="mt-4">
-            <Card className="border-0 shadow-premium">
-              <CardContent className="p-0 sm:p-2">{renderQueryState("etudiant")}</CardContent>
-            </Card>
-          </TabsContent>
-          <TabsContent value="bailleurs" className="mt-4">
-            <Card className="border-0 shadow-premium">
-              <CardContent className="p-0 sm:p-2">{renderQueryState("bailleur")}</CardContent>
-            </Card>
-          </TabsContent>
-          <TabsContent value="admins" className="mt-4">
-            <Card className="border-0 shadow-premium">
-              <CardContent className="p-0 sm:p-2">{renderQueryState("admin")}</CardContent>
-            </Card>
-          </TabsContent>
+          </div>
         </Tabs>
       </div>
 
@@ -250,8 +265,8 @@ const AdminUtilisateurs = () => {
                 </div>
                 <div>
                   <p className="font-semibold text-lg">{selectedUser.profile?.prenom} {selectedUser.profile?.nom}</p>
-                  <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium ${roleConfig[selectedUser.role].color}`}>
-                    {roleConfig[selectedUser.role].icon} {roleConfig[selectedUser.role].label}
+                  <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium ${roleConfig[selectedUser.role]?.color}`}>
+                    {roleConfig[selectedUser.role]?.icon} {roleConfig[selectedUser.role]?.label}
                   </span>
                 </div>
               </div>
@@ -273,7 +288,7 @@ const AdminUtilisateurs = () => {
                 </div>
               </div>
 
-              {selectedUser.role !== "admin" && (
+              {(selectedUser.role !== "admin" && selectedUser.role !== "super_admin") && (
                 <div className="pt-2 border-t">
                   {selectedUser.is_validated ? (
                     <Button

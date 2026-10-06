@@ -104,23 +104,58 @@ export const createReversement = async (
  * Utilisé en fallback si la table reversements n'est pas encore peuplée.
  */
 export const getReversementsEstimes = async () => {
-  const { data, error } = await supabase
+  // Étape 1 : paiements confirmés avec jointure vers logements/chambres
+  const { data: paiements, error } = await supabase
     .from("paiements")
     .select(`
       id,
       montant,
-      statut,
+      est_confirme,
       created_at,
       reservations(
         etudiant_id,
         logement_id,
         chambres(nom, prix_bailleur, prix_zeyna),
-        logements(nom, bailleur_id, bailleur:profiles!logements_bailleur_id_fkey(prenom, nom))
+        logements(nom, bailleur_id)
       )
     `)
-    .eq("statut", "confirme")
+    .eq("est_confirme", true)
     .order("created_at", { ascending: false });
 
   if (error) throw error;
-  return data || [];
+  if (!paiements?.length) return [];
+
+  // Étape 2 : récupérer les profils des bailleurs séparément
+  const bailleurIds = [...new Set(
+    paiements
+      .map(p => (p as any).reservations?.logement_id ? (p as any).reservations?.logements?.bailleur_id : null)
+      .filter(Boolean)
+  )];
+
+  let bailleurProfiles: { user_id: string; prenom: string; nom: string }[] = [];
+  if (bailleurIds.length > 0) {
+    const { data: profiles } = await supabase
+      .from("profiles")
+      .select("user_id, prenom, nom")
+      .in("user_id", bailleurIds);
+    bailleurProfiles = profiles || [];
+  }
+
+  // Étape 3 : assembler — injecter le profil bailleur dans logements
+  return paiements.map(p => {
+    const res = (p as any).reservations;
+    const bailleurId = res?.logements?.bailleur_id;
+    const bailleur = bailleurProfiles.find(b => b.user_id === bailleurId);
+    return {
+      ...p,
+      reservations: res
+        ? {
+            ...res,
+            logements: res.logements
+              ? { ...res.logements, bailleur }
+              : res.logements,
+          }
+        : res,
+    };
+  });
 };

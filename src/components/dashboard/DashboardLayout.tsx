@@ -7,7 +7,7 @@ import logo from "@/assets/logo-zeyna.png";
 import {
   Home, Building, Users, CreditCard, FileText, Settings, LogOut,
   Menu, X, BarChart3, CheckCircle, UserCheck, BookOpen, GraduationCap,
-  TrendingUp, ArrowLeftRight, AlertTriangle
+  TrendingUp, ArrowLeftRight, AlertTriangle, ShieldAlert
 } from "lucide-react";
 import { getRoleLabel } from "@/lib/permissions";
 
@@ -28,7 +28,7 @@ const DashboardLayout = ({ children }: { children: ReactNode }) => {
   const navItems: NavItem[] = role === "super_admin"
     ? [
         { label: "Tableau de bord", href: "/super-admin", icon: <BarChart3 className="h-4 w-4" /> },
-        { label: "Profil", href: "/super-admin/profil", icon: <Settings className="h-4 w-4" /> }, // Redirige vers un profil partagé si nécessaire, ou on peut l'omettre. Pour l'instant, disons juste Tableau de bord
+        { label: "Journal d'audit", href: "/super-admin/audit-logs", icon: <ShieldAlert className="h-4 w-4" /> },
       ]
     : role === "admin"
     ? [

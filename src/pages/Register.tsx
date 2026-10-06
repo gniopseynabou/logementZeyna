@@ -95,7 +95,7 @@ const Register = () => {
 
           <motion.div variants={itemVariants} className="space-y-2 group">
             <Label htmlFor="telephone" className="transition-colors group-focus-within:text-accent">Téléphone</Label>
-            <Input id="telephone" placeholder="+221 77 000 00 00" value={form.telephone} onChange={(e) => update("telephone", e.target.value)} className="transition-all duration-300 focus:border-accent focus:ring-1 focus:ring-accent" />
+            <Input id="telephone" placeholder="+221 78 432 64 86" value={form.telephone} onChange={(e) => update("telephone", e.target.value)} className="transition-all duration-300 focus:border-accent focus:ring-1 focus:ring-accent" />
           </motion.div>
 
           <motion.div variants={itemVariants} className="grid grid-cols-2 gap-3">

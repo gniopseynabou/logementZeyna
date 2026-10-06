@@ -33,14 +33,54 @@ export const cancelStudentReservation = async (reservationId: string) => {
   if (error) throw error;
 };
 
-export const getAdminReservations = async () => {
-  const { data, error } = await supabase
+import type { PaginatedResponse } from "./admin-user-service";
+
+export interface GetReservationsParams {
+  page?: number;
+  pageSize?: number;
+  statusFilter?: string; // 'all' | 'en_attente' | 'confirmee' | 'annulee'
+}
+
+export const getAdminReservations = async ({
+  page = 1,
+  pageSize = 20,
+  statusFilter = "all",
+}: GetReservationsParams = {}): Promise<PaginatedResponse<any>> => {
+  const from = (page - 1) * pageSize;
+  const to = from + pageSize - 1;
+
+  let query = supabase
     .from("reservations")
-    .select("*, logements(nom), chambres(nom)")
+    .select("*, logements(nom), chambres(nom)", { count: "exact" });
+
+  if (statusFilter !== "all") {
+    query = query.eq("statut", statusFilter);
+  }
+
+  const { data, count, error } = await query
+    .range(from, to)
     .order("created_at", { ascending: false });
 
   if (error) throw error;
-  return data ?? [];
+
+  const total = count || 0;
+  const totalPages = Math.ceil(total / pageSize);
+
+  return {
+    data: data || [],
+    pagination: { page, pageSize, total, totalPages },
+  };
+};
+
+export const getAdminReservationStats = async () => {
+  const { data, error } = await supabase.from("reservations").select("statut");
+  if (error) throw error;
+  return {
+    all: data.length,
+    en_attente: data.filter((d) => d.statut === "en_attente").length,
+    confirmee: data.filter((d) => d.statut === "confirmee").length,
+    annulee: data.filter((d) => d.statut === "annulee").length,
+  };
 };
 
 export const updateAdminReservationStatus = async (

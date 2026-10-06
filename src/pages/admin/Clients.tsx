@@ -3,7 +3,7 @@ import { invalidateGroup } from "@/lib/invalidate-helpers";
 // Route : /admin/clients
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { getAdminUsers } from "@/services/admin-user-service";
+import { getAdminUsers, getAdminUserStats } from "@/services/admin-user-service";
 import DashboardLayout from "@/components/dashboard/DashboardLayout";
 import SEOHead from "@/components/SEOHead";
 import { Card, CardContent } from "@/components/ui/card";
@@ -39,42 +39,48 @@ import type { AdminUser } from "@/services/admin-user-service";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { updateAdminUserValidation } from "@/services/admin-user-service";
 import { useToast } from "@/hooks/use-toast";
+import { PaginationControls } from "@/components/ui/PaginationControls";
+import { useDebounce } from "@/hooks/use-debounce";
 
 const AdminClients = () => {
   const { toast } = useToast();
   const qc = useQueryClient();
+  
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(20);
   const [search, setSearch] = useState("");
+  const debouncedSearch = useDebounce(search, 500);
+  
   const [selectedClient, setSelectedClient] = useState<AdminUser | null>(null);
 
-  const { data: users, isLoading, isError, error } = useQuery({
-    queryKey: ["admin-all-users"],
-    queryFn: getAdminUsers,
+  const { data: usersData, isLoading, isError, error } = useQuery({
+    queryKey: ["admin-users", page, pageSize, debouncedSearch, "etudiant"],
+    queryFn: () => getAdminUsers({
+      page,
+      pageSize,
+      search: debouncedSearch,
+      roleFilter: "etudiant" // On ne récupère que les étudiants (clients)
+    }),
+  });
+
+  const { data: stats } = useQuery({
+    queryKey: ["admin-users-stats"],
+    queryFn: getAdminUserStats,
   });
 
   const toggleValidation = useMutation({
     mutationFn: ({ id, validated }: { id: string; validated: boolean }) =>
       updateAdminUserValidation(id, validated),
     onSuccess: async () => {
-      await invalidateGroup(qc, "BAILLEUR_CHANGED");
+      await invalidateGroup(qc, "BAILLEUR_CHANGED"); // Réinvalider si nécessaire
+      qc.invalidateQueries({ queryKey: ["admin-users"] });
       toast({ title: "Statut mis à jour" });
     },
     onError: (e) =>
       toast({ title: "Erreur", description: e.message, variant: "destructive" }),
   });
 
-  const etudiants = (users || []).filter((u) => u.role === "etudiant");
-  const filtered = etudiants.filter((u) => {
-    if (!search.trim()) return true;
-    const s = search.toLowerCase();
-    return (
-      u.profile?.nom?.toLowerCase().includes(s) ||
-      u.profile?.prenom?.toLowerCase().includes(s) ||
-      u.profile?.telephone?.toLowerCase().includes(s)
-    );
-  });
-
-  const actifs = filtered.filter((u) => u.is_validated).length;
-  const enAttente = filtered.filter((u) => !u.is_validated).length;
+  const clients = usersData?.data || [];
 
   return (
     <DashboardLayout>
@@ -92,7 +98,7 @@ const AdminClients = () => {
               Clients &amp; Étudiants
             </h1>
             <p className="text-muted-foreground text-sm">
-              {isLoading || isError ? "-" : `${etudiants.length} client(s) enregistré(s)`}
+              {stats?.etudiant ?? "-"} client(s) enregistré(s)
             </p>
           </div>
           <Button variant="outline" className="w-full sm:w-auto">
@@ -102,21 +108,15 @@ const AdminClients = () => {
         </div>
 
         {/* Métriques */}
-        <div className="grid grid-cols-3 gap-4">
-          {[
-            { label: "Total", value: isLoading ? "-" : etudiants.length, color: "text-primary" },
-            { label: "Actifs", value: isLoading ? "-" : actifs, color: "text-green-600" },
-            { label: "En attente", value: isLoading ? "-" : enAttente, color: "text-amber-600" },
-          ].map((s) => (
-            <Card key={s.label} className="border-0 shadow-premium">
-              <CardContent className="p-4">
-                <p className={`text-2xl font-bold font-ui ${s.color}`}>
-                  {s.value}
-                </p>
-                <p className="text-xs text-muted-foreground mt-1">{s.label}</p>
-              </CardContent>
-            </Card>
-          ))}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <Card className="border-0 shadow-premium">
+            <CardContent className="p-4">
+              <p className="text-2xl font-bold font-ui text-primary">
+                {stats?.etudiant ?? "-"}
+              </p>
+              <p className="text-xs text-muted-foreground mt-1">Total Étudiants</p>
+            </CardContent>
+          </Card>
         </div>
 
         {/* Recherche */}
@@ -146,7 +146,7 @@ const AdminClients = () => {
                   {error instanceof Error ? error.message : "Erreur inattendue."}
                 </p>
               </div>
-            ) : filtered.length === 0 ? (
+            ) : clients.length === 0 ? (
               <div className="py-12 text-center text-muted-foreground">
                 <GraduationCap className="h-8 w-8 mx-auto mb-3 opacity-40" />
                 <p>Aucun client trouvé</p>
@@ -164,7 +164,7 @@ const AdminClients = () => {
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {filtered.map((u) => (
+                    {clients.map((u) => (
                       <TableRow key={u.id}>
                         <TableCell>
                           <div className="flex items-center gap-3">
@@ -242,6 +242,24 @@ const AdminClients = () => {
                     ))}
                   </TableBody>
                 </Table>
+              </div>
+            )}
+            
+            {/* Pagination Controls */}
+            {usersData && usersData.pagination.totalPages > 0 && (
+              <div className="border-t">
+                <PaginationControls
+                  currentPage={usersData.pagination.page}
+                  totalPages={usersData.pagination.totalPages}
+                  pageSize={usersData.pagination.pageSize}
+                  totalItems={usersData.pagination.total}
+                  onPageChange={setPage}
+                  onPageSizeChange={(size) => {
+                    setPageSize(size);
+                    setPage(1);
+                  }}
+                  isLoading={isLoading}
+                />
               </div>
             )}
           </CardContent>

@@ -39,6 +39,7 @@ const AdminReversements = lazy(() => import("./pages/admin/Reversements"));
 const AdminDocuments = lazy(() => import("./pages/admin/Documents"));
 const AdminClients = lazy(() => import("./pages/admin/Clients"));
 const SuperAdminDashboard = lazy(() => import("./pages/super-admin/Dashboard"));
+const SuperAdminAuditLogs = lazy(() => import("./pages/super-admin/AuditLogs"));
 const ProfilePage = lazy(() => import("./pages/shared/Profile"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 
@@ -116,6 +117,7 @@ const App = () => (
 
               {/* Super-Admin */}
               <Route path="/super-admin" element={<ProtectedRoute allowedRoles={["super_admin"]}><SuperAdminDashboard /></ProtectedRoute>} />
+              <Route path="/super-admin/audit-logs" element={<ProtectedRoute allowedRoles={["super_admin"]}><SuperAdminAuditLogs /></ProtectedRoute>} />
 
               <Route path="*" element={<NotFound />} />
             </Routes>

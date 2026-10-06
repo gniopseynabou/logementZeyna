@@ -55,14 +55,59 @@ export const getLandlordPaymentReport = async (landlordId: string) => {
   return { paiements: paymentRows, total };
 };
 
-export const getAdminPayments = async () => {
-  const { data, error } = await supabase
+import type { PaginatedResponse } from "./admin-user-service";
+
+export interface GetPaymentsParams {
+  page?: number;
+  pageSize?: number;
+  statusFilter?: string; // 'all' | 'true' | 'false'
+}
+
+export const getAdminPayments = async ({
+  page = 1,
+  pageSize = 20,
+  statusFilter = "all",
+}: GetPaymentsParams = {}): Promise<PaginatedResponse<any>> => {
+  const from = (page - 1) * pageSize;
+  const to = from + pageSize - 1;
+
+  let query = supabase
     .from("paiements")
-    .select("*, reservations(logements(nom), chambres(nom))")
+    .select("*, reservations(logements(nom), chambres(nom))", { count: "exact" });
+
+  if (statusFilter !== "all") {
+    query = query.eq("est_confirme", statusFilter === "true");
+  }
+
+  const { data, count, error } = await query
+    .range(from, to)
     .order("created_at", { ascending: false });
 
   if (error) throw error;
-  return data ?? [];
+
+  const total = count || 0;
+  const totalPages = Math.ceil(total / pageSize);
+
+  return {
+    data: data || [],
+    pagination: {
+      page,
+      pageSize,
+      total,
+      totalPages,
+    },
+  };
+};
+
+export const getAdminPaymentStats = async () => {
+  const { data, error } = await supabase.from("paiements").select("est_confirme");
+  if (error) throw error;
+
+  return {
+    all: data.length,
+    confirme: data.filter((d) => d.est_confirme).length,
+    en_attente: data.filter((d) => !d.est_confirme).length,
+  };
 };
 
 interface ConfirmAdminPaymentInput {
