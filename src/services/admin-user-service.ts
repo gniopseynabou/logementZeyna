@@ -125,11 +125,23 @@ export const updateAdminUserValidation = async (roleId: string, validated: boole
 };
 
 export const inviteUser = async (email: string, role: string) => {
-  const { data, error } = await supabase.functions.invoke('invite-user', {
+  const { data, error } = await supabase.functions.invoke("invite-user", {
     body: { email, role, redirectTo: `${window.location.origin}/reset-password` }
   });
 
-  if (error) throw error;
+  if (error) {
+    let customMessage = error.message;
+    if ("context" in error && error.context && typeof (error.context as Response).clone === "function") {
+      try {
+        const body = await (error.context as Response).clone().json();
+        if (body?.error) customMessage = body.error;
+      } catch {
+        // Fallback to error.message if context parsing fails
+      }
+    }
+    throw new Error(customMessage);
+  }
+
   if (data?.error) throw new Error(data.error);
 
   return data;

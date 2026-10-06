@@ -17,9 +17,15 @@ import { getAdminUsers, updateAdminUserValidation } from "./admin-user-service";
 describe("admin user service", () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    const mockQueryBuilder = {
+      eq: vi.fn().mockReturnThis(),
+      in: vi.fn().mockReturnThis(),
+      range: vi.fn().mockReturnThis(),
+      order: mockRoleQuery,
+    };
     mockFrom.mockImplementation((table: string) => table === "profiles"
       ? { select: () => ({ in: mockProfilesIn }) }
-      : { select: () => mockRoleQuery(), update: mockUpdate });
+      : { select: () => mockQueryBuilder, update: mockUpdate });
     mockUpdate.mockReturnValue({ eq: mockUpdateEq });
   });
 
@@ -32,10 +38,13 @@ describe("admin user service", () => {
     mockRoleQuery.mockResolvedValue({ data: roles, error: null });
     mockProfilesIn.mockResolvedValue({ data: profiles, error: null });
 
-    await expect(getAdminUsers()).resolves.toEqual([
-      { ...roles[0], profile: profiles[0] },
-      { ...roles[1], profile: profiles[1] },
-    ]);
+    await expect(getAdminUsers()).resolves.toEqual({
+      data: [
+        { ...roles[0], profile: profiles[0] },
+        { ...roles[1], profile: profiles[1] },
+      ],
+      pagination: { page: 1, pageSize: 20, total: 0, totalPages: 0 },
+    });
     expect(mockFrom).toHaveBeenCalledWith("user_roles");
     expect(mockFrom).toHaveBeenCalledWith("profiles");
     expect(mockProfilesIn).toHaveBeenCalledWith("user_id", ["user-1", "user-2"]);
@@ -44,7 +53,10 @@ describe("admin user service", () => {
   it("returns an empty list without querying profiles when there are no roles", async () => {
     mockRoleQuery.mockResolvedValue({ data: [], error: null });
 
-    await expect(getAdminUsers()).resolves.toEqual([]);
+    await expect(getAdminUsers()).resolves.toEqual({
+      data: [],
+      pagination: { page: 1, pageSize: 20, total: 0, totalPages: 0 },
+    });
     expect(mockProfilesIn).not.toHaveBeenCalled();
   });
 

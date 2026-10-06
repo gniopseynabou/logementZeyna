@@ -45,7 +45,12 @@ describe("admin payment service", () => {
       if (table === "contrats") return { insert: mockContractInsert };
       return { update: mockReservationUpdate, select: mockReservationSelect };
     });
-    mockSelect.mockReturnValue({ order: mockOrder });
+    const mockQueryBuilder = {
+      eq: vi.fn().mockReturnThis(),
+      range: vi.fn().mockReturnThis(),
+      order: mockOrder,
+    };
+    mockSelect.mockReturnValue(mockQueryBuilder);
     mockPaymentUpdate.mockReturnValue({ eq: mockPaymentEq });
     mockReservationUpdate.mockReturnValue({ eq: mockReservationUpdateEq });
     mockReservationSelect.mockReturnValue({ eq: mockReservationEq });
@@ -62,7 +67,10 @@ describe("admin payment service", () => {
     const data = [{ id: "payment-1" }];
     mockOrder.mockResolvedValue({ data, error: null });
 
-    await expect(getAdminPayments()).resolves.toBe(data);
+    await expect(getAdminPayments()).resolves.toEqual({
+      data,
+      pagination: { page: 1, pageSize: 20, total: 0, totalPages: 0 },
+    });
     expect(mockFrom).toHaveBeenCalledWith("paiements");
     expect(mockOrder).toHaveBeenCalledWith("created_at", { ascending: false });
 

@@ -24,7 +24,12 @@ describe("reservation-service", () => {
       select: mockSelect,
       update: table === "chambres" ? mockRoomUpdate : mockUpdate,
     }));
-    mockSelect.mockReturnValue({ eq: mockEq, order: mockOrder });
+    const mockQueryBuilder = {
+      eq: mockEq,
+      range: vi.fn().mockReturnThis(),
+      order: mockOrder,
+    };
+    mockSelect.mockReturnValue(mockQueryBuilder);
     mockEq.mockReturnValue({ order: mockOrder });
     mockUpdate.mockReturnValue({ eq: mockUpdateEq });
     mockRoomUpdate.mockReturnValue({ eq: mockRoomUpdateEq });
@@ -62,8 +67,11 @@ describe("reservation-service", () => {
     mockOrder.mockResolvedValue({ data, error: null });
 
     const { getAdminReservations } = await import("./reservation-service");
-    await expect(getAdminReservations()).resolves.toBe(data);
-    expect(mockSelect).toHaveBeenCalledWith("*, logements(nom), chambres(nom)");
+    await expect(getAdminReservations()).resolves.toEqual({
+      data,
+      pagination: { page: 1, pageSize: 20, total: 0, totalPages: 0 },
+    });
+    expect(mockSelect).toHaveBeenCalledWith("*, logements(nom), chambres(nom)", { count: "exact" });
     expect(mockOrder).toHaveBeenCalledWith("created_at", { ascending: false });
   });
 
