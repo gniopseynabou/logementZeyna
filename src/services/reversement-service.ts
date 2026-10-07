@@ -141,7 +141,7 @@ export const getReversementsEstimes = async () => {
     bailleurProfiles = profiles || [];
   }
 
-  // Étape 3 : assembler — injecter le profil bailleur dans logements
+  // Étape 3 : assembler - injecter le profil bailleur dans logements
   return paiements.map(p => {
     const res = (p as any).reservations;
     const bailleurId = res?.logements?.bailleur_id;

@@ -163,3 +163,32 @@ export const getAdminUserStats = async () => {
   
   return stats;
 };
+
+/**
+ * Met à jour le profil (nom, prénom, téléphone) d'un utilisateur.
+ * Identifié par son user_id (clé de la table profiles).
+ */
+export const updateAdminUserProfile = async (
+  userId: string,
+  updates: { nom?: string; prenom?: string; telephone?: string }
+) => {
+  const { error } = await supabase
+    .from("profiles")
+    .update(updates)
+    .eq("user_id", userId);
+
+  if (error) throw error;
+};
+
+/**
+ * Révocation logique d'un utilisateur : is_validated = false.
+ * N'efface pas le compte Supabase Auth (opération irréversible nécessitant le service role).
+ */
+export const revokeAdminUser = async (roleId: string) => {
+  const { error } = await supabase
+    .from("user_roles")
+    .update({ is_validated: false })
+    .eq("id", roleId);
+
+  if (error) throw error;
+};

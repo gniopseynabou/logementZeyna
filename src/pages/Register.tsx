@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { registerUser, type RegistrationRole } from "@/services/auth-service";
 import { useToast } from "@/hooks/use-toast";
 import { Eye, EyeOff, Loader2 } from "lucide-react";
@@ -40,14 +41,17 @@ const Register = () => {
         nom: form.nom,
         prenom: form.prenom,
         telephone: form.telephone,
-        role: "etudiant", // Seuls les locataires peuvent s'inscrire publiquement
+        role: "etudiant", // Seuls les locataires s'inscrivent ici
         redirectTo: `${window.location.origin}/login`,
       });
 
       if (error) {
         toast({ title: "Erreur d'inscription", description: error.message, variant: "destructive" });
       } else {
-        toast({ title: "Inscription réussie !", description: "Vérifiez votre email pour confirmer votre compte." });
+        toast({ 
+          title: "Inscription réussie !", 
+          description: "Vérifiez votre email pour confirmer votre compte." 
+        });
         navigate("/login");
       }
     } finally {
@@ -75,7 +79,6 @@ const Register = () => {
           animate="visible"
           transition={{ staggerChildren: 0.05, delayChildren: 0.1 }}
         >
-
 
           <motion.div variants={itemVariants} className="grid grid-cols-2 gap-3 pt-2">
             <div className="space-y-2 group">

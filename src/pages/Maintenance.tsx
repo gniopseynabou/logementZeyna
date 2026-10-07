@@ -15,7 +15,7 @@ const MaintenancePage = () => {
 
   // Définir le statut HTTP 503 via meta pour les crawlers
   useEffect(() => {
-    document.title = "Maintenance en cours — Les Logements de Zeyna";
+    document.title = "Maintenance en cours - Les Logements de Zeyna";
   }, []);
 
   const title = maintenance?.title ?? "Maintenance en cours";
@@ -65,7 +65,7 @@ const MaintenancePage = () => {
         {/* Séparateur */}
         <div className="border-t border-border pt-4">
           <p className="text-xs text-muted-foreground">
-            Les Logements de Zeyna — Plateforme de logement étudiant
+            Les Logements de Zeyna - Plateforme de logement étudiant
           </p>
         </div>
       </div>

@@ -42,6 +42,7 @@ const SuperAdminDashboard = lazy(() => import("./pages/super-admin/Dashboard"));
 const SuperAdminAuditLogs = lazy(() => import("./pages/super-admin/AuditLogs"));
 const ProfilePage = lazy(() => import("./pages/shared/Profile"));
 const NotFound = lazy(() => import("./pages/NotFound"));
+const DevenirBailleur = lazy(() => import("./pages/DevenirBailleur"));
 
 const PageLoader = () => (
   <div className="min-h-screen flex items-center justify-center bg-background">
@@ -84,6 +85,7 @@ const App = () => (
               </Route>
               <Route path="/logements" element={<Logements />} />
               <Route path="/logements/:id" element={<LogementDetail />} />
+              <Route path="/devenir-bailleur" element={<DevenirBailleur />} />
 
               {/* Étudiant */}
               <Route path="/etudiant" element={<ProtectedRoute allowedRoles={["etudiant"]}><EtudiantDashboard /></ProtectedRoute>} />

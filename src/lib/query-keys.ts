@@ -43,7 +43,7 @@ export const QUERY_KEYS = {
 } as const;
 
 /**
- * Groupes d'invalidation — listes de queryKeys à invalider ensemble
+ * Groupes d'invalidation - listes de queryKeys à invalider ensemble
  * selon le type d'action métier effectué.
  */
 export const INVALIDATION_GROUPS = {

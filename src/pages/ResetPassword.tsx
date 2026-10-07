@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { isPasswordRecoveryLink, resetUserPassword } from "@/services/auth-service";
+import { isPasswordRecoveryLink, resetUserPassword, getInviteLinkType } from "@/services/auth-service";
 import { useToast } from "@/hooks/use-toast";
 import { Eye, EyeOff, Loader2 } from "lucide-react";
 
@@ -20,18 +20,18 @@ const ResetPassword = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [isRecoveryLinkValid] = useState(() => isPasswordRecoveryLink(window.location.hash));
+  const linkType = getInviteLinkType(window.location.hash);
+  const isInvite = linkType === "invite";
   const navigate = useNavigate();
   const { toast } = useToast();
 
   useEffect(() => {
-    if (!isRecoveryLinkValid) {
-      toast({ title: "Lien invalide", description: "Ce lien de réinitialisation n'est pas valide.", variant: "destructive" });
-    }
-  }, [isRecoveryLinkValid, toast]);
+    // Optionnel: vérifier si on a une session active. 
+    // Si l'utilisateur clique sur le lien, Supabase le connecte automatiquement.
+  }, []);
 
   const handleReset = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!isRecoveryLinkValid) return;
     if (password !== confirm) {
       toast({ title: "Erreur", description: "Les mots de passe ne correspondent pas.", variant: "destructive" });
       return;
@@ -48,7 +48,12 @@ const ResetPassword = () => {
       if (error) {
         toast({ title: "Erreur", description: error.message, variant: "destructive" });
       } else {
-        toast({ title: "Mot de passe mis à jour", description: "Vous pouvez maintenant vous connecter." });
+        toast({
+          title: isInvite ? "Compte activé ✅" : "Mot de passe mis à jour ✅",
+          description: isInvite
+            ? "Votre compte a été créé. Vous pouvez maintenant vous connecter."
+            : "Vous pouvez maintenant vous connecter avec votre nouveau mot de passe.",
+        });
         navigate("/login");
       }
     } catch (error) {
@@ -67,26 +72,18 @@ const ResetPassword = () => {
       <div className="h-1 w-full bg-gradient-to-r from-accent/50 to-accent" />
       <CardHeader className="pb-6">
         <motion.div initial="hidden" animate="visible" variants={itemVariants}>
-          <CardTitle className="font-serif text-2xl">Nouveau mot de passe</CardTitle>
-          <CardDescription className="mt-1.5">Choisissez un nouveau mot de passe sécurisé</CardDescription>
+          <CardTitle className="font-serif text-2xl">
+            {isInvite ? "Créer votre mot de passe" : "Nouveau mot de passe"}
+          </CardTitle>
+          <CardDescription className="mt-1.5">
+            {isInvite
+              ? "Bienvenue ! Choisissez un mot de passe pour activer votre compte."
+              : "Choisissez un nouveau mot de passe sécurisé"}
+          </CardDescription>
         </motion.div>
       </CardHeader>
       
       <CardContent>
-        {!isRecoveryLinkValid ? (
-          <motion.div 
-            className="space-y-4 text-center py-4" 
-            role="alert"
-            initial="hidden" animate="visible" variants={itemVariants}
-          >
-            <p className="text-sm text-destructive bg-destructive/10 p-3 rounded-lg border border-destructive/20">
-              Lien invalide ou expiré. Demandez un nouveau lien de réinitialisation.
-            </p>
-            <Button asChild variant="outline" className="w-full h-11">
-              <Link to="/forgot-password">Demander un nouveau lien</Link>
-            </Button>
-          </motion.div>
-        ) : (
           <motion.form 
             onSubmit={handleReset} 
             className="space-y-5"
@@ -145,7 +142,6 @@ const ResetPassword = () => {
               </Button>
             </motion.div>
           </motion.form>
-        )}
       </CardContent>
     </Card>
   );

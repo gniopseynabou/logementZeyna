@@ -55,9 +55,37 @@ export const resetUserPassword = async (password: string) => {
   return { error };
 };
 
+/**
+ * Supabase envoie les tokens soit dans le hash (#type=recovery&access_token=...)
+ * soit dans les query params (?token=...&type=invite) selon le type d'email.
+ * On accepte les deux formats et les deux types : recovery + invite.
+ */
 export const isPasswordRecoveryLink = (hash: string): boolean => {
-  const params = new URLSearchParams(hash.startsWith("#") ? hash.slice(1) : hash);
-  return params.get("type") === "recovery";
+  // Vérifier dans le hash fragment
+  const hashParams = new URLSearchParams(hash.startsWith("#") ? hash.slice(1) : hash);
+  const hashType = hashParams.get("type");
+  if (hashType === "recovery" || hashType === "invite") return true;
+
+  // Vérifier dans les query params (cas invite via lien magique)
+  const queryParams = new URLSearchParams(window.location.search);
+  const queryType = queryParams.get("type");
+  if (queryType === "recovery" || queryType === "invite") return true;
+
+  return false;
+};
+
+export const getInviteLinkType = (hash: string): "recovery" | "invite" | null => {
+  const hashParams = new URLSearchParams(hash.startsWith("#") ? hash.slice(1) : hash);
+  const hashType = hashParams.get("type");
+  if (hashType === "recovery") return "recovery";
+  if (hashType === "invite") return "invite";
+
+  const queryParams = new URLSearchParams(window.location.search);
+  const queryType = queryParams.get("type");
+  if (queryType === "recovery") return "recovery";
+  if (queryType === "invite") return "invite";
+
+  return null;
 };
 
 interface RegisterUserInput {

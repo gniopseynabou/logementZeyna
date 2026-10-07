@@ -144,14 +144,14 @@ const AuditLogs = () => {
                           <TableCell className="hidden md:table-cell text-xs text-muted-foreground">
                             {log.resource_type
                               ? <span>{log.resource_type}{log.resource_id ? ` #${log.resource_id.slice(0, 8)}…` : ""}</span>
-                              : "—"
+                              : "-"
                             }
                           </TableCell>
                           <TableCell className="hidden lg:table-cell text-xs font-mono text-muted-foreground">
-                            {log.user_id ? `${log.user_id.slice(0, 8)}…` : "—"}
+                            {log.user_id ? `${log.user_id.slice(0, 8)}…` : "-"}
                           </TableCell>
                           <TableCell className="hidden lg:table-cell text-xs text-muted-foreground">
-                            {log.ip_address || "—"}
+                            {log.ip_address || "-"}
                           </TableCell>
                           <TableCell>
                             {log.success ? (
