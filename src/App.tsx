@@ -26,6 +26,7 @@ const BailleurDashboard = lazy(() => import("./pages/bailleur/Dashboard"));
 const BailleurLogements = lazy(() => import("./pages/bailleur/Logements"));
 const NouveauLogement = lazy(() => import("./pages/bailleur/NouveauLogement"));
 const BailleurPaiements = lazy(() => import("./pages/bailleur/Paiements"));
+const BailleurContrats = lazy(() => import("./pages/bailleur/Contrats"));
 const AdminDashboard = lazy(() => import("./pages/admin/Dashboard"));
 const AdminLogements = lazy(() => import("./pages/admin/Logements"));
 const AdminNouveauLogement = lazy(() => import("./pages/admin/NouveauLogement"));
@@ -101,6 +102,7 @@ const App = () => (
               <Route path="/bailleur/logements" element={<ProtectedRoute allowedRoles={["bailleur"]}><BailleurLogements /></ProtectedRoute>} />
               <Route path="/bailleur/logements/nouveau" element={<ProtectedRoute allowedRoles={["bailleur"]}><NouveauLogement /></ProtectedRoute>} />
               <Route path="/bailleur/paiements" element={<ProtectedRoute allowedRoles={["bailleur"]}><BailleurPaiements /></ProtectedRoute>} />
+              <Route path="/bailleur/contrats" element={<ProtectedRoute allowedRoles={["bailleur"]}><BailleurContrats /></ProtectedRoute>} />
               <Route path="/bailleur/profil" element={<ProtectedRoute allowedRoles={["bailleur"]}><ProfilePage /></ProtectedRoute>} />
 
               {/* Admin */}

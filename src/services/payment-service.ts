@@ -169,13 +169,65 @@ export const confirmAdminPayment = async ({
 };
 
 export const getReservationForPayment = async (reservationId: string) => {
-  const { data, error } = await supabase
+  // 1. Fetch de base
+  const { data: reservation, error } = await supabase
     .from("reservations")
-    .select("*, logements(nom), chambres(nom, prix_zeyna, caution)")
+    .select(`
+      *,
+      logements (
+        nom,
+        adresse,
+        ville,
+        conditions_electricite,
+        bailleur_id
+      ),
+      chambres (
+        nom,
+        prix_zeyna,
+        caution
+      )
+    `)
     .eq("id", reservationId)
     .single();
 
   if (error) throw error;
-  return data;
+  if (!reservation) throw new Error("Réservation non trouvée");
+
+  // 2. Récupérer le profil du bailleur (car la FK pointe sur auth.users)
+  const bailleurId = (reservation.logements as any)?.bailleur_id;
+  let bailleurProfile = null;
+  
+  if (bailleurId) {
+    const { data: profile } = await supabase
+      .from("profiles")
+      .select("nom, prenom, telephone")
+      .eq("user_id", bailleurId)
+      .single();
+    bailleurProfile = profile;
+  }
+
+  return {
+    ...reservation,
+    bailleur: bailleurProfile
+  };
 };
 
+
+export const submitPaymentProof = async (data: {
+  etudiant_id: string;
+  reservation_id: string;
+  montant: number;
+  methode: PaymentMethod;
+  reference: string;
+}) => {
+  const { error } = await supabase.from("paiements").insert({
+    etudiant_id: data.etudiant_id,
+    reservation_id: data.reservation_id,
+    montant: data.montant,
+    methode: data.methode,
+    reference: data.reference,
+    est_confirme: false,
+  });
+
+  if (error) throw error;
+};

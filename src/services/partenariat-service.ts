@@ -16,14 +16,11 @@ export interface DemandePartenariat {
 }
 
 export const submitDemandePartenariat = async (demande: Omit<DemandePartenariat, "id" | "statut" | "created_at">) => {
-  const { data, error } = await supabase
+  const { error } = await supabase
     .from("demandes_partenariat")
-    .insert([demande])
-    .select()
-    .single();
+    .insert([demande]);
 
   if (error) throw error;
-  return data;
 };
 
 export const getDemandesPartenariat = async () => {

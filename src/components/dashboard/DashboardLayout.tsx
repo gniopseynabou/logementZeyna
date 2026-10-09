@@ -53,6 +53,7 @@ const DashboardLayout = ({ children }: { children: ReactNode }) => {
         { label: "Mes logements", href: "/bailleur/logements", icon: <Building className="h-4 w-4" /> },
         { label: "Ajouter logement", href: "/bailleur/logements/nouveau", icon: <CheckCircle className="h-4 w-4" /> },
         { label: "Paiements", href: "/bailleur/paiements", icon: <CreditCard className="h-4 w-4" /> },
+        { label: "Contrats", href: "/bailleur/contrats", icon: <FileText className="h-4 w-4" /> },
         { label: "Profil", href: "/bailleur/profil", icon: <Settings className="h-4 w-4" /> },
       ]
     : [
