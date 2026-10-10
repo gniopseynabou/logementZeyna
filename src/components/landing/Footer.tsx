@@ -85,10 +85,11 @@ const Footer = () => {
           <p>
             &copy; {new Date().getFullYear()} Les Logements de Zeyna. Tous droits réservés.
           </p>
-          <div className="flex gap-6">
-            <a href="#" className="hover:text-background transition-colors">Mentions légales</a>
-            <a href="#" className="hover:text-background transition-colors">CGV / CGU</a>
-            <a href="#" className="hover:text-background transition-colors">Confidentialité</a>
+          <div className="flex flex-wrap justify-center gap-4 sm:gap-6">
+            <Link to="/mentions-legales" className="hover:text-background transition-colors">Mentions légales</Link>
+            <Link to="/cgu" className="hover:text-background transition-colors">CGU</Link>
+            <Link to="/cgv" className="hover:text-background transition-colors">CGV</Link>
+            <Link to="/confidentialite" className="hover:text-background transition-colors">Confidentialité</Link>
           </div>
         </div>
 

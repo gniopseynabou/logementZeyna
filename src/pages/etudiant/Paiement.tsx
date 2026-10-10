@@ -74,7 +74,6 @@ const PaiementPage = () => {
   const montant = reservation.montant_total;
   const logement = (reservation as any).logements;
   const chambre = (reservation as any).chambres;
-  const bailleur = (reservation as any).bailleur;
 
   return (
     <DashboardLayout>
@@ -106,9 +105,9 @@ const PaiementPage = () => {
                 <div className="space-y-2">
                   <p><strong>ENTRE LES SOUSSIGNÉS :</strong></p>
                   <p>
-                    <span className="font-medium text-primary">Le Bailleur (ou son mandataire ZEYNA) :</span><br />
-                    {bailleur ? `${bailleur.prenom} ${bailleur.nom}` : "Les Logements de Zeyna"}<br />
-                    <em>(ci-après dénommé "Le Bailleur")</em>
+                    <span className="font-medium text-primary">Le Gestionnaire / Bailleur :</span><br />
+                    <strong>Les Logements de ZEYNA</strong><br />
+                    <em>(ci-après dénommé "ZEYNA")</em>
                   </p>
                   <p>
                     <span className="font-medium text-primary">Et Le Preneur (Locataire) :</span><br />
@@ -120,7 +119,7 @@ const PaiementPage = () => {
                 <div className="space-y-2 mt-4">
                   <p><strong>IL A ÉTÉ CONVENU CE QUI SUIT :</strong></p>
                   <p>
-                    <strong>Article 1 - Objet de la location :</strong> Le Bailleur loue au Locataire la chambre <strong>"{chambre?.nom}"</strong> située dans le logement <strong>"{logement?.nom}"</strong> à l'adresse : {logement?.adresse}, {logement?.ville}.
+                    <strong>Article 1 - Objet de la location :</strong> ZEYNA met à la disposition du Locataire la chambre <strong>"{chambre?.nom}"</strong> située dans le logement <strong>"{logement?.nom}"</strong> à l'adresse : {logement?.adresse}, {logement?.ville}.
                   </p>
                   <p>
                     <strong>Article 2 - Loyer et Caution :</strong> Le locataire s'engage à payer une caution initiale de <strong>{montant.toLocaleString()} FCFA</strong>. Le loyer mensuel fixé est de <strong>{chambre?.prix_zeyna?.toLocaleString()} FCFA</strong>.
@@ -133,7 +132,7 @@ const PaiementPage = () => {
                   )}
 
                   <p>
-                    <strong>Article 4 - Engagement de la plateforme :</strong> La plateforme <em>Les Logements de Zeyna</em> agit en tant que tiers de confiance. Le présent contrat prend effet dès la validation du paiement de la caution par l'administrateur.
+                    <strong>Article 4 - Engagement :</strong> La plateforme <em>Les Logements de ZEYNA</em> agit en tant qu'interlocuteur exclusif du locataire. Le présent contrat prend effet dès la validation du paiement de la caution par nos services.
                   </p>
                 </div>
               </div>

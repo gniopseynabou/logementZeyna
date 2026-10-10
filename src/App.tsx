@@ -41,6 +41,12 @@ const AdminDocuments = lazy(() => import("./pages/admin/Documents"));
 const AdminClients = lazy(() => import("./pages/admin/Clients"));
 const SuperAdminDashboard = lazy(() => import("./pages/super-admin/Dashboard"));
 const SuperAdminAuditLogs = lazy(() => import("./pages/super-admin/AuditLogs"));
+
+// Légal
+const MentionsLegales = lazy(() => import("./pages/legal/MentionsLegales"));
+const CGU = lazy(() => import("./pages/legal/CGU"));
+const CGV = lazy(() => import("./pages/legal/CGV"));
+const Confidentialite = lazy(() => import("./pages/legal/Confidentialite"));
 const ProfilePage = lazy(() => import("./pages/shared/Profile"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 const DevenirBailleur = lazy(() => import("./pages/DevenirBailleur"));
@@ -87,6 +93,12 @@ const App = () => (
               <Route path="/logements" element={<Logements />} />
               <Route path="/logements/:id" element={<LogementDetail />} />
               <Route path="/devenir-bailleur" element={<DevenirBailleur />} />
+              
+              {/* Légal */}
+              <Route path="/mentions-legales" element={<MentionsLegales />} />
+              <Route path="/cgu" element={<CGU />} />
+              <Route path="/cgv" element={<CGV />} />
+              <Route path="/confidentialite" element={<Confidentialite />} />
 
               {/* Étudiant */}
               <Route path="/etudiant" element={<ProtectedRoute allowedRoles={["etudiant"]}><EtudiantDashboard /></ProtectedRoute>} />
