@@ -129,43 +129,66 @@ export const confirmAdminPayment = async ({
   logementName,
   roomName,
 }: ConfirmAdminPaymentInput) => {
-  const { error: paymentError } = await supabase
-    .from("paiements")
-    .update({ est_confirme: true })
-    .eq("id", paymentId);
-  if (paymentError) throw paymentError;
-
-  const { error: reservationError } = await supabase
-    .from("reservations")
-    .update({ statut: "confirmee" })
-    .eq("id", reservationId);
-  if (reservationError) throw reservationError;
-
-  const { data: reservation, error: lookupError } = await supabase
-    .from("reservations")
-    .select("chambre_id")
-    .eq("id", reservationId)
-    .single();
-  if (lookupError) throw lookupError;
-
-  const { error: roomError } = await supabase
-    .from("chambres")
-    .update({ est_disponible: false })
-    .eq("id", reservation.chambre_id);
-  if (roomError) throw roomError;
-
-  const { error: contractError } = await supabase.from("contrats").insert({
-    etudiant_id: studentId,
-    reservation_id: reservationId,
-    contenu: {
-      montant: amount,
-      reference,
-      date: new Date().toISOString(),
-      logement: logementName,
-      chambre: roomName,
-    },
+  // 1. Tenter la procédure stockée atomique sécurisée (SEC-006)
+  const { data, error: rpcError } = await supabase.rpc("confirm_payment_and_assign_room" as any, {
+    p_payment_id: paymentId,
+    p_reservation_id: reservationId,
+    p_student_id: studentId,
+    p_amount: amount,
+    p_reference: reference || "",
+    p_logement_name: logementName || "",
+    p_room_name: roomName || "",
   });
-  if (contractError) throw contractError;
+
+  if (!rpcError) {
+    return data;
+  }
+
+  // 2. Si la fonction RPC n'a pas encore été migrée sur la base distante (code 42883), fallback
+  if (rpcError && (rpcError.code === "42883" || rpcError.message?.includes("function") || rpcError.message?.includes("not found"))) {
+    console.warn("Procédure RPC confirm_payment_and_assign_room non encore migrée sur Supabase, exécution du fallback séquentiel.");
+
+    const { error: paymentError } = await supabase
+      .from("paiements")
+      .update({ est_confirme: true })
+      .eq("id", paymentId);
+    if (paymentError) throw paymentError;
+
+    const { error: reservationError } = await supabase
+      .from("reservations")
+      .update({ statut: "confirmee" })
+      .eq("id", reservationId);
+    if (reservationError) throw reservationError;
+
+    const { data: reservation, error: lookupError } = await supabase
+      .from("reservations")
+      .select("chambre_id")
+      .eq("id", reservationId)
+      .single();
+    if (lookupError) throw lookupError;
+
+    const { error: roomError } = await supabase
+      .from("chambres")
+      .update({ est_disponible: false })
+      .eq("id", reservation.chambre_id);
+    if (roomError) throw roomError;
+
+    const { error: contractError } = await supabase.from("contrats").insert({
+      etudiant_id: studentId,
+      reservation_id: reservationId,
+      contenu: {
+        montant: amount,
+        reference,
+        date: new Date().toISOString(),
+        logement: logementName,
+        chambre: roomName,
+      },
+    });
+    if (contractError) throw contractError;
+    return;
+  }
+
+  throw rpcError;
 };
 
 export const getReservationForPayment = async (reservationId: string) => {

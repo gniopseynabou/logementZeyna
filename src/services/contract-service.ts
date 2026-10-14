@@ -38,15 +38,8 @@ export const getLandlordContracts = async (landlordId: string) => {
 
   if (error) throw error;
   
-  // Remplir le nom de l'étudiant
-  const enrichedData = await Promise.all(data.map(async (c) => {
-    const { data: profile } = await supabase
-      .from("profiles")
-      .select("nom, prenom, telephone")
-      .eq("user_id", c.etudiant_id)
-      .single();
-    return { ...c, etudiant: profile };
-  }));
-
-  return enrichedData;
+  // Protection stricte de confidentialité (SEC-007) :
+  // Le bailleur ne reçoit JAMAIS les coordonnées personnelles de l'étudiant.
+  // ZEYNA assure la relation exclusive avec le locataire.
+  return data;
 };

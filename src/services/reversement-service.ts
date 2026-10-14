@@ -44,12 +44,14 @@ export const getAdminReversements = async (): Promise<Reversement[]> => {
 };
 
 export const getBailleurReversements = async (bailleurId: string): Promise<Reversement[]> => {
+  // Protection du secret d'affaires ZEYNA (SEC-007) :
+  // Le bailleur a accès à son montant reversé (reversements.montant) et aux détails de la chambre,
+  // mais la somme totale payée par l'étudiant à ZEYNA (paiements.montant) est masquée.
   const { data, error } = await supabase
     .from("reversements")
     .select(`
       *,
       paiement:paiements!reversements_paiement_id_fkey(
-        montant,
         created_at,
         reservations(
           chambres(nom, prix_bailleur),
@@ -61,7 +63,7 @@ export const getBailleurReversements = async (bailleurId: string): Promise<Rever
     .order("created_at", { ascending: false });
 
   if (error) throw error;
-  return data || [];
+  return (data || []) as Reversement[];
 };
 
 export const updateReversementStatut = async (

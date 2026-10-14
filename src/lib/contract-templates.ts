@@ -44,6 +44,17 @@ export const getCompanyInfo = () => ({
   telephone: "+221 77 000 00 00",
 });
 
+
+export function escapeHtml(value?: string | number | null): string {
+  if (value === null || value === undefined) return "";
+  return String(value)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+}
+
 function fmt(n?: number): string {
   if (!n) return "[montant à compléter]";
   return n.toLocaleString("fr-FR") + " FCFA";
@@ -56,7 +67,7 @@ function wrap(html: string): string {
 function header(ref: string, date: string): string {
   return `<div class="header">
     <div class="brand-name">Les Logements de Zeyna</div>
-    <div class="doc-ref">Réf : ${ref}<br/>Date : ${date}</div>
+    <div class="doc-ref">Réf : ${escapeHtml(ref)}<br/>Date : ${escapeHtml(date)}</div>
   </div>`;
 }
 
@@ -86,10 +97,22 @@ export const generateConventionBailleurHTML = (data: {
   dateDebut: string;
 }): string => {
   const c = getCompanyInfo();
-  const bNom = `${data.bailleur.prenom} ${data.bailleur.nom}`;
+  const refConvention = escapeHtml(data.refConvention);
+  const dateEmission = escapeHtml(data.dateEmission);
+  const dateDebut = escapeHtml(data.dateDebut);
+  const bPrenom = escapeHtml(data.bailleur.prenom);
+  const bNom = escapeHtml(data.bailleur.nom);
+  const bNomComplet = `${bPrenom} ${bNom}`.trim();
+  const bAdresse = escapeHtml(data.bailleur.adresse || "[adresse à compléter]");
+  const bTel = escapeHtml(data.bailleur.telephone || "[téléphone à compléter]");
+  const logNom = escapeHtml(data.logement.nom);
+  const logAdresse = escapeHtml(data.logement.adresse);
+  const logVille = escapeHtml(data.logement.ville);
+  const logType = escapeHtml(data.logement.type);
   const chambresRows = data.chambres.map(ch =>
-    `<tr><td>${ch.nom}</td><td>${fmt(ch.prix_bailleur)}</td><td>[Oui / Non]</td><td>${fmt(ch.prix_zeyna)}</td><td>[À vérifier]</td></tr>`
+    `<tr><td>${escapeHtml(ch.nom)}</td><td>${fmt(ch.prix_bailleur)}</td><td>[Oui / Non]</td><td>${fmt(ch.prix_zeyna)}</td><td>[À vérifier]</td></tr>`
   ).join("");
+  const chambresList = data.chambres.map(ch => escapeHtml(ch.nom)).join(", ");
 
   const body = `
   ${header(data.refConvention, data.dateEmission)}
@@ -108,7 +131,7 @@ export const generateConventionBailleurHTML = (data: {
   </div>
 
   <h2 class="partie-title">ENTRE LES SOUSSIGNÉS</h2>
-  <p><strong>1. Le Bailleur :</strong> ${bNom}, demeurant à ${data.bailleur.adresse || "[adresse à compléter]"}, téléphone ${data.bailleur.telephone || "[téléphone à compléter]"}, ci-après désigné « le Bailleur ».</p>
+  <p><strong>1. Le Bailleur :</strong> ${bNomComplet}, demeurant à ${bAdresse}, téléphone ${bTel}, ci-après désigné « le Bailleur ».</p>
   <p><strong>2. Le Preneur principal :</strong> ${c.nom}, ${c.forme}, immatriculée sous le numéro ${c.rccm} et NINEA ${c.ninea}, dont le siège est situé à ${c.adresse}, représentée par ${c.representant}, dûment habilité(e), exploitant le service sous l'appellation « Les Logements de ZEYNA », ci-après désignée « ZEYNA » ou « le Preneur principal ».</p>
   <p>Le Bailleur et ZEYNA sont ci-après individuellement une « Partie » et ensemble les « Parties ».</p>
 
@@ -117,7 +140,7 @@ export const generateConventionBailleurHTML = (data: {
   <p>Le préambule et les annexes expressément visées font partie intégrante du présent contrat.</p>
 
   <h3 class="article-title">ARTICLE 1 — OBJET ET DÉSIGNATION DES LOCAUX</h3>
-  <p>Le Bailleur donne à bail à ZEYNA, qui accepte, les locaux sis à <strong>${data.logement.adresse}, ${data.logement.ville}</strong>, comprenant : ${data.logement.type} – <strong>${data.logement.nom}</strong>.</p>
+  <p>Le Bailleur donne à bail à ZEYNA, qui accepte, les locaux sis à <strong>${logAdresse}, ${logVille}</strong>, comprenant : ${logType} – <strong>${logNom}</strong>.</p>
   <p>La description détaillée des locaux, des chambres/studios/appartements, des espaces privatifs et des espaces partagés figure à l'<strong>Annexe 1</strong>. Seules les unités expressément listées comme pouvant être sous-louées sont couvertes par l'autorisation prévue à l'article 5.</p>
   <p>Les caractéristiques, équipements, meubles, sanitaires, accès, compteurs et clés remis doivent être constatés dans un état des lieux contradictoire annexé au contrat.</p>
 
@@ -132,7 +155,7 @@ export const generateConventionBailleurHTML = (data: {
     <li><span class="checkbox"></span> Bail d'habitation à durée indéterminée ;</li>
     <li><span class="checkbox"></span> Autre régime légal applicable, expressément validé par écrit par un conseil juridique : [à préciser].</li>
   </ul>
-  <p>Date de prise d'effet : <strong>${data.dateDebut}</strong>. Date/terme, lorsque le régime retenu le prévoit : [date ou mention appropriée].</p>
+  <p>Date de prise d'effet : <strong>${dateDebut}</strong>. Date/terme, lorsque le régime retenu le prévoit : [date ou mention appropriée].</p>
 
   <h3 class="article-title">ARTICLE 4 — LOYER PRINCIPAL, DÉPÔT DE GARANTIE ET PAIEMENT</h3>
   <p>Le loyer principal convenu pour l'ensemble des locaux est fixé à <strong>[montant en chiffres] FCFA</strong> ([montant en lettres] francs CFA) par mois. Il est payable au plus tard le [jour] de chaque période, par [mode et coordonnées de paiement], contre quittance ou reçu conforme.</p>
@@ -204,10 +227,10 @@ export const generateConventionBailleurHTML = (data: {
   <p>Le présent contrat et ses annexes constituent l'accord écrit des Parties sur son objet. Toute modification doit être consignée par écrit et signée par les Parties.</p>
   <p><strong>Annexes :</strong> Annexe 1 — Désignation des locaux et unités ; Annexe 2 — Notification et autorisation individuelle de sous-location ; Annexe 3 — Charges et modalités de calcul ; Annexe 4 — État des lieux et inventaire ; Annexe 5 — Grille de contrôle des loyers de sous-location.</p>
 
-  <p>Fait à [lieu], le ${data.dateEmission}, en deux exemplaires.</p>
+  <p>Fait à [lieu], le ${dateEmission}, en deux exemplaires.</p>
 
   ${sigBlock(
-    `LE BAILLEUR<br/>${bNom}`,
+    `LE BAILLEUR<br/>${bNomComplet}`,
     `ZEYNA — PRENEUR PRINCIPAL<br/>Représentant : ${c.representant}`
   )}
 
@@ -215,10 +238,10 @@ export const generateConventionBailleurHTML = (data: {
   <h2 class="partie-title">ANNEXE 1 — DÉSIGNATION DES LOCAUX ET UNITÉS</h2>
   <table>
     <tr><th>Champ</th><th>Description / valeur à compléter</th></tr>
-    <tr><td>Adresse complète</td><td>${data.logement.adresse}, ${data.logement.ville}</td></tr>
-    <tr><td>Référence du logement</td><td>${data.logement.nom}</td></tr>
-    <tr><td>Type</td><td>${data.logement.type}</td></tr>
-    <tr><td>Unités autorisées à la sous-location</td><td>${data.chambres.map(ch => ch.nom).join(", ")}</td></tr>
+    <tr><td>Adresse complète</td><td>${logAdresse}, ${logVille}</td></tr>
+    <tr><td>Référence du logement</td><td>${logNom}</td></tr>
+    <tr><td>Type</td><td>${logType}</td></tr>
+    <tr><td>Unités autorisées à la sous-location</td><td>${chambresList}</td></tr>
     <tr><td>Capacité autorisée par unité</td><td>[Nombre de personnes — à vérifier par unité]</td></tr>
     <tr><td>Salle de bain / sanitaires</td><td>[Privatifs ou communs — préciser]</td></tr>
     <tr><td>État meublé</td><td>[Meublé / non meublé]</td></tr>
@@ -232,8 +255,8 @@ export const generateConventionBailleurHTML = (data: {
   <h2 class="partie-title">ANNEXE 2 — FICHE DE NOTIFICATION ET D'AUTORISATION INDIVIDUELLE DE SOUS-LOCATION</h2>
   <table>
     <tr><th>Champ</th><th>Informations à compléter</th></tr>
-    <tr><td>Référence du bail principal</td><td>${data.refConvention}</td></tr>
-    <tr><td>Logement / adresse</td><td>${data.logement.adresse}, ${data.logement.ville}</td></tr>
+    <tr><td>Référence du bail principal</td><td>${refConvention}</td></tr>
+    <tr><td>Logement / adresse</td><td>${logAdresse}, ${logVille}</td></tr>
     <tr><td>Unité sous-louée</td><td>[Chambre / studio / appartement — référence à compléter]</td></tr>
     <tr><td>Nom complet du sous-locataire</td><td>[Nom et prénoms]</td></tr>
     <tr><td>Téléphone / courriel</td><td>[Coordonnées]</td></tr>
@@ -244,8 +267,8 @@ export const generateConventionBailleurHTML = (data: {
     <tr><td>Vérification du plafond légal</td><td>[Référence ou fiche de calcul à conserver]</td></tr>
     <tr><td>Date de notification au Bailleur</td><td>[Date et mode de transmission]</td></tr>
   </table>
-  <p><strong>ACCORD EXPRESS DU BAILLEUR :</strong> Je soussigné(e) ${bNom}, Bailleur principal, donne mon accord exprès et écrit à la sous-location de l'unité désignée ci-dessus au sous-locataire identifié, au taux de sous-loyer mentionné, sous réserve du respect du contrat principal et des dispositions impératives applicables.</p>
-  ${sigBlock(`LE BAILLEUR<br/>${bNom}`, `ZEYNA — PRENEUR PRINCIPAL<br/>Représentant : ${c.representant}`)}
+  <p><strong>ACCORD EXPRESS DU BAILLEUR :</strong> Je soussigné(e) ${bNomComplet}, Bailleur principal, donne mon accord exprès et écrit à la sous-location de l'unité désignée ci-dessus au sous-locataire identifié, au taux de sous-loyer mentionné, sous réserve du respect du contrat principal et des dispositions impératives applicables.</p>
+  ${sigBlock(`LE BAILLEUR<br/>${bNomComplet}`, `ZEYNA — PRENEUR PRINCIPAL<br/>Représentant : ${c.representant}`)}
 
   <div class="page-break"></div>
   <h2 class="partie-title">ANNEXE 3 — CHARGES ET MODALITÉS DE CALCUL</h2>
@@ -272,7 +295,7 @@ export const generateConventionBailleurHTML = (data: {
     <tr><td>Relevés de compteurs</td><td>[Index / date]</td><td>[Index / date]</td></tr>
     <tr><td>Réserves / photos jointes</td><td>[À préciser]</td><td>[À préciser]</td></tr>
   </table>
-  ${sigBlock(`BAILLEUR<br/>${bNom}`, `ZEYNA<br/>Représentant : ${c.representant}`)}
+  ${sigBlock(`BAILLEUR<br/>${bNomComplet}`, `ZEYNA<br/>Représentant : ${c.representant}`)}
 
   <div class="page-break"></div>
   <h2 class="partie-title">ANNEXE 5 — GRILLE DE CONTRÔLE DES LOYERS DE SOUS-LOCATION</h2>
@@ -298,7 +321,7 @@ export const generateConventionBailleurHTML = (data: {
     <tr><td>Personne ayant effectué le contrôle</td><td>[Nom / fonction]</td></tr>
   </table>
 
-  <div class="doc-footer"><span>${c.nom} · ${c.adresse}</span><span>Réf : ${data.refConvention} · ${data.dateEmission}</span></div>`;
+  <div class="doc-footer"><span>${c.nom} · ${c.adresse}</span><span>Réf : ${refConvention} · ${dateEmission}</span></div>`;
 
   return wrap(body);
 };
@@ -317,7 +340,19 @@ export const generateContratClientHTML = (data: {
   dateDebut: string;
 }): string => {
   const c = getCompanyInfo();
-  const cliNom = `${data.client.prenom} ${data.client.nom}`;
+  const refContrat = escapeHtml(data.refContrat);
+  const dateEmission = escapeHtml(data.dateEmission);
+  const dateDebut = escapeHtml(data.dateDebut);
+  const cliPrenom = escapeHtml(data.client.prenom);
+  const cliNom = escapeHtml(data.client.nom);
+  const cliNomComplet = `${cliPrenom} ${cliNom}`.trim();
+  const cliTel = escapeHtml(data.client.telephone || "[téléphone]");
+  const logNom = escapeHtml(data.logement.nom);
+  const logAdresse = escapeHtml(data.logement.adresse);
+  const logVille = escapeHtml(data.logement.ville);
+  const logType = escapeHtml(data.logement.type);
+  const chNom = escapeHtml(data.chambre.nom);
+  const chCapacite = escapeHtml(data.chambre.nombre_personnes ?? "[à compléter]");
 
   const body = `
   ${header(data.refContrat, data.dateEmission)}
@@ -337,7 +372,7 @@ export const generateContratClientHTML = (data: {
 
   <h2 class="partie-title">ENTRE LES SOUSSIGNÉS</h2>
   <p><strong>1. Le Sous-bailleur :</strong> ${c.nom}, ${c.forme}, immatriculée sous le numéro ${c.rccm} et NINEA ${c.ninea}, dont le siège est situé à ${c.adresse}, représentée par ${c.representant}, dûment habilité(e), ci-après désignée « ZEYNA » ou « le Sous-bailleur ».</p>
-  <p><strong>2. Le Sous-locataire :</strong> ${cliNom}, téléphone ${data.client.telephone || "[téléphone]"}, ci-après désigné « l'Étudiant » ou « le Sous-locataire ».</p>
+  <p><strong>2. Le Sous-locataire :</strong> ${cliNomComplet}, téléphone ${cliTel}, ci-après désigné « l'Étudiant » ou « le Sous-locataire ».</p>
   <p>Les Parties déclarent avoir la capacité nécessaire pour conclure le présent contrat.</p>
 
   <h2 class="partie-title">PRÉAMBULE</h2>
@@ -347,11 +382,11 @@ export const generateContratClientHTML = (data: {
   <h3 class="article-title">ARTICLE 1 — OBJET ET DÉSIGNATION DU LOGEMENT</h3>
   <p>ZEYNA, agissant en qualité de locataire principal dûment autorisé à sous-louer, donne en sous-location au Sous-locataire, pour l'usage d'habitation convenu, l'unité décrite ci-dessous :</p>
   <ul>
-    <li>Adresse complète : <strong>${data.logement.adresse}, ${data.logement.ville}</strong> ;</li>
-    <li>Logement / résidence : <strong>${data.logement.nom}</strong> ;</li>
-    <li>Type de logement : ${data.logement.type} ;</li>
-    <li>Unité louée : <strong>${data.chambre.nom}</strong> ;</li>
-    <li>Capacité maximale : ${data.chambre.nombre_personnes || "[à compléter]"} personne(s) ;</li>
+    <li>Adresse complète : <strong>${logAdresse}, ${logVille}</strong> ;</li>
+    <li>Logement / résidence : <strong>${logNom}</strong> ;</li>
+    <li>Type de logement : ${logType} ;</li>
+    <li>Unité louée : <strong>${chNom}</strong> ;</li>
+    <li>Capacité maximale : ${chCapacite} personne(s) ;</li>
     <li>Sanitaires : [salle de bain privée / douche commune / autres précisions] ;</li>
     <li>Espaces partagés autorisés : [liste] ;</li>
     <li>État meublé et équipements : [description exacte — inventaire en Annexe 4].</li>
@@ -367,7 +402,7 @@ export const generateContratClientHTML = (data: {
     <li><span class="checkbox"></span> Location saisonnière au sens du régime légal applicable : du [date] au [date] ;</li>
     <li><span class="checkbox"></span> Autre régime expressément validé par un conseil juridique : [préciser].</li>
   </ul>
-  <p>Date de prise d'effet juridique : <strong>${data.dateDebut}</strong>. Date prévue d'entrée dans les lieux : [date]. Remise effective des clés : [date et heure, constatées par écrit].</p>
+  <p>Date de prise d'effet juridique : <strong>${dateDebut}</strong>. Date prévue d'entrée dans les lieux : [date]. Remise effective des clés : [date et heure, constatées par écrit].</p>
   <p>La validation d'un paiement et la prise d'effet du contrat sont des événements distincts. Le contrat ne peut avoir pour effet d'écarter les règles légales relatives à la durée, au renouvellement ou à la résiliation.</p>
 
   <h3 class="article-title">ARTICLE 4 — LOYER ET MODALITÉS DE PAIEMENT</h3>
@@ -429,7 +464,7 @@ export const generateContratClientHTML = (data: {
   <p>Le présent contrat est régi par le droit sénégalais. Les Parties recherchent de bonne foi une solution amiable et documentée en cas de difficulté. À défaut d'accord, le différend est porté devant la juridiction compétente selon les règles applicables.</p>
 
   <h3 class="article-title">ARTICLE 16 — DOCUMENTS CONTRACTUELS ET SIGNATURE</h3>
-  <p>Le présent contrat est établi à Saint-Louis, le ${data.dateEmission}, en deux exemplaires ou signé par un procédé électronique dont la validité et la conservation ont été vérifiées. Chaque Partie reconnaît recevoir un exemplaire complet avec ses annexes.</p>
+  <p>Le présent contrat est établi à Saint-Louis, le ${dateEmission}, en deux exemplaires ou signé par un procédé électronique dont la validité et la conservation ont été vérifiées. Chaque Partie reconnaît recevoir un exemplaire complet avec ses annexes.</p>
   <ul>
     <li><span class="checkbox"></span> Annexe 1 — Autorisation écrite de sous-location et notification individuelle ;</li>
     <li><span class="checkbox"></span> Annexe 2 — Fiche descriptive, loyer et charges ;</li>
@@ -440,7 +475,7 @@ export const generateContratClientHTML = (data: {
 
   ${sigBlock(
     `ZEYNA — SOUS-BAILLEUR<br/>Représentant : ${c.representant}`,
-    `L'ÉTUDIANT — SOUS-LOCATAIRE<br/>${cliNom}`
+    `L'ÉTUDIANT — SOUS-LOCATAIRE<br/>${cliNomComplet}`
   )}
 
   <div class="page-break"></div>
@@ -449,10 +484,10 @@ export const generateContratClientHTML = (data: {
     <tr><th>Champ</th><th>Donnée</th></tr>
     <tr><td>Référence du bail principal</td><td>[ZEYNA-BAIL-____]</td></tr>
     <tr><td>ZEYNA, preneur principal</td><td>${c.nom} — ${c.forme}</td></tr>
-    <tr><td>Étudiant concerné</td><td>${cliNom}</td></tr>
-    <tr><td>Adresse et unité sous-louée</td><td>${data.logement.adresse}, ${data.logement.ville} — ${data.chambre.nom}</td></tr>
+    <tr><td>Étudiant concerné</td><td>${cliNomComplet}</td></tr>
+    <tr><td>Adresse et unité sous-louée</td><td>${logAdresse}, ${logVille} — ${chNom}</td></tr>
     <tr><td>Taux du sous-loyer</td><td>${fmt(data.chambre.prix_zeyna)} / mois</td></tr>
-    <tr><td>Date de prise d'effet prévue</td><td>${data.dateDebut}</td></tr>
+    <tr><td>Date de prise d'effet prévue</td><td>${dateDebut}</td></tr>
     <tr><td>Caractère meublé</td><td>[Oui / non — inventaire joint]</td></tr>
     <tr><td>Date de notification</td><td>[Date / moyen de transmission]</td></tr>
   </table>
@@ -466,8 +501,8 @@ export const generateContratClientHTML = (data: {
   <h2 class="partie-title">ANNEXE 2 — FICHE DESCRIPTIVE, LOYER ET CHARGES</h2>
   <table>
     <tr><th>Élément</th><th>Description / valeur contractuelle</th></tr>
-    <tr><td>Type</td><td>${data.logement.type} — ${data.chambre.nom}</td></tr>
-    <tr><td>Capacité maximale</td><td>${data.chambre.nombre_personnes || "[à compléter]"} personne(s)</td></tr>
+    <tr><td>Type</td><td>${logType} — ${chNom}</td></tr>
+    <tr><td>Capacité maximale</td><td>${chCapacite} personne(s)</td></tr>
     <tr><td>Sanitaires</td><td>[Privés / communs / description]</td></tr>
     <tr><td>Espaces communs accessibles</td><td>[Cuisine, cour, douche commune, etc.]</td></tr>
     <tr><td>Mobilier et équipements</td><td>[Liste ou « non meublé »]</td></tr>
@@ -476,7 +511,7 @@ export const generateContratClientHTML = (data: {
     <tr><td>Eau</td><td>[Incluse / distincte / mode de calcul]</td></tr>
     <tr><td>Électricité</td><td>[Incluse / distincte / mode de calcul]</td></tr>
     <tr><td>Autres charges</td><td>[Détail et justification]</td></tr>
-    <tr><td>Date d'entrée / remise des clés</td><td>${data.dateDebut}</td></tr>
+    <tr><td>Date d'entrée / remise des clés</td><td>${dateDebut}</td></tr>
   </table>
 
   <div class="page-break"></div>
@@ -507,24 +542,24 @@ export const generateContratClientHTML = (data: {
     <tr><td>Compteurs/relevés</td><td>[Index/date]</td><td>[Index/date]</td></tr>
     <tr><td>Réserves / photos</td><td>[À préciser]</td><td>[À préciser]</td></tr>
   </table>
-  ${sigBlock(`ZEYNA<br/>Représentant : ${c.representant}`, `L'ÉTUDIANT<br/>${cliNom}`)}
+  ${sigBlock(`ZEYNA<br/>Représentant : ${c.representant}`, `L'ÉTUDIANT<br/>${cliNomComplet}`)}
 
   <div class="page-break"></div>
   <h2 class="partie-title">ANNEXE 5 — ÉCHÉANCIER ET REÇU DU DÉPÔT DE GARANTIE</h2>
   <table>
     <tr><th>Opération</th><th>Montant</th><th>Date prévue</th><th>Date reçue / référence</th></tr>
-    <tr><td>Premier loyer / prorata</td><td>${fmt(data.chambre.prix_zeyna)}</td><td>${data.dateDebut}</td><td>[À compléter]</td></tr>
-    <tr><td>Dépôt de garantie</td><td>${fmt(data.caution)}</td><td>${data.dateDebut}</td><td>[À compléter]</td></tr>
+    <tr><td>Premier loyer / prorata</td><td>${fmt(data.chambre.prix_zeyna)}</td><td>${dateDebut}</td><td>[À compléter]</td></tr>
+    <tr><td>Dépôt de garantie</td><td>${fmt(data.caution)}</td><td>${dateDebut}</td><td>[À compléter]</td></tr>
     <tr><td>Loyers périodiques</td><td>${fmt(data.chambre.prix_zeyna)}</td><td>[Échéance mensuelle]</td><td>[Référence du reçu]</td></tr>
     <tr><td>Charges justifiées</td><td>[Mode de calcul]</td><td>[Échéance]</td><td>[Justificatif]</td></tr>
   </table>
-  <p><strong>Reçu du dépôt de garantie</strong> (à remplir uniquement après encaissement effectif) : Je soussigné(e), représentant(e) habilité(e) de ZEYNA, reconnais avoir reçu de <strong>${cliNom}</strong> la somme de <strong>${fmt(data.caution)}</strong> au titre du dépôt de garantie du contrat référencé <strong>${data.refContrat}</strong>, le [date], par [moyen de paiement], référence de transaction [référence].</p>
+  <p><strong>Reçu du dépôt de garantie</strong> (à remplir uniquement après encaissement effectif) : Je soussigné(e), représentant(e) habilité(e) de ZEYNA, reconnais avoir reçu de <strong>${cliNomComplet}</strong> la somme de <strong>${fmt(data.caution)}</strong> au titre du dépôt de garantie du contrat référencé <strong>${refContrat}</strong>, le [date], par [moyen de paiement], référence de transaction [référence].</p>
   ${sigBlock(
     `ZEYNA — REÇU<br/>Représentant : ${c.representant}`,
-    `L'ÉTUDIANT — PRISE DE CONNAISSANCE<br/>${cliNom}`
+    `L'ÉTUDIANT — PRISE DE CONNAISSANCE<br/>${cliNomComplet}`
   )}
 
-  <div class="doc-footer"><span>${c.nom} · ${c.adresse}</span><span>Réf : ${data.refContrat} · ${data.dateEmission}</span></div>`;
+  <div class="doc-footer"><span>${c.nom} · ${c.adresse}</span><span>Réf : ${refContrat} · ${dateEmission}</span></div>`;
 
   return wrap(body);
 };
@@ -542,28 +577,39 @@ export const generateBonAffectationHTML = (data: {
   dateDebut: string;
 }): string => {
   const c = getCompanyInfo();
+  const refAffectation = escapeHtml(data.refAffectation);
+  const dateEmission = escapeHtml(data.dateEmission);
+  const dateDebut = escapeHtml(data.dateDebut);
+  const bPrenom = escapeHtml(data.bailleur.prenom);
+  const bNom = escapeHtml(data.bailleur.nom);
+  const bNomComplet = `${bPrenom} ${bNom}`.trim();
+  const logNom = escapeHtml(data.logement.nom);
+  const logAdresse = escapeHtml(data.logement.adresse);
+  const logVille = escapeHtml(data.logement.ville);
+  const chNom = escapeHtml(data.chambre.nom);
+
   const body = `
-  ${header(data.refAffectation, data.dateEmission)}
+  ${header(refAffectation, dateEmission)}
 
   <div class="doc-title">BON D'AFFECTATION</div>
   <div class="doc-subtitle">Notification d'occupation — Document confidentiel</div>
 
-  <p>Bonjour <strong>${data.bailleur.prenom} ${data.bailleur.nom}</strong>,</p>
-  <p>L'équipe <strong>${c.nom}</strong> vous informe que la chambre <strong>${data.chambre.nom}</strong> de votre logement <strong>${data.logement.nom}</strong> a été affectée à un locataire pris en charge par nos soins, conformément à la convention de gestion qui nous lie.</p>
+  <p>Bonjour <strong>${bNomComplet}</strong>,</p>
+  <p>L'équipe <strong>${c.nom}</strong> vous informe que la chambre <strong>${chNom}</strong> de votre logement <strong>${logNom}</strong> a été affectée à un locataire pris en charge par nos soins, conformément à la convention de gestion qui nous lie.</p>
 
   <h2 class="partie-title">Détails de l'affectation</h2>
   <table>
     <tr><th>Élément</th><th>Détail</th></tr>
-    <tr><td>Logement</td><td>${data.logement.nom} — ${data.logement.adresse}, ${data.logement.ville}</td></tr>
-    <tr><td>Unité affectée</td><td>${data.chambre.nom}</td></tr>
-    <tr><td>Date de prise d'effet</td><td>${data.dateDebut}</td></tr>
+    <tr><td>Logement</td><td>${logNom} — ${logAdresse}, ${logVille}</td></tr>
+    <tr><td>Unité affectée</td><td>${chNom}</td></tr>
+    <tr><td>Date de prise d'effet</td><td>${dateDebut}</td></tr>
     <tr><td>Loyer reversé au Bailleur</td><td>${data.chambre.prix_bailleur ? fmt(data.chambre.prix_bailleur) : "Selon convention"} / mois</td></tr>
-    <tr><td>Référence</td><td>${data.refAffectation}</td></tr>
+    <tr><td>Référence</td><td>${refAffectation}</td></tr>
   </table>
 
   <p style="font-size:9pt;font-style:italic;margin-top:20px;">Ce document confirme la prise en charge de l'occupation par ${c.nom}. Conformément à nos conditions générales et à la convention de gestion, l'identité du locataire étudiant reste exclusivement gérée par nos services. ${c.nom} demeure votre unique interlocuteur (Locataire Principal) pour toute question relative à cet hébergement.</p>
 
-  <div class="doc-footer"><span>${c.nom} · ${c.adresse}</span><span>Réf : ${data.refAffectation} · ${data.dateEmission}</span></div>`;
+  <div class="doc-footer"><span>${c.nom} · ${c.adresse}</span><span>Réf : ${refAffectation} · ${dateEmission}</span></div>`;
 
   return wrap(body);
 };
