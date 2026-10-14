@@ -3,11 +3,11 @@ import { LegalDocument, LegalPart } from "@/components/legal/LegalDocument";
 const CGU = () => {
   const parts: LegalPart[] = [
     {
-      title: "PARTIE I — ACCÈS ET SERVICES",
+      title: "PARTIE I- ACCÈS ET SERVICES",
       sections: [
         {
           id: "objet",
-          title: "Article 1 — Objet",
+          title: "Article 1- Objet",
           content: (
             <>
               <p>Les présentes conditions générales d’utilisation définissent les règles d’accès et d’utilisation de la plateforme Les Logements de ZEYNA, accessible à l’adresse www.logements-zeyna.sn.</p>
@@ -18,7 +18,7 @@ const CGU = () => {
         },
         {
           id: "services",
-          title: "Article 2 — Services proposés",
+          title: "Article 2- Services proposés",
           content: (
             <>
               <p>Les Logements de ZEYNA permet notamment, selon les fonctionnalités disponibles :</p>
@@ -37,7 +37,7 @@ const CGU = () => {
         },
         {
           id: "role-zeyna",
-          title: "Article 3 — Rôle de ZEYNA",
+          title: "Article 3- Rôle de ZEYNA",
           content: (
             <>
               <p>ZEYNA assure <strong>exclusivement</strong> la relation avec l’étudiant dans le cadre des services et contrats qu’elle conclut avec lui. Aucun contact n'est établi entre l'étudiant et le bailleur propriétaire.</p>
@@ -50,11 +50,11 @@ const CGU = () => {
       ]
     },
     {
-      title: "PARTIE II — COMPTES ET UTILISATION",
+      title: "PARTIE II- COMPTES ET UTILISATION",
       sections: [
         {
           id: "compte",
-          title: "Article 4 — Création et utilisation d’un compte",
+          title: "Article 4- Création et utilisation d’un compte",
           content: (
             <>
               <p>Certaines fonctionnalités nécessitent la création d’un compte.</p>
@@ -66,7 +66,7 @@ const CGU = () => {
         },
         {
           id: "utilisation-correcte",
-          title: "Article 5 — Utilisation correcte de la plateforme",
+          title: "Article 5- Utilisation correcte de la plateforme",
           content: (
             <>
               <p>L’utilisateur s’engage à utiliser la plateforme de manière loyale et conformément à sa destination.</p>
@@ -87,11 +87,11 @@ const CGU = () => {
       ]
     },
     {
-      title: "PARTIE III — LOGEMENTS ET RÉSERVATIONS",
+      title: "PARTIE III- LOGEMENTS ET RÉSERVATIONS",
       sections: [
         {
           id: "infos-logements",
-          title: "Article 6 — Informations sur les logements",
+          title: "Article 6- Informations sur les logements",
           content: (
             <>
               <p>Les offres présentent les caractéristiques des logements selon les informations disponibles : type, localisation, capacité, équipements, prix et conditions d’occupation.</p>
@@ -102,7 +102,7 @@ const CGU = () => {
         },
         {
           id: "demandes",
-          title: "Article 7 — Demandes et réservations",
+          title: "Article 7- Demandes et réservations",
           content: (
             <>
               <p>Une demande de renseignements ou une manifestation d’intérêt ne constitue pas automatiquement une réservation définitive.</p>
@@ -114,11 +114,11 @@ const CGU = () => {
       ]
     },
     {
-      title: "PARTIE IV — RESPONSABILITÉS ET LITIGES",
+      title: "PARTIE IV- RESPONSABILITÉS ET LITIGES",
       sections: [
         {
           id: "disponibilite",
-          title: "Article 8 — Disponibilité et maintenance",
+          title: "Article 8- Disponibilité et maintenance",
           content: (
             <>
               <p>ZEYNA s’efforce d’assurer le bon fonctionnement de la plateforme. Toutefois, l’accès peut être temporairement interrompu pour maintenance, mise à jour, sécurité ou résolution d’un incident.</p>
@@ -128,7 +128,7 @@ const CGU = () => {
         },
         {
           id: "propriete-intellectuelle",
-          title: "Article 9 — Propriété intellectuelle",
+          title: "Article 9- Propriété intellectuelle",
           content: (
             <>
               <p>Les éléments de la plateforme appartenant à ZEYNA ne peuvent pas être reproduits, modifiés ou exploités sans autorisation, sauf dans les cas autorisés par la loi.</p>
@@ -138,7 +138,7 @@ const CGU = () => {
         },
         {
           id: "donnees-personnelles",
-          title: "Article 10 — Données personnelles",
+          title: "Article 10- Données personnelles",
           content: (
             <>
               <p>Les données personnelles sont traitées conformément à la politique de confidentialité de ZEYNA, accessible depuis la plateforme.</p>
@@ -148,7 +148,7 @@ const CGU = () => {
         },
         {
           id: "reclamations",
-          title: "Article 11 — Réclamations",
+          title: "Article 11- Réclamations",
           content: (
             <>
               <p>Pour toute difficulté liée à l’utilisation de la plateforme, l’utilisateur peut contacter ZEYNA :</p>
@@ -162,7 +162,7 @@ const CGU = () => {
         },
         {
           id: "modification",
-          title: "Article 12 — Modification des CGU",
+          title: "Article 12- Modification des CGU",
           content: (
             <>
               <p>Les présentes conditions peuvent être mises à jour pour tenir compte de l’évolution de la plateforme, de ses fonctionnalités ou de la réglementation.</p>
@@ -172,7 +172,7 @@ const CGU = () => {
         },
         {
           id: "litiges",
-          title: "Article 13 — Droit applicable et litiges",
+          title: "Article 13- Droit applicable et litiges",
           content: (
             <>
               <p>Les présentes CGU sont soumises au droit applicable au Sénégal.</p>

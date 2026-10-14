@@ -143,7 +143,7 @@ export const LegalDocument = ({ title, lastUpdated, intro, parts }: LegalDocumen
       
       {/* Print Footer */}
       <div className="hidden print:block fixed bottom-0 w-full text-center text-[10px] text-gray-500 border-t border-gray-300 pt-2">
-        Les Logements de ZEYNA — {title} — Généré le {new Date().toLocaleDateString("fr-FR")}
+        Les Logements de ZEYNA- {title}- Généré le {new Date().toLocaleDateString("fr-FR")}
       </div>
     </div>
   );

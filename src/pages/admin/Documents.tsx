@@ -39,10 +39,30 @@ const AdminDocuments = () => {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("contrats")
-        .select(`*, reservations(*, chambres(*), logements(*), profiles(*))`)
+        .select(`*, reservations(*, chambres(*), logements(*))`)
         .order("created_at", { ascending: false });
       if (error) throw error;
-      return data || [];
+      if (!data || data.length === 0) return [];
+
+      // Récupérer les profils des étudiants séparément (résolution FK auth.users)
+      const studentIds = [...new Set(data.map((c: any) => c.etudiant_id).filter(Boolean))];
+      const profilesMap = new Map<string, any>();
+      if (studentIds.length > 0) {
+        const { data: profiles, error: profError } = await supabase
+          .from("profiles")
+          .select("user_id, prenom, nom, telephone")
+          .in("user_id", studentIds);
+        if (!profError && profiles) {
+          profiles.forEach((p) => profilesMap.set(p.user_id, p));
+        }
+      }
+
+      return data.map((c: any) => ({
+        ...c,
+        reservations: c.reservations
+          ? { ...c.reservations, profiles: profilesMap.get(c.etudiant_id) || null }
+          : null,
+      }));
     },
   });
 
@@ -52,11 +72,29 @@ const AdminDocuments = () => {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("logements")
-        .select(`*, bailleur:profiles!logements_bailleur_id_fkey(prenom, nom, telephone), chambres(nom, prix_bailleur, prix_zeyna, marge)`)
+        .select(`*, chambres(nom, prix_bailleur, prix_zeyna, marge)`)
         .eq("statut", "valide")
         .order("created_at", { ascending: false });
       if (error) throw error;
-      return data || [];
+      if (!data || data.length === 0) return [];
+
+      // Récupérer les profils des bailleurs séparément (résolution FK auth.users)
+      const bailleurIds = [...new Set(data.map((l: any) => l.bailleur_id).filter(Boolean))];
+      const bailleursMap = new Map<string, any>();
+      if (bailleurIds.length > 0) {
+        const { data: profiles, error: profError } = await supabase
+          .from("profiles")
+          .select("user_id, prenom, nom, telephone")
+          .in("user_id", bailleurIds);
+        if (!profError && profiles) {
+          profiles.forEach((p) => bailleursMap.set(p.user_id, p));
+        }
+      }
+
+      return data.map((l: any) => ({
+        ...l,
+        bailleur: bailleursMap.get(l.bailleur_id) || null,
+      }));
     },
   });
 

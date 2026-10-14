@@ -3,11 +3,11 @@ import { LegalDocument, LegalPart } from "@/components/legal/LegalDocument";
 const CGV = () => {
   const parts: LegalPart[] = [
     {
-      title: "PARTIE I — GÉNÉRALITÉS",
+      title: "PARTIE I- GÉNÉRALITÉS",
       sections: [
         {
           id: "identification",
-          title: "Article 1 — Identification de ZEYNA",
+          title: "Article 1- Identification de ZEYNA",
           content: (
             <>
               <p>Les services sont proposés par :</p>
@@ -23,7 +23,7 @@ const CGV = () => {
         },
         {
           id: "objet",
-          title: "Article 2 — Objet",
+          title: "Article 2- Objet",
           content: (
             <>
               <p>Les présentes conditions définissent les règles commerciales applicables aux logements proposés par ZEYNA.</p>
@@ -34,7 +34,7 @@ const CGV = () => {
         },
         {
           id: "presentation",
-          title: "Article 3 — Présentation du logement",
+          title: "Article 3- Présentation du logement",
           content: (
             <>
               <p>Chaque offre précise, selon les informations disponibles :</p>
@@ -55,11 +55,11 @@ const CGV = () => {
       ]
     },
     {
-      title: "PARTIE II — CONDITIONS FINANCIÈRES",
+      title: "PARTIE II- CONDITIONS FINANCIÈRES",
       sections: [
         {
           id: "prix",
-          title: "Article 4 — Prix et transparence",
+          title: "Article 4- Prix et transparence",
           content: (
             <>
               <p>Les prix sont indiqués en francs CFA (FCFA), sauf mention contraire.</p>
@@ -70,7 +70,7 @@ const CGV = () => {
         },
         {
           id: "demande",
-          title: "Article 5 — Demande et conclusion du contrat",
+          title: "Article 5- Demande et conclusion du contrat",
           content: (
             <>
               <p>Une demande de logement ne vaut pas, à elle seule, conclusion d’un contrat.</p>
@@ -82,7 +82,7 @@ const CGV = () => {
         },
         {
           id: "paiement",
-          title: "Article 6 — Paiement du loyer",
+          title: "Article 6- Paiement du loyer",
           content: (
             <>
               <p>L’étudiant règle le loyer à ZEYNA selon le montant et l’échéancier figurant dans son contrat.</p>
@@ -93,7 +93,7 @@ const CGV = () => {
         },
         {
           id: "caution",
-          title: "Article 7 — Caution ou dépôt de garantie",
+          title: "Article 7- Caution ou dépôt de garantie",
           content: (
             <>
               <p>Le montant de la caution est précisé dans le contrat de sous-location.</p>
@@ -105,7 +105,7 @@ const CGV = () => {
         },
         {
           id: "charges",
-          title: "Article 8 — Charges et équipements",
+          title: "Article 8- Charges et équipements",
           content: (
             <>
               <p>Le contrat précise les conditions relatives à l’eau, à l’électricité, aux équipements inclus et aux éventuelles consommations supplémentaires.</p>
@@ -117,11 +117,11 @@ const CGV = () => {
       ]
     },
     {
-      title: "PARTIE III — ENGAGEMENTS ET GESTION",
+      title: "PARTIE III- ENGAGEMENTS ET GESTION",
       sections: [
         {
           id: "engagements-zeyna",
-          title: "Article 9 — Engagements de ZEYNA",
+          title: "Article 9- Engagements de ZEYNA",
           content: (
             <>
               <p>Dans le cadre du contrat conclu, ZEYNA s’engage notamment à :</p>
@@ -139,7 +139,7 @@ const CGV = () => {
         },
         {
           id: "engagements-etudiant",
-          title: "Article 10 — Engagements de l’étudiant",
+          title: "Article 10- Engagements de l’étudiant",
           content: (
             <>
               <p>L’étudiant s’engage notamment à :</p>
@@ -158,7 +158,7 @@ const CGV = () => {
         },
         {
           id: "fin-occupation",
-          title: "Article 11 — Annulation, départ et fin d’occupation",
+          title: "Article 11- Annulation, départ et fin d’occupation",
           content: (
             <>
               <p>Les conditions d’annulation, de départ anticipé, de préavis et de restitution des sommes sont précisées dans le contrat individuel.</p>
@@ -169,7 +169,7 @@ const CGV = () => {
         },
         {
           id: "problemes",
-          title: "Article 12 — Problèmes liés au logement",
+          title: "Article 12- Problèmes liés au logement",
           content: (
             <>
               <p>L’étudiant doit signaler à ZEYNA tout problème affectant le logement au moyen des coordonnées ou fonctionnalités mises à sa disposition.</p>
@@ -180,7 +180,7 @@ const CGV = () => {
         },
         {
           id: "indisponibilite",
-          title: "Article 13 — Indisponibilité ou changement",
+          title: "Article 13- Indisponibilité ou changement",
           content: (
             <>
               <p>Si le logement devient indisponible ou si une caractéristique essentielle ne correspond pas aux conditions convenues, ZEYNA examine la situation et informe l’étudiant des solutions possibles.</p>
@@ -191,11 +191,11 @@ const CGV = () => {
       ]
     },
     {
-      title: "PARTIE IV — DISPOSITIONS FINALES",
+      title: "PARTIE IV- DISPOSITIONS FINALES",
       sections: [
         {
           id: "reclamations",
-          title: "Article 14 — Réclamations",
+          title: "Article 14- Réclamations",
           content: (
             <>
               <p>Toute réclamation peut être adressée à :</p>
@@ -209,7 +209,7 @@ const CGV = () => {
         },
         {
           id: "documents",
-          title: "Article 15 — Documents contractuels",
+          title: "Article 15- Documents contractuels",
           content: (
             <>
               <p>Le contrat individuel de sous-location et ses annexes précisent les conditions propres à chaque occupation.</p>
@@ -219,7 +219,7 @@ const CGV = () => {
         },
         {
           id: "modification",
-          title: "Article 16 — Modification des conditions",
+          title: "Article 16- Modification des conditions",
           content: (
             <>
               <p>ZEYNA peut mettre à jour les présentes conditions pour tenir compte de l’évolution de ses services ou de la réglementation.</p>
@@ -229,7 +229,7 @@ const CGV = () => {
         },
         {
           id: "litiges",
-          title: "Article 17 — Droit applicable et litiges",
+          title: "Article 17- Droit applicable et litiges",
           content: (
             <>
               <p>Les présentes conditions sont soumises au droit applicable au Sénégal.</p>

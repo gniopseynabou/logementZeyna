@@ -71,7 +71,7 @@ function header(ref: string, date: string): string {
   </div>`;
 }
 
-function sigBlock(labelLeft: string, labelRight: string, hintLeft = "Mention : « Lu et approuvé » — Date : _____________", hintRight = "Mention : « Lu et approuvé » — Date : _____________"): string {
+function sigBlock(labelLeft: string, labelRight: string, hintLeft = "Mention : « Lu et approuvé »- Date : _____________", hintRight = "Mention : « Lu et approuvé »- Date : _____________"): string {
   return `<div class="signatures">
     <div class="sig-box">
       <div class="sig-label">${labelLeft}</div>
@@ -85,7 +85,7 @@ function sigBlock(labelLeft: string, labelRight: string, hintLeft = "Mention : �
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// 1. CONTRAT DE BAIL PRINCIPAL — ZEYNA ↔ BAILLEUR
+// 1. CONTRAT DE BAIL PRINCIPAL- ZEYNA ↔ BAILLEUR
 // ─────────────────────────────────────────────────────────────────────────────
 
 export const generateConventionBailleurHTML = (data: {
@@ -121,7 +121,7 @@ export const generateConventionBailleurHTML = (data: {
   <div class="doc-subtitle">Avec autorisation expresse et écrite de sous-location au profit de Les Logements de ZEYNA</div>
 
   <div class="important-box">
-    <p>IMPORTANT — PROJET DE TRAVAIL</p>
+    <p>IMPORTANT- PROJET DE TRAVAIL</p>
     <ul>
       <li>Compléter toutes les mentions entre crochets et supprimer les options non retenues avant signature.</li>
       <li>Vérifier la forme juridique et l'identité exacte de ZEYNA, ainsi que le pouvoir du signataire.</li>
@@ -139,16 +139,16 @@ export const generateConventionBailleurHTML = (data: {
   <p>Le Bailleur déclare disposer des droits nécessaires pour donner à bail les locaux décrits au présent contrat. Les Parties souhaitent organiser leur location à ZEYNA pour un usage d'habitation, avec autorisation expresse de sous-louer les unités identifiées dans les annexes, conformément aux dispositions impératives applicables au Sénégal.</p>
   <p>Le préambule et les annexes expressément visées font partie intégrante du présent contrat.</p>
 
-  <h3 class="article-title">ARTICLE 1 — OBJET ET DÉSIGNATION DES LOCAUX</h3>
+  <h3 class="article-title">ARTICLE 1- OBJET ET DÉSIGNATION DES LOCAUX</h3>
   <p>Le Bailleur donne à bail à ZEYNA, qui accepte, les locaux sis à <strong>${logAdresse}, ${logVille}</strong>, comprenant : ${logType} – <strong>${logNom}</strong>.</p>
   <p>La description détaillée des locaux, des chambres/studios/appartements, des espaces privatifs et des espaces partagés figure à l'<strong>Annexe 1</strong>. Seules les unités expressément listées comme pouvant être sous-louées sont couvertes par l'autorisation prévue à l'article 5.</p>
   <p>Les caractéristiques, équipements, meubles, sanitaires, accès, compteurs et clés remis doivent être constatés dans un état des lieux contradictoire annexé au contrat.</p>
 
-  <h3 class="article-title">ARTICLE 2 — DESTINATION ET USAGE AUTORISÉ</h3>
+  <h3 class="article-title">ARTICLE 2- DESTINATION ET USAGE AUTORISÉ</h3>
   <p>Les locaux sont destinés à l'habitation. Le Bailleur autorise leur exploitation par ZEYNA en vue de l'hébergement résidentiel d'étudiants et d'autres occupants correspondant à la destination convenue, sous réserve du respect du présent contrat et de la réglementation applicable.</p>
   <p>Toute activité différente, transformation matérielle des locaux ou changement de destination exige l'accord préalable et écrit du Bailleur et, lorsque nécessaire, les autorisations administratives applicables.</p>
 
-  <h3 class="article-title">ARTICLE 3 — DURÉE ET RÉGIME DU BAIL</h3>
+  <h3 class="article-title">ARTICLE 3- DURÉE ET RÉGIME DU BAIL</h3>
   <p>Le régime et la durée doivent être choisis avant signature en fonction de la nature réelle de la location et des dispositions impératives du COCC. Cocher une seule option après vérification juridique :</p>
   <ul>
     <li><span class="checkbox"></span> Bail d'habitation de droit commun à durée de trois (3) ans, renouvelable dans les conditions légales ;</li>
@@ -157,24 +157,24 @@ export const generateConventionBailleurHTML = (data: {
   </ul>
   <p>Date de prise d'effet : <strong>${dateDebut}</strong>. Date/terme, lorsque le régime retenu le prévoit : [date ou mention appropriée].</p>
 
-  <h3 class="article-title">ARTICLE 4 — LOYER PRINCIPAL, DÉPÔT DE GARANTIE ET PAIEMENT</h3>
+  <h3 class="article-title">ARTICLE 4- LOYER PRINCIPAL, DÉPÔT DE GARANTIE ET PAIEMENT</h3>
   <p>Le loyer principal convenu pour l'ensemble des locaux est fixé à <strong>[montant en chiffres] FCFA</strong> ([montant en lettres] francs CFA) par mois. Il est payable au plus tard le [jour] de chaque période, par [mode et coordonnées de paiement], contre quittance ou reçu conforme.</p>
   <p>Dépôt de garantie éventuellement convenu : [montant] FCFA. Sa nature, son utilisation et ses conditions de restitution sont définies conformément au droit applicable.</p>
   <p>Aucun paiement en espèces ou par voie électronique ne dispense la Partie qui reçoit les fonds d'enregistrer l'opération et de remettre un justificatif mentionnant la date, le montant et l'imputation du paiement.</p>
 
-  <h3 class="article-title">ARTICLE 5 — AUTORISATION EXPRESSE ET ÉCRITE DE SOUS-LOCATION</h3>
+  <h3 class="article-title">ARTICLE 5- AUTORISATION EXPRESSE ET ÉCRITE DE SOUS-LOCATION</h3>
   <p>Le Bailleur autorise expressément et par écrit ZEYNA à sous-louer à usage d'habitation les unités détaillées à l'Annexe 1, exclusivement dans les limites de la destination, de la capacité d'occupation, des conditions financières et des règles prévues au présent contrat.</p>
   <p>Pour chaque sous-location, ZEYNA notifiera au Bailleur le nom du sous-locataire et le taux du sous-loyer, ainsi que l'unité concernée et la date envisagée de prise d'effet. Les Parties utiliseront la fiche de notification et de consentement de l'<strong>Annexe 2</strong>. La fiche devra être complétée avant l'entrée dans les lieux.</p>
   <p>Toute sous-location d'une unité non listée, toute cession du bail principal ou tout changement substantiel de destination nécessite un accord écrit préalable du Bailleur.</p>
   <p>Cette autorisation n'a pas pour effet de libérer ZEYNA de ses obligations de locataire principal envers le Bailleur.</p>
 
-  <h3 class="article-title">ARTICLE 6 — PRIX DES SOUS-LOCATIONS ET RESPECT DU PLAFOND LÉGAL</h3>
+  <h3 class="article-title">ARTICLE 6- PRIX DES SOUS-LOCATIONS ET RESPECT DU PLAFOND LÉGAL</h3>
   <p>Les Parties s'engagent à fixer les loyers de sous-location et toute somme liée à l'occupation en respectant les dispositions impératives applicables, notamment les <strong>articles 577 et 578 du Code des obligations civiles et commerciales du Sénégal (COCC)</strong>.</p>
   <p>Selon l'article 578 du COCC, le prix de sous-location ne peut en principe dépasser le loyer dû au Bailleur principal. Lorsque les locaux sous-loués sont garnis par le Preneur principal de meubles en bon état et en quantité suffisante, le plafond légal peut, dans les conditions prévues par cet article, atteindre 150 % du loyer principal. Cette exception ne s'applique pas automatiquement.</p>
   <p>Le taux du sous-loyer est précisé dans la fiche individuelle de notification de l'Annexe 2. Le caractère meublé ou non meublé du local, l'inventaire du mobilier et les éléments nécessaires à la vérification du plafond applicable sont documentés dans les annexes. Une grille de contrôle figure à l'<strong>Annexe 5</strong>.</p>
   <p>Aucune ventilation artificielle en frais, prestations ou suppléments ne peut avoir pour objet de contourner un plafond légal.</p>
 
-  <h3 class="article-title">ARTICLE 7 — OBLIGATIONS DU BAILLEUR</h3>
+  <h3 class="article-title">ARTICLE 7- OBLIGATIONS DU BAILLEUR</h3>
   <p>Le Bailleur s'engage, dans les limites prévues par le droit applicable, à :</p>
   <ul>
     <li>délivrer les locaux dans un état compatible avec l'usage convenu et remettre les clés selon l'état des lieux contradictoire ;</li>
@@ -185,7 +185,7 @@ export const generateConventionBailleurHTML = (data: {
     <li>confirmer par écrit toute autorisation, modification ou décision pour laquelle un écrit est requis.</li>
   </ul>
 
-  <h3 class="article-title">ARTICLE 8 — OBLIGATIONS DE ZEYNA COMME PRENEUR PRINCIPAL</h3>
+  <h3 class="article-title">ARTICLE 8- OBLIGATIONS DE ZEYNA COMME PRENEUR PRINCIPAL</h3>
   <p>ZEYNA s'engage à :</p>
   <ul>
     <li>payer le loyer principal et les sommes contractuellement dues aux échéances convenues ;</li>
@@ -196,54 +196,54 @@ export const generateConventionBailleurHTML = (data: {
     <li>remettre les locaux en fin de bail selon les obligations légales, sous réserve de l'usure normale.</li>
   </ul>
 
-  <h3 class="article-title">ARTICLE 9 — CHARGES, EAU, ÉLECTRICITÉ ET AUTRES CONSOMMATIONS</h3>
+  <h3 class="article-title">ARTICLE 9- CHARGES, EAU, ÉLECTRICITÉ ET AUTRES CONSOMMATIONS</h3>
   <p>Les Parties cochent et précisent les modalités applicables : eau [incluse / facturée séparément / selon relevé / autre] ; électricité [incluse / facturée séparément / selon relevé / autre] ; autres charges [détail].</p>
   <p>Les règles de calcul, de répartition, les compteurs disponibles, les justificatifs et la périodicité de règlement sont décrits à l'<strong>Annexe 3</strong>. Toute charge récupérable doit être justifiable.</p>
 
-  <h3 class="article-title">ARTICLE 10 — ÉTAT DES LIEUX, CLÉS ET MOBILIER</h3>
+  <h3 class="article-title">ARTICLE 10- ÉTAT DES LIEUX, CLÉS ET MOBILIER</h3>
   <p>Un état des lieux contradictoire est établi à l'entrée et à la sortie de ZEYNA. L'inventaire du mobilier et des équipements, le nombre de clés et les anomalies constatées sont consignés par écrit. Les Parties signent l'état des lieux et en conservent chacune une copie.</p>
 
-  <h3 class="article-title">ARTICLE 11 — ENTRETIEN, TRAVAUX ET INCIDENTS</h3>
+  <h3 class="article-title">ARTICLE 11- ENTRETIEN, TRAVAUX ET INCIDENTS</h3>
   <p>ZEYNA signale sans délai au Bailleur les désordres susceptibles d'affecter la sécurité, la salubrité ou l'usage normal des locaux. Les Parties conviennent d'un canal de signalement : [téléphone / courriel / autre] et d'un contact d'urgence : [coordonnées]. Les coûts sont supportés par la Partie à laquelle ils incombent légalement ou contractuellement.</p>
 
-  <h3 class="article-title">ARTICLE 12 — ASSURANCE ET SÉCURITÉ</h3>
+  <h3 class="article-title">ARTICLE 12- ASSURANCE ET SÉCURITÉ</h3>
   <p>Les exigences d'assurance applicables à chaque Partie et les justificatifs à remettre sont les suivants : [à compléter après vérification]. Aucune assurance n'est réputée souscrite du seul fait de la signature du présent contrat.</p>
 
-  <h3 class="article-title">ARTICLE 13 — SOUS-LOCATIONS EN COURS ET FIN DU BAIL PRINCIPAL</h3>
+  <h3 class="article-title">ARTICLE 13- SOUS-LOCATIONS EN COURS ET FIN DU BAIL PRINCIPAL</h3>
   <p>ZEYNA informe le Bailleur de toute difficulté susceptible d'affecter la continuité du bail principal ou les droits des sous-locataires. Elle tient à jour les notifications individuelles visées à l'Annexe 2.</p>
   <p>En cas d'expiration, de résiliation, de perte du droit de jouissance ou d'indisponibilité des locaux, les Parties doivent agir sans délai afin de limiter le préjudice des occupants et respecter les droits et procédures imposés par la loi. Aucune clause du présent contrat ne peut écarter les protections légales d'un sous-locataire.</p>
 
-  <h3 class="article-title">ARTICLE 14 — INEXÉCUTION, RÉSILIATION ET FIN DU CONTRAT</h3>
+  <h3 class="article-title">ARTICLE 14- INEXÉCUTION, RÉSILIATION ET FIN DU CONTRAT</h3>
   <p>En cas d'inexécution, la Partie concernée adresse à l'autre une notification ou mise en demeure suivant les formes, délais et modalités imposés par les dispositions applicables. Les procédures judiciaires ou extrajudiciaires légalement requises doivent être respectées.</p>
   <p>À la fin du contrat, les Parties organisent l'état des lieux de sortie, la restitution des clés, la clôture des charges justifiées et la restitution du dépôt de garantie selon les règles applicables.</p>
 
-  <h3 class="article-title">ARTICLE 15 — NOTIFICATIONS ET PREUVE</h3>
+  <h3 class="article-title">ARTICLE 15- NOTIFICATIONS ET PREUVE</h3>
   <p>Les coordonnées de notification des Parties sont celles mentionnées en tête du contrat, sauf changement communiqué par écrit. Les messages électroniques peuvent servir au suivi opérationnel dans les limites admises par la loi ; ils ne remplacent pas un acte extrajudiciaire lorsqu'un tel acte est requis.</p>
 
-  <h3 class="article-title">ARTICLE 16 — RÈGLEMENT DES DIFFÉRENDS ET DROIT APPLICABLE</h3>
+  <h3 class="article-title">ARTICLE 16- RÈGLEMENT DES DIFFÉRENDS ET DROIT APPLICABLE</h3>
   <p>Le présent contrat est régi par le droit sénégalais. En cas de difficulté, les Parties recherchent d'abord une solution amiable documentée. À défaut d'accord, le litige est soumis à la juridiction compétente conformément aux règles applicables.</p>
 
-  <h3 class="article-title">ARTICLE 17 — INTÉGRALITÉ, MODIFICATIONS ET ANNEXES</h3>
+  <h3 class="article-title">ARTICLE 17- INTÉGRALITÉ, MODIFICATIONS ET ANNEXES</h3>
   <p>Le présent contrat et ses annexes constituent l'accord écrit des Parties sur son objet. Toute modification doit être consignée par écrit et signée par les Parties.</p>
-  <p><strong>Annexes :</strong> Annexe 1 — Désignation des locaux et unités ; Annexe 2 — Notification et autorisation individuelle de sous-location ; Annexe 3 — Charges et modalités de calcul ; Annexe 4 — État des lieux et inventaire ; Annexe 5 — Grille de contrôle des loyers de sous-location.</p>
+  <p><strong>Annexes :</strong> Annexe 1- Désignation des locaux et unités ; Annexe 2- Notification et autorisation individuelle de sous-location ; Annexe 3- Charges et modalités de calcul ; Annexe 4- État des lieux et inventaire ; Annexe 5- Grille de contrôle des loyers de sous-location.</p>
 
   <p>Fait à [lieu], le ${dateEmission}, en deux exemplaires.</p>
 
   ${sigBlock(
     `LE BAILLEUR<br/>${bNomComplet}`,
-    `ZEYNA — PRENEUR PRINCIPAL<br/>Représentant : ${c.representant}`
+    `ZEYNA- PRENEUR PRINCIPAL<br/>Représentant : ${c.representant}`
   )}
 
   <div class="page-break"></div>
-  <h2 class="partie-title">ANNEXE 1 — DÉSIGNATION DES LOCAUX ET UNITÉS</h2>
+  <h2 class="partie-title">ANNEXE 1- DÉSIGNATION DES LOCAUX ET UNITÉS</h2>
   <table>
     <tr><th>Champ</th><th>Description / valeur à compléter</th></tr>
     <tr><td>Adresse complète</td><td>${logAdresse}, ${logVille}</td></tr>
     <tr><td>Référence du logement</td><td>${logNom}</td></tr>
     <tr><td>Type</td><td>${logType}</td></tr>
     <tr><td>Unités autorisées à la sous-location</td><td>${chambresList}</td></tr>
-    <tr><td>Capacité autorisée par unité</td><td>[Nombre de personnes — à vérifier par unité]</td></tr>
-    <tr><td>Salle de bain / sanitaires</td><td>[Privatifs ou communs — préciser]</td></tr>
+    <tr><td>Capacité autorisée par unité</td><td>[Nombre de personnes- à vérifier par unité]</td></tr>
+    <tr><td>Salle de bain / sanitaires</td><td>[Privatifs ou communs- préciser]</td></tr>
     <tr><td>État meublé</td><td>[Meublé / non meublé]</td></tr>
     <tr><td>Mobilier fourni par ZEYNA</td><td>[Liste et état, si applicable]</td></tr>
     <tr><td>Espaces communs autorisés</td><td>[Cuisine, cour, salon, couloir, douche, etc.]</td></tr>
@@ -252,26 +252,26 @@ export const generateConventionBailleurHTML = (data: {
   </table>
 
   <div class="page-break"></div>
-  <h2 class="partie-title">ANNEXE 2 — FICHE DE NOTIFICATION ET D'AUTORISATION INDIVIDUELLE DE SOUS-LOCATION</h2>
+  <h2 class="partie-title">ANNEXE 2- FICHE DE NOTIFICATION ET D'AUTORISATION INDIVIDUELLE DE SOUS-LOCATION</h2>
   <table>
     <tr><th>Champ</th><th>Informations à compléter</th></tr>
     <tr><td>Référence du bail principal</td><td>${refConvention}</td></tr>
     <tr><td>Logement / adresse</td><td>${logAdresse}, ${logVille}</td></tr>
-    <tr><td>Unité sous-louée</td><td>[Chambre / studio / appartement — référence à compléter]</td></tr>
+    <tr><td>Unité sous-louée</td><td>[Chambre / studio / appartement- référence à compléter]</td></tr>
     <tr><td>Nom complet du sous-locataire</td><td>[Nom et prénoms]</td></tr>
     <tr><td>Téléphone / courriel</td><td>[Coordonnées]</td></tr>
     <tr><td>Date envisagée de prise d'effet</td><td>[Date]</td></tr>
     <tr><td>Durée / régime validé</td><td>[À compléter après vérification juridique]</td></tr>
     <tr><td>Taux du sous-loyer</td><td>[Montant, périodicité, devise]</td></tr>
-    <tr><td>État du local</td><td>[Meublé / non meublé — inventaire joint si meublé]</td></tr>
+    <tr><td>État du local</td><td>[Meublé / non meublé- inventaire joint si meublé]</td></tr>
     <tr><td>Vérification du plafond légal</td><td>[Référence ou fiche de calcul à conserver]</td></tr>
     <tr><td>Date de notification au Bailleur</td><td>[Date et mode de transmission]</td></tr>
   </table>
   <p><strong>ACCORD EXPRESS DU BAILLEUR :</strong> Je soussigné(e) ${bNomComplet}, Bailleur principal, donne mon accord exprès et écrit à la sous-location de l'unité désignée ci-dessus au sous-locataire identifié, au taux de sous-loyer mentionné, sous réserve du respect du contrat principal et des dispositions impératives applicables.</p>
-  ${sigBlock(`LE BAILLEUR<br/>${bNomComplet}`, `ZEYNA — PRENEUR PRINCIPAL<br/>Représentant : ${c.representant}`)}
+  ${sigBlock(`LE BAILLEUR<br/>${bNomComplet}`, `ZEYNA- PRENEUR PRINCIPAL<br/>Représentant : ${c.representant}`)}
 
   <div class="page-break"></div>
-  <h2 class="partie-title">ANNEXE 3 — CHARGES ET MODALITÉS DE CALCUL</h2>
+  <h2 class="partie-title">ANNEXE 3- CHARGES ET MODALITÉS DE CALCUL</h2>
   <table>
     <tr><th>Charge / poste</th><th>Mode de calcul / prise en charge</th><th>Justificatif / échéance</th></tr>
     <tr><td>Eau</td><td>[Incluse / compteur / quote-part / autre]</td><td>[Facture / période]</td></tr>
@@ -282,7 +282,7 @@ export const generateConventionBailleurHTML = (data: {
   </table>
 
   <div class="page-break"></div>
-  <h2 class="partie-title">ANNEXE 4 — ÉTAT DES LIEUX ET INVENTAIRE</h2>
+  <h2 class="partie-title">ANNEXE 4- ÉTAT DES LIEUX ET INVENTAIRE</h2>
   <table>
     <tr><th>Élément</th><th>État à l'entrée</th><th>État à la sortie / observations</th></tr>
     <tr><td>Murs / peinture</td><td>[Neuf / bon / usagé / dégradé]</td><td>[À compléter]</td></tr>
@@ -298,7 +298,7 @@ export const generateConventionBailleurHTML = (data: {
   ${sigBlock(`BAILLEUR<br/>${bNomComplet}`, `ZEYNA<br/>Représentant : ${c.representant}`)}
 
   <div class="page-break"></div>
-  <h2 class="partie-title">ANNEXE 5 — GRILLE DE CONTRÔLE DES LOYERS DE SOUS-LOCATION</h2>
+  <h2 class="partie-title">ANNEXE 5- GRILLE DE CONTRÔLE DES LOYERS DE SOUS-LOCATION</h2>
   <p>À compléter avant chaque mise en location et à conserver au dossier. La répartition d'un loyer global entre plusieurs unités doit être juridiquement vérifiée.</p>
   <table>
     <tr>
@@ -327,7 +327,7 @@ export const generateConventionBailleurHTML = (data: {
 };
 
 // ─────────────────────────────────────────────────────────────────────────────
-// 2. CONTRAT DE SOUS-LOCATION — ZEYNA ↔ ÉTUDIANT
+// 2. CONTRAT DE SOUS-LOCATION- ZEYNA ↔ ÉTUDIANT
 // ─────────────────────────────────────────────────────────────────────────────
 
 export const generateContratClientHTML = (data: {
@@ -361,7 +361,7 @@ export const generateContratClientHTML = (data: {
   <div class="doc-subtitle">Entre Les Logements de ZEYNA, sous-bailleur, et l'étudiant sous-locataire</div>
 
   <div class="important-box">
-    <p>IMPORTANT — PROJET DE TRAVAIL</p>
+    <p>IMPORTANT- PROJET DE TRAVAIL</p>
     <ul>
       <li>Projet à personnaliser pour chaque étudiant ; aucun contrat ne doit être signé avec des champs obligatoires non renseignés.</li>
       <li>Joindre la fiche d'autorisation écrite de sous-location relative à cet étudiant et à cette unité.</li>
@@ -379,7 +379,7 @@ export const generateContratClientHTML = (data: {
   <p>ZEYNA déclare détenir un droit de jouissance principal sur le logement visé et une autorisation écrite de sous-location couvrant l'unité désignée, le sous-locataire et le taux de sous-loyer, selon la fiche jointe en <strong>Annexe 1</strong>. Le Bailleur principal n'est pas signataire du présent contrat et n'est pas le cocontractant de l'Étudiant, sans préjudice des droits que la loi peut lui reconnaître, notamment ceux prévus par l'article 578 du COCC.</p>
   <p>Le préambule et les annexes visées font partie intégrante du contrat.</p>
 
-  <h3 class="article-title">ARTICLE 1 — OBJET ET DÉSIGNATION DU LOGEMENT</h3>
+  <h3 class="article-title">ARTICLE 1- OBJET ET DÉSIGNATION DU LOGEMENT</h3>
   <p>ZEYNA, agissant en qualité de locataire principal dûment autorisé à sous-louer, donne en sous-location au Sous-locataire, pour l'usage d'habitation convenu, l'unité décrite ci-dessous :</p>
   <ul>
     <li>Adresse complète : <strong>${logAdresse}, ${logVille}</strong> ;</li>
@@ -389,13 +389,13 @@ export const generateContratClientHTML = (data: {
     <li>Capacité maximale : ${chCapacite} personne(s) ;</li>
     <li>Sanitaires : [salle de bain privée / douche commune / autres précisions] ;</li>
     <li>Espaces partagés autorisés : [liste] ;</li>
-    <li>État meublé et équipements : [description exacte — inventaire en Annexe 4].</li>
+    <li>État meublé et équipements : [description exacte- inventaire en Annexe 4].</li>
   </ul>
 
-  <h3 class="article-title">ARTICLE 2 — AUTORISATION DE SOUS-LOCATION</h3>
+  <h3 class="article-title">ARTICLE 2- AUTORISATION DE SOUS-LOCATION</h3>
   <p>ZEYNA déclare avoir obtenu l'accord exprès et écrit requis pour sous-louer l'unité au Sous-locataire. La fiche d'autorisation individualisée et de notification au Bailleur principal est annexée au présent contrat (Annexe 1). Toute modification de l'unité, du taux du sous-loyer ou de l'identité du sous-locataire nécessitant une nouvelle notification ou autorisation doit être régularisée par écrit avant sa mise en œuvre.</p>
 
-  <h3 class="article-title">ARTICLE 3 — DURÉE, PRISE D'EFFET ET REMISE DES CLÉS</h3>
+  <h3 class="article-title">ARTICLE 3- DURÉE, PRISE D'EFFET ET REMISE DES CLÉS</h3>
   <p>Le régime de durée retenu doit être sélectionné avant signature après vérification de la situation réelle et du régime légal applicable :</p>
   <ul>
     <li><span class="checkbox"></span> Bail d'habitation de droit commun : [durée/régime à compléter conformément au COCC] ;</li>
@@ -405,20 +405,20 @@ export const generateContratClientHTML = (data: {
   <p>Date de prise d'effet juridique : <strong>${dateDebut}</strong>. Date prévue d'entrée dans les lieux : [date]. Remise effective des clés : [date et heure, constatées par écrit].</p>
   <p>La validation d'un paiement et la prise d'effet du contrat sont des événements distincts. Le contrat ne peut avoir pour effet d'écarter les règles légales relatives à la durée, au renouvellement ou à la résiliation.</p>
 
-  <h3 class="article-title">ARTICLE 4 — LOYER ET MODALITÉS DE PAIEMENT</h3>
+  <h3 class="article-title">ARTICLE 4- LOYER ET MODALITÉS DE PAIEMENT</h3>
   <p>Le loyer mensuel de sous-location convenu est de <strong>${fmt(data.chambre.prix_zeyna)}</strong>, payable à ZEYNA au plus tard le [jour] de chaque période, par [moyen de paiement et coordonnées officiellement communiquées].</p>
   <p>Le sous-loyer doit respecter le plafond applicable prévu par le droit sénégalais, notamment l'article 578 du COCC. En principe, le prix de sous-location ne peut dépasser le loyer dû au Bailleur principal. Avant signature, ZEYNA vérifie et conserve les éléments permettant d'établir la conformité du taux du sous-loyer.</p>
   <p>Tout paiement donne lieu à un reçu ou à une quittance mentionnant la date, le montant, la période concernée et l'imputation des sommes versées.</p>
 
-  <h3 class="article-title">ARTICLE 5 — DÉPÔT DE GARANTIE (CAUTION)</h3>
+  <h3 class="article-title">ARTICLE 5- DÉPÔT DE GARANTIE (CAUTION)</h3>
   <p>Le dépôt de garantie convenu est fixé à <strong>${fmt(data.caution)}</strong>. Il est encaissé par ZEYNA et enregistré séparément du loyer.</p>
   <p>Le dépôt de garantie n'est pas un loyer et ne peut être imputé sur les loyers courants sans accord écrit ou base légale. Il garantit uniquement les obligations pour lesquelles une retenue est licite et justifiée.</p>
   <p>À la fin de la sous-location, après restitution des clés et état des lieux de sortie, ZEYNA procède au décompte des sommes restant dues et des éventuelles retenues justifiées. Elle communique au Sous-locataire un décompte écrit. Aucune retenue ne peut être opérée sur la seule base d'une usure normale.</p>
 
-  <h3 class="article-title">ARTICLE 6 — CHARGES, EAU, ÉLECTRICITÉ ET SERVICES</h3>
+  <h3 class="article-title">ARTICLE 6- CHARGES, EAU, ÉLECTRICITÉ ET SERVICES</h3>
   <p>Les conditions applicables à l'unité sont indiquées ci-dessous et détaillées à l'<strong>Annexe 2</strong> : eau [incluse / distincte] ; électricité [incluse / distincte] ; équipements/consommations inclus [description précise] ; autres charges autorisées [nature, montant ou calcul, échéance et justificatif]. Les charges ne sont dues que selon les modalités convenues, justifiées lorsque cela est requis, et sans double facturation.</p>
 
-  <h3 class="article-title">ARTICLE 7 — ENGAGEMENTS DE ZEYNA</h3>
+  <h3 class="article-title">ARTICLE 7- ENGAGEMENTS DE ZEYNA</h3>
   <p>ZEYNA s'engage, dans les limites du contrat et du droit applicable, à :</p>
   <ul>
     <li>mettre l'unité à disposition à la date convenue et remettre les clés contre constat écrit ;</li>
@@ -429,7 +429,7 @@ export const generateContratClientHTML = (data: {
     <li>protéger les données personnelles de l'Étudiant conformément à la politique de confidentialité.</li>
   </ul>
 
-  <h3 class="article-title">ARTICLE 8 — ENGAGEMENTS DU SOUS-LOCATAIRE</h3>
+  <h3 class="article-title">ARTICLE 8- ENGAGEMENTS DU SOUS-LOCATAIRE</h3>
   <p>Le Sous-locataire s'engage à :</p>
   <ul>
     <li>payer le loyer et les charges licitement dus aux échéances convenues ;</li>
@@ -441,67 +441,67 @@ export const generateContratClientHTML = (data: {
     <li>restituer les lieux, équipements et clés à la fin du contrat, sous réserve de l'usure normale.</li>
   </ul>
 
-  <h3 class="article-title">ARTICLE 9 — ÉTAT DES LIEUX, INVENTAIRE ET CLÉS</h3>
+  <h3 class="article-title">ARTICLE 9- ÉTAT DES LIEUX, INVENTAIRE ET CLÉS</h3>
   <p>Un état des lieux contradictoire est établi lors de la remise et de la restitution des clés. Le nombre et l'identification des clés remises sont consignés par écrit. Le Sous-locataire reçoit une copie de l'état des lieux et de l'inventaire.</p>
 
-  <h3 class="article-title">ARTICLE 10 — SIGNALEMENT ET GESTION DES INCIDENTS</h3>
+  <h3 class="article-title">ARTICLE 10- SIGNALEMENT ET GESTION DES INCIDENTS</h3>
   <p>Toute anomalie, panne, fuite, problème électrique ou de sécurité doit être signalé à ZEYNA via les canaux officiels de la plateforme. ZEYNA accuse réception de la demande et informe l'Étudiant des suites utiles. Le Sous-locataire coopère à l'accès nécessaire aux réparations, dans le respect de sa jouissance.</p>
 
-  <h3 class="article-title">ARTICLE 11 — ACCÈS AUX LIEUX ET TRAVAUX</h3>
+  <h3 class="article-title">ARTICLE 11- ACCÈS AUX LIEUX ET TRAVAUX</h3>
   <p>ZEYNA ou les intervenants mandatés peuvent accéder aux lieux pour une réparation, un contrôle nécessaire ou une intervention convenue, sous réserve d'une information préalable raisonnable et du respect de la vie privée du Sous-locataire. En cas de danger imminent ou d'urgence réelle, l'intervention est organisée dans les limites autorisées par la loi.</p>
 
-  <h3 class="article-title">ARTICLE 12 — RÈGLES D'OCCUPATION ET VIE COLLECTIVE</h3>
+  <h3 class="article-title">ARTICLE 12- RÈGLES D'OCCUPATION ET VIE COLLECTIVE</h3>
   <p>Le Sous-locataire respecte les règles de sécurité, de tranquillité, d'hygiène et d'usage des espaces communs communiquées en <strong>Annexe 3</strong>. Ces règles doivent être raisonnables, non discriminatoires et compatibles avec le contrat et la loi.</p>
 
-  <h3 class="article-title">ARTICLE 13 — DÉFAUT, RÉSILIATION ET DÉPART</h3>
+  <h3 class="article-title">ARTICLE 13- DÉFAUT, RÉSILIATION ET DÉPART</h3>
   <p>En cas de manquement, la Partie concernée met l'autre en demeure selon les formes et délais applicables. La résiliation, l'expulsion ou la récupération forcée des lieux ne peut intervenir que conformément aux procédures légales applicables. Le présent contrat ne crée aucun droit à une expulsion immédiate ou à une confiscation automatique de sommes.</p>
   <p>Les conditions de congé, renouvellement, départ anticipé et fin de la sous-location doivent être interprétées conformément au régime de durée sélectionné à l'article 3 et aux dispositions impératives du COCC. À la sortie, les Parties établissent l'état des lieux, enregistrent la restitution des clés, arrêtent les charges justifiées et établissent le décompte du dépôt de garantie.</p>
 
-  <h3 class="article-title">ARTICLE 14 — DONNÉES PERSONNELLES ET COMMUNICATIONS</h3>
+  <h3 class="article-title">ARTICLE 14- DONNÉES PERSONNELLES ET COMMUNICATIONS</h3>
   <p>Les coordonnées et données nécessaires au contrat sont utilisées pour l'identification des Parties, la gestion des paiements, la sécurité, le traitement des demandes et le respect des obligations légales. ZEYNA limite les accès aux personnes autorisées.</p>
 
-  <h3 class="article-title">ARTICLE 15 — DROIT APPLICABLE ET DIFFÉRENDS</h3>
+  <h3 class="article-title">ARTICLE 15- DROIT APPLICABLE ET DIFFÉRENDS</h3>
   <p>Le présent contrat est régi par le droit sénégalais. Les Parties recherchent de bonne foi une solution amiable et documentée en cas de difficulté. À défaut d'accord, le différend est porté devant la juridiction compétente selon les règles applicables.</p>
 
-  <h3 class="article-title">ARTICLE 16 — DOCUMENTS CONTRACTUELS ET SIGNATURE</h3>
+  <h3 class="article-title">ARTICLE 16- DOCUMENTS CONTRACTUELS ET SIGNATURE</h3>
   <p>Le présent contrat est établi à Saint-Louis, le ${dateEmission}, en deux exemplaires ou signé par un procédé électronique dont la validité et la conservation ont été vérifiées. Chaque Partie reconnaît recevoir un exemplaire complet avec ses annexes.</p>
   <ul>
-    <li><span class="checkbox"></span> Annexe 1 — Autorisation écrite de sous-location et notification individuelle ;</li>
-    <li><span class="checkbox"></span> Annexe 2 — Fiche descriptive, loyer et charges ;</li>
-    <li><span class="checkbox"></span> Annexe 3 — Règles d'occupation des lieux ;</li>
-    <li><span class="checkbox"></span> Annexe 4 — État des lieux et inventaire ;</li>
-    <li><span class="checkbox"></span> Annexe 5 — Échéancier / reçu du dépôt de garantie.</li>
+    <li><span class="checkbox"></span> Annexe 1- Autorisation écrite de sous-location et notification individuelle ;</li>
+    <li><span class="checkbox"></span> Annexe 2- Fiche descriptive, loyer et charges ;</li>
+    <li><span class="checkbox"></span> Annexe 3- Règles d'occupation des lieux ;</li>
+    <li><span class="checkbox"></span> Annexe 4- État des lieux et inventaire ;</li>
+    <li><span class="checkbox"></span> Annexe 5- Échéancier / reçu du dépôt de garantie.</li>
   </ul>
 
   ${sigBlock(
-    `ZEYNA — SOUS-BAILLEUR<br/>Représentant : ${c.representant}`,
-    `L'ÉTUDIANT — SOUS-LOCATAIRE<br/>${cliNomComplet}`
+    `ZEYNA- SOUS-BAILLEUR<br/>Représentant : ${c.representant}`,
+    `L'ÉTUDIANT- SOUS-LOCATAIRE<br/>${cliNomComplet}`
   )}
 
   <div class="page-break"></div>
-  <h2 class="partie-title">ANNEXE 1 — AUTORISATION ÉCRITE DE SOUS-LOCATION</h2>
+  <h2 class="partie-title">ANNEXE 1- AUTORISATION ÉCRITE DE SOUS-LOCATION</h2>
   <table>
     <tr><th>Champ</th><th>Donnée</th></tr>
     <tr><td>Référence du bail principal</td><td>[ZEYNA-BAIL-____]</td></tr>
-    <tr><td>ZEYNA, preneur principal</td><td>${c.nom} — ${c.forme}</td></tr>
+    <tr><td>ZEYNA, preneur principal</td><td>${c.nom}- ${c.forme}</td></tr>
     <tr><td>Étudiant concerné</td><td>${cliNomComplet}</td></tr>
-    <tr><td>Adresse et unité sous-louée</td><td>${logAdresse}, ${logVille} — ${chNom}</td></tr>
+    <tr><td>Adresse et unité sous-louée</td><td>${logAdresse}, ${logVille}- ${chNom}</td></tr>
     <tr><td>Taux du sous-loyer</td><td>${fmt(data.chambre.prix_zeyna)} / mois</td></tr>
     <tr><td>Date de prise d'effet prévue</td><td>${dateDebut}</td></tr>
-    <tr><td>Caractère meublé</td><td>[Oui / non — inventaire joint]</td></tr>
+    <tr><td>Caractère meublé</td><td>[Oui / non- inventaire joint]</td></tr>
     <tr><td>Date de notification</td><td>[Date / moyen de transmission]</td></tr>
   </table>
   <p><strong>Accord exprès du Bailleur principal :</strong> Je soussigné(e), Bailleur principal, donne mon accord exprès et écrit à la sous-location de l'unité ci-dessus à la personne identifiée au taux indiqué, sous réserve du respect du bail principal et des dispositions impératives applicables.</p>
   ${sigBlock(
-    `BAILLEUR PRINCIPAL — CONSENTEMENT<br/>[Nom du Bailleur]`,
-    `ZEYNA — PRENEUR PRINCIPAL<br/>Représentant : ${c.representant}`
+    `BAILLEUR PRINCIPAL- CONSENTEMENT<br/>[Nom du Bailleur]`,
+    `ZEYNA- PRENEUR PRINCIPAL<br/>Représentant : ${c.representant}`
   )}
 
   <div class="page-break"></div>
-  <h2 class="partie-title">ANNEXE 2 — FICHE DESCRIPTIVE, LOYER ET CHARGES</h2>
+  <h2 class="partie-title">ANNEXE 2- FICHE DESCRIPTIVE, LOYER ET CHARGES</h2>
   <table>
     <tr><th>Élément</th><th>Description / valeur contractuelle</th></tr>
-    <tr><td>Type</td><td>${logType} — ${chNom}</td></tr>
+    <tr><td>Type</td><td>${logType}- ${chNom}</td></tr>
     <tr><td>Capacité maximale</td><td>${chCapacite} personne(s)</td></tr>
     <tr><td>Sanitaires</td><td>[Privés / communs / description]</td></tr>
     <tr><td>Espaces communs accessibles</td><td>[Cuisine, cour, douche commune, etc.]</td></tr>
@@ -515,7 +515,7 @@ export const generateContratClientHTML = (data: {
   </table>
 
   <div class="page-break"></div>
-  <h2 class="partie-title">ANNEXE 3 — RÈGLES D'OCCUPATION DES LIEUX</h2>
+  <h2 class="partie-title">ANNEXE 3- RÈGLES D'OCCUPATION DES LIEUX</h2>
   <table>
     <tr><th>Sujet</th><th>Règle convenue</th></tr>
     <tr><td>Capacité / occupants</td><td>[Capacité et conditions]</td></tr>
@@ -529,7 +529,7 @@ export const generateContratClientHTML = (data: {
   </table>
 
   <div class="page-break"></div>
-  <h2 class="partie-title">ANNEXE 4 — ÉTAT DES LIEUX ET INVENTAIRE</h2>
+  <h2 class="partie-title">ANNEXE 4- ÉTAT DES LIEUX ET INVENTAIRE</h2>
   <table>
     <tr><th>Élément</th><th>État à l'entrée</th><th>État à la sortie / observations</th></tr>
     <tr><td>Murs / peinture</td><td>[À compléter]</td><td>[À compléter]</td></tr>
@@ -545,7 +545,7 @@ export const generateContratClientHTML = (data: {
   ${sigBlock(`ZEYNA<br/>Représentant : ${c.representant}`, `L'ÉTUDIANT<br/>${cliNomComplet}`)}
 
   <div class="page-break"></div>
-  <h2 class="partie-title">ANNEXE 5 — ÉCHÉANCIER ET REÇU DU DÉPÔT DE GARANTIE</h2>
+  <h2 class="partie-title">ANNEXE 5- ÉCHÉANCIER ET REÇU DU DÉPÔT DE GARANTIE</h2>
   <table>
     <tr><th>Opération</th><th>Montant</th><th>Date prévue</th><th>Date reçue / référence</th></tr>
     <tr><td>Premier loyer / prorata</td><td>${fmt(data.chambre.prix_zeyna)}</td><td>${dateDebut}</td><td>[À compléter]</td></tr>
@@ -555,8 +555,8 @@ export const generateContratClientHTML = (data: {
   </table>
   <p><strong>Reçu du dépôt de garantie</strong> (à remplir uniquement après encaissement effectif) : Je soussigné(e), représentant(e) habilité(e) de ZEYNA, reconnais avoir reçu de <strong>${cliNomComplet}</strong> la somme de <strong>${fmt(data.caution)}</strong> au titre du dépôt de garantie du contrat référencé <strong>${refContrat}</strong>, le [date], par [moyen de paiement], référence de transaction [référence].</p>
   ${sigBlock(
-    `ZEYNA — REÇU<br/>Représentant : ${c.representant}`,
-    `L'ÉTUDIANT — PRISE DE CONNAISSANCE<br/>${cliNomComplet}`
+    `ZEYNA- REÇU<br/>Représentant : ${c.representant}`,
+    `L'ÉTUDIANT- PRISE DE CONNAISSANCE<br/>${cliNomComplet}`
   )}
 
   <div class="doc-footer"><span>${c.nom} · ${c.adresse}</span><span>Réf : ${refContrat} · ${dateEmission}</span></div>`;
@@ -565,7 +565,7 @@ export const generateContratClientHTML = (data: {
 };
 
 // ─────────────────────────────────────────────────────────────────────────────
-// 3. BON D'AFFECTATION — ZEYNA ↔ BAILLEUR (Aucune info étudiant)
+// 3. BON D'AFFECTATION- ZEYNA ↔ BAILLEUR (Aucune info étudiant)
 // ─────────────────────────────────────────────────────────────────────────────
 
 export const generateBonAffectationHTML = (data: {
@@ -592,7 +592,7 @@ export const generateBonAffectationHTML = (data: {
   ${header(refAffectation, dateEmission)}
 
   <div class="doc-title">BON D'AFFECTATION</div>
-  <div class="doc-subtitle">Notification d'occupation — Document confidentiel</div>
+  <div class="doc-subtitle">Notification d'occupation- Document confidentiel</div>
 
   <p>Bonjour <strong>${bNomComplet}</strong>,</p>
   <p>L'équipe <strong>${c.nom}</strong> vous informe que la chambre <strong>${chNom}</strong> de votre logement <strong>${logNom}</strong> a été affectée à un locataire pris en charge par nos soins, conformément à la convention de gestion qui nous lie.</p>
@@ -600,7 +600,7 @@ export const generateBonAffectationHTML = (data: {
   <h2 class="partie-title">Détails de l'affectation</h2>
   <table>
     <tr><th>Élément</th><th>Détail</th></tr>
-    <tr><td>Logement</td><td>${logNom} — ${logAdresse}, ${logVille}</td></tr>
+    <tr><td>Logement</td><td>${logNom}- ${logAdresse}, ${logVille}</td></tr>
     <tr><td>Unité affectée</td><td>${chNom}</td></tr>
     <tr><td>Date de prise d'effet</td><td>${dateDebut}</td></tr>
     <tr><td>Loyer reversé au Bailleur</td><td>${data.chambre.prix_bailleur ? fmt(data.chambre.prix_bailleur) : "Selon convention"} / mois</td></tr>
