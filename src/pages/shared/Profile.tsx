@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { updateUserPassword, updateUserProfile, uploadUserAvatar } from "@/services/profile-service";
+import { validatePassword } from "@/lib/password-validator";
 import { useToast } from "@/hooks/use-toast";
 import { User, Mail, Phone, Shield, Camera, Loader2 } from "lucide-react";
 
@@ -94,8 +95,9 @@ const ProfilePage = () => {
       toast({ title: "Erreur", description: "Les mots de passe ne correspondent pas.", variant: "destructive" });
       return;
     }
-    if (passwordForm.newPass.length < 6) {
-      toast({ title: "Erreur", description: "Le mot de passe doit contenir au moins 6 caractères.", variant: "destructive" });
+    const passValidation = validatePassword(passwordForm.newPass);
+    if (!passValidation.isValid) {
+      toast({ title: "Mot de passe trop faible", description: passValidation.message, variant: "destructive" });
       return;
     }
     setChangingPassword(true);
@@ -244,7 +246,7 @@ const ProfilePage = () => {
               <Input
                 id="newPass"
                 type="password"
-                placeholder="Min. 6 caractères"
+                placeholder="Min. 8 caractères (avec chiffre)"
                 value={passwordForm.newPass}
                 onChange={(e) => setPasswordForm({ ...passwordForm, newPass: e.target.value })}
               />

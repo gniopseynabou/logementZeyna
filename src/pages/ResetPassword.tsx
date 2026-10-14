@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { isPasswordRecoveryLink, resetUserPassword, getInviteLinkType } from "@/services/auth-service";
+import { validatePassword } from "@/lib/password-validator";
 import { useToast } from "@/hooks/use-toast";
 import { Eye, EyeOff, Loader2 } from "lucide-react";
 
@@ -36,8 +37,9 @@ const ResetPassword = () => {
       toast({ title: "Erreur", description: "Les mots de passe ne correspondent pas.", variant: "destructive" });
       return;
     }
-    if (password.length < 6) {
-      toast({ title: "Erreur", description: "Le mot de passe doit contenir au moins 6 caractères.", variant: "destructive" });
+    const passValidation = validatePassword(password);
+    if (!passValidation.isValid) {
+      toast({ title: "Mot de passe trop faible", description: passValidation.message, variant: "destructive" });
       return;
     }
     setLoading(true);
@@ -117,7 +119,7 @@ const ResetPassword = () => {
               <Label className="transition-colors group-focus-within:text-accent">Confirmer</Label>
               <Input 
                 type="password" 
-                placeholder="••••••••" 
+                placeholder="Min. 8 caractères (avec chiffre)" 
                 value={confirm} 
                 onChange={(e) => setConfirm(e.target.value)} 
                 required 

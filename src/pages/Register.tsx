@@ -28,8 +28,9 @@ const Register = () => {
       toast({ title: "Erreur", description: "Les mots de passe ne correspondent pas.", variant: "destructive" });
       return;
     }
-    if (form.password.length < 6) {
-      toast({ title: "Erreur", description: "Le mot de passe doit contenir au moins 6 caractères.", variant: "destructive" });
+    const passValidation = validatePassword(form.password);
+    if (!passValidation.isValid) {
+      toast({ title: "Mot de passe trop faible", description: passValidation.message, variant: "destructive" });
       return;
     }
 
@@ -105,7 +106,7 @@ const Register = () => {
             <div className="space-y-2 group">
               <Label htmlFor="password" className="transition-colors group-focus-within:text-accent">Mot de passe</Label>
               <div className="relative">
-                <Input id="password" type={showPassword ? "text" : "password"} placeholder="Min. 6 caractères" value={form.password} onChange={(e) => update("password", e.target.value)} required className="transition-all duration-300 focus:border-accent focus:ring-1 focus:ring-accent pr-10" />
+                <Input id="password" type={showPassword ? "text" : "password"} placeholder="Min. 8 caractères (avec chiffre)" value={form.password} onChange={(e) => update("password", e.target.value)} required className="transition-all duration-300 focus:border-accent focus:ring-1 focus:ring-accent pr-10" />
                 <button type="button" className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors" onClick={() => setShowPassword(!showPassword)} tabIndex={-1}>
                   {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                 </button>
