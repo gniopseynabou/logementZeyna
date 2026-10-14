@@ -5,7 +5,7 @@ import DashboardLayout from "@/components/dashboard/DashboardLayout";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { FileText, Download } from "lucide-react";
-import { generateBonAffectationHTML } from "@/pages/admin/Documents";
+import { generateBonAffectationHTML } from "@/lib/contract-templates";
 
 const BailleurContrats = () => {
   const { user, profile } = useAuth();
