@@ -14,6 +14,7 @@ const {
   mockRoomUpdate,
   mockRoomEq,
   mockContractInsert,
+  mockRpc,
 } = vi.hoisted(() => ({
   mockFrom: vi.fn(),
   mockSelect: vi.fn(),
@@ -28,10 +29,14 @@ const {
   mockRoomUpdate: vi.fn(),
   mockRoomEq: vi.fn(),
   mockContractInsert: vi.fn(),
+  mockRpc: vi.fn(),
 }));
 
 vi.mock("@/integrations/supabase/client", () => ({
-  supabase: { from: mockFrom },
+  supabase: {
+    from: mockFrom,
+    rpc: mockRpc,
+  },
 }));
 
 import { confirmAdminPayment, getAdminPayments } from "./payment-service";
@@ -39,6 +44,7 @@ import { confirmAdminPayment, getAdminPayments } from "./payment-service";
 describe("admin payment service", () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    mockRpc.mockResolvedValue({ error: { code: "PGRST202" } });
     mockFrom.mockImplementation((table: string) => {
       if (table === "paiements") return { select: mockSelect, update: mockPaymentUpdate };
       if (table === "chambres") return { update: mockRoomUpdate };

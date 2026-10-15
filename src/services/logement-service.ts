@@ -185,6 +185,138 @@ export const getLogementDetail = async (id: string) => {
   return data;
 };
 
+export interface UpdateAdminLogementInput {
+  nom?: string;
+  adresse?: string;
+  ville?: string;
+  type?: string;
+  description?: string;
+  conditions_electricite?: string;
+  latitude?: number | null;
+  longitude?: number | null;
+  images?: string[];
+  statut?: LogementStatus;
+}
+
+export const updateAdminLogement = async (id: string, updates: UpdateAdminLogementInput) => {
+  const { data, error } = await supabase
+    .from("logements")
+    .update(updates)
+    .eq("id", id)
+    .select()
+    .single();
+
+  if (error) throw error;
+  return data;
+};
+
+export const deleteAdminLogement = async (id: string) => {
+  const { error } = await supabase
+    .from("logements")
+    .delete()
+    .eq("id", id);
+
+  if (error) throw error;
+};
+
+export const toggleLogementDisponibilite = async (logementId: string, estDisponible: boolean) => {
+  const { error } = await supabase
+    .from("chambres")
+    .update({ est_disponible: estDisponible })
+    .eq("logement_id", logementId);
+
+  if (error) throw error;
+};
+
+export const toggleChambreDisponibilite = async (chambreId: string, estDisponible: boolean) => {
+  const { error } = await supabase
+    .from("chambres")
+    .update({ est_disponible: estDisponible })
+    .eq("id", chambreId);
+
+  if (error) throw error;
+};
+
+export interface AdminChambrePayload {
+  id?: string;
+  logement_id: string;
+  nom: string;
+  nombre_personnes: number;
+  prix_bailleur: number;
+  prix_zeyna: number;
+  marge?: number;
+  caution: number;
+  description?: string;
+  est_disponible?: boolean;
+}
+
+export const saveAdminChambre = async (chambre: AdminChambrePayload) => {
+  const marge = chambre.marge !== undefined ? chambre.marge : (chambre.prix_zeyna - chambre.prix_bailleur);
+
+  if (chambre.id) {
+    const { data, error } = await supabase
+      .from("chambres")
+      .update({
+        nom: chambre.nom,
+        nombre_personnes: chambre.nombre_personnes,
+        prix_bailleur: chambre.prix_bailleur,
+        prix_zeyna: chambre.prix_zeyna,
+        marge,
+        caution: chambre.caution,
+        description: chambre.description ?? "",
+        est_disponible: chambre.est_disponible ?? true,
+      })
+      .eq("id", chambre.id)
+      .select()
+      .single();
+
+    if (error) throw error;
+    return data;
+  } else {
+    const { data, error } = await supabase
+      .from("chambres")
+      .insert({
+        logement_id: chambre.logement_id,
+        nom: chambre.nom,
+        nombre_personnes: chambre.nombre_personnes,
+        prix_bailleur: chambre.prix_bailleur,
+        prix_zeyna: chambre.prix_zeyna,
+        marge,
+        caution: chambre.caution,
+        description: chambre.description ?? "",
+        est_disponible: chambre.est_disponible ?? true,
+      })
+      .select()
+      .single();
+
+    if (error) throw error;
+    return data;
+  }
+};
+
+export const deleteAdminChambre = async (chambreId: string) => {
+  const { error } = await supabase
+    .from("chambres")
+    .delete()
+    .eq("id", chambreId);
+
+  if (error) throw error;
+};
+
+export const uploadAdminLogementImages = async (logementId: string, files: File[]) => {
+  const imageUrls: string[] = [];
+  for (const file of files) {
+    const extension = file.name.split(".").pop();
+    const path = `${logementId}/${Date.now()}-${Math.random().toString(36).slice(2)}.${extension}`;
+    const { error } = await supabase.storage.from("logements").upload(path, file);
+    if (error) throw error;
+
+    const { data: urlData } = supabase.storage.from("logements").getPublicUrl(path);
+    imageUrls.push(urlData.publicUrl);
+  }
+  return imageUrls;
+};
+
 interface CreateReservationInput {
   studentId: string;
   roomId: string;

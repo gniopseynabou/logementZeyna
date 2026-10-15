@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-const { mockFrom, mockSelect, mockEq, mockOrder, mockLimit, mockSingle, mockInsert, mockUpdate } = vi.hoisted(() => ({
+const { mockFrom, mockSelect, mockEq, mockOrder, mockLimit, mockSingle, mockInsert, mockUpdate, mockDelete } = vi.hoisted(() => ({
   mockFrom: vi.fn(),
   mockSelect: vi.fn(),
   mockEq: vi.fn(),
@@ -9,6 +9,7 @@ const { mockFrom, mockSelect, mockEq, mockOrder, mockLimit, mockSingle, mockInse
   mockSingle: vi.fn(),
   mockInsert: vi.fn(),
   mockUpdate: vi.fn(),
+  mockDelete: vi.fn(),
 }));
 
 vi.mock("@/integrations/supabase/client", () => ({
@@ -22,14 +23,21 @@ import {
   getValidatedLogementsForTariffs,
   updateRoomTariff,
   updateAdminLogementStatus,
+  updateAdminLogement,
+  deleteAdminLogement,
+  toggleLogementDisponibilite,
+  toggleChambreDisponibilite,
+  saveAdminChambre,
+  deleteAdminChambre,
 } from "./logement-service";
 
 describe("getPublicLogements", () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    mockFrom.mockReturnValue({ select: mockSelect, insert: mockInsert, update: mockUpdate });
+    mockFrom.mockReturnValue({ select: mockSelect, insert: mockInsert, update: mockUpdate, delete: mockDelete });
     mockSelect.mockReturnValue({ eq: mockEq });
-    mockEq.mockReturnValue({ order: mockOrder, limit: mockLimit, single: mockSingle });
+    mockDelete.mockReturnValue({ eq: mockEq });
+    mockEq.mockReturnValue({ order: mockOrder, limit: mockLimit, single: mockSingle, select: mockSelect });
     mockUpdate.mockReturnValue({ eq: mockEq });
   });
 
@@ -169,5 +177,67 @@ describe("getPublicLogements", () => {
       date_debut: expect.stringMatching(/^\d{4}-\d{2}-\d{2}$/),
       statut: "en_attente",
     }));
+  });
+
+  it("updates admin logement details", async () => {
+    const updated = { id: "logement-1", nom: "Nouveau Nom" };
+    mockSelect.mockReturnValue({ single: mockSingle });
+    mockSingle.mockResolvedValue({ data: updated, error: null });
+
+    await expect(updateAdminLogement("logement-1", { nom: "Nouveau Nom" })).resolves.toBe(updated);
+    expect(mockFrom).toHaveBeenCalledWith("logements");
+    expect(mockUpdate).toHaveBeenCalledWith({ nom: "Nouveau Nom" });
+    expect(mockEq).toHaveBeenCalledWith("id", "logement-1");
+  });
+
+  it("deletes an admin logement", async () => {
+    mockEq.mockResolvedValue({ error: null });
+
+    await expect(deleteAdminLogement("logement-1")).resolves.toBeUndefined();
+    expect(mockFrom).toHaveBeenCalledWith("logements");
+    expect(mockDelete).toHaveBeenCalled();
+    expect(mockEq).toHaveBeenCalledWith("id", "logement-1");
+  });
+
+  it("toggles all rooms availability for a logement", async () => {
+    mockEq.mockResolvedValue({ error: null });
+
+    await expect(toggleLogementDisponibilite("logement-1", false)).resolves.toBeUndefined();
+    expect(mockFrom).toHaveBeenCalledWith("chambres");
+    expect(mockUpdate).toHaveBeenCalledWith({ est_disponible: false });
+    expect(mockEq).toHaveBeenCalledWith("logement_id", "logement-1");
+  });
+
+  it("toggles a single room availability", async () => {
+    mockEq.mockResolvedValue({ error: null });
+
+    await expect(toggleChambreDisponibilite("room-1", true)).resolves.toBeUndefined();
+    expect(mockFrom).toHaveBeenCalledWith("chambres");
+    expect(mockUpdate).toHaveBeenCalledWith({ est_disponible: true });
+    expect(mockEq).toHaveBeenCalledWith("id", "room-1");
+  });
+
+  it("inserts or updates a chambre", async () => {
+    const roomData = { id: "room-1", nom: "Chambre 1", nombre_personnes: 1, prix_bailleur: 20000, prix_zeyna: 25000, caution: 20000, logement_id: "logement-1" };
+    mockSelect.mockReturnValue({ single: mockSingle });
+    mockSingle.mockResolvedValue({ data: roomData, error: null });
+
+    await expect(saveAdminChambre(roomData)).resolves.toBe(roomData);
+    expect(mockFrom).toHaveBeenCalledWith("chambres");
+    expect(mockUpdate).toHaveBeenCalledWith(expect.objectContaining({
+      nom: "Chambre 1",
+      prix_bailleur: 20000,
+      prix_zeyna: 25000,
+      marge: 5000,
+    }));
+  });
+
+  it("deletes a chambre", async () => {
+    mockEq.mockResolvedValue({ error: null });
+
+    await expect(deleteAdminChambre("room-1")).resolves.toBeUndefined();
+    expect(mockFrom).toHaveBeenCalledWith("chambres");
+    expect(mockDelete).toHaveBeenCalled();
+    expect(mockEq).toHaveBeenCalledWith("id", "room-1");
   });
 });

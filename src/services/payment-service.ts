@@ -144,8 +144,8 @@ export const confirmAdminPayment = async ({
     return data;
   }
 
-  // 2. Si la fonction RPC n'a pas encore été migrée sur la base distante (code 42883), fallback
-  if (rpcError && (rpcError.code === "42883" || rpcError.message?.includes("function") || rpcError.message?.includes("not found"))) {
+  // 2. Si la fonction RPC n'a pas encore été migrée sur la base distante (code 42883 ou PGRST202), fallback
+  if (rpcError && (rpcError.code === "42883" || rpcError.code === "PGRST202" || rpcError.message?.includes("function") || rpcError.message?.includes("not found"))) {
     console.warn("Procédure RPC confirm_payment_and_assign_room non encore migrée sur Supabase, exécution du fallback séquentiel.");
 
     const { error: paymentError } = await supabase

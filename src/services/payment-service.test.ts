@@ -30,7 +30,10 @@ describe("payment-service", () => {
     const data = { id: "reservation-1" };
     mockSingle.mockResolvedValue({ data, error: null });
 
-    await expect(getReservationForPayment("reservation-1")).resolves.toBe(data);
+    await expect(getReservationForPayment("reservation-1")).resolves.toEqual({
+      id: "reservation-1",
+      bailleur: null,
+    });
     expect(mockFrom).toHaveBeenCalledWith("reservations");
     expect(mockEq).toHaveBeenCalledWith("id", "reservation-1");
   });

@@ -148,16 +148,16 @@ const DashboardLayout = ({ children }: { children: ReactNode }) => {
       {sidebarOpen && <div className="fixed inset-0 bg-black/50 z-40 lg:hidden" onClick={() => setSidebarOpen(false)} />}
 
       {/* Main content - offset by sidebar width on lg */}
-      <div className="flex-1 flex flex-col min-h-screen lg:ml-64">
+      <div className="flex-1 flex flex-col min-h-screen lg:ml-64 min-w-0">
         <header className="h-14 border-b border-border bg-card flex items-center px-4 lg:px-6 sticky top-0 z-30">
-          <button className="lg:hidden mr-4" onClick={() => setSidebarOpen(true)}>
+          <button className="lg:hidden mr-4 p-1.5 rounded-md hover:bg-muted" onClick={() => setSidebarOpen(true)} aria-label="Ouvrir le menu">
             <Menu className="h-5 w-5" />
           </button>
-          <h2 className="font-serif text-lg font-semibold">
+          <h2 className="font-serif text-lg font-semibold truncate">
             {navItems.find(n => n.href === location.pathname)?.label || "Dashboard"}
           </h2>
         </header>
-        <main className="flex-1 p-4 lg:p-6 overflow-auto">
+        <main className="flex-1 p-3.5 sm:p-5 lg:p-6 min-w-0 overflow-x-hidden">
           {children}
         </main>
       </div>
