@@ -151,11 +151,11 @@ const SuperAdminDashboard = () => {
             </div>
           </div>
 
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setIsDialogOpen(false)} disabled={toggleMaintenance.isPending}>
+          <DialogFooter className="flex-col-reverse sm:flex-row gap-2">
+            <Button variant="outline" onClick={() => setIsDialogOpen(false)} disabled={toggleMaintenance.isPending} className="w-full sm:w-auto">
               Annuler
             </Button>
-            <Button className="bg-amber-600 hover:bg-amber-700 text-white" onClick={confirmActivation} disabled={toggleMaintenance.isPending}>
+            <Button className="bg-amber-600 hover:bg-amber-700 text-white w-full sm:w-auto" onClick={confirmActivation} disabled={toggleMaintenance.isPending}>
               Confirmer l'activation
             </Button>
           </DialogFooter>

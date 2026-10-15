@@ -79,16 +79,16 @@ const EtudiantContrats = () => {
           <div className="space-y-4">
             {contrats.map((c) => (
               <Card key={c.id} className="border-0 shadow-premium">
-                <CardContent className="p-5 flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    <div className="p-3 bg-muted rounded-xl"><FileText className="h-5 w-5 text-primary" /></div>
-                    <div>
-                      <p className="font-medium">{(c as any).reservations?.logements?.nom || "Logement"}</p>
+                <CardContent className="p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                  <div className="flex items-center gap-3 min-w-0">
+                    <div className="p-3 bg-muted rounded-xl shrink-0"><FileText className="h-5 w-5 text-primary" /></div>
+                    <div className="min-w-0">
+                      <p className="font-medium truncate">{(c as any).reservations?.logements?.nom || "Logement"}</p>
                       <p className="text-sm text-muted-foreground">{(c as any).reservations?.chambres?.nom}</p>
                       <p className="text-xs text-muted-foreground">Réf: {(c.contenu as any)?.reference || "-"} · {new Date(c.created_at).toLocaleDateString("fr-FR")}</p>
                     </div>
                   </div>
-                  <Button variant="outline" size="sm" onClick={() => downloadContract(c)}>
+                  <Button variant="outline" size="sm" className="w-full sm:w-auto shrink-0" onClick={() => downloadContract(c)}>
                     <Download className="h-4 w-4 mr-2" /> Télécharger
                   </Button>
                 </CardContent>

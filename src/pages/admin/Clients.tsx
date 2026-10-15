@@ -62,7 +62,7 @@ const EditClientProfileDialog = ({
       }}
       className="space-y-4 mt-2"
     >
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         <div className="space-y-1.5">
           <Label>Prénom</Label>
           <Input value={prenom} onChange={(e) => setPrenom(e.target.value)} required />

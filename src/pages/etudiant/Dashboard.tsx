@@ -35,14 +35,14 @@ const EtudiantDashboard = () => {
         {/* En-tête */}
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
           <div>
-            <h1 className="font-serif text-3xl font-bold text-foreground">
+            <h1 className="font-serif text-2xl sm:text-3xl font-bold text-foreground">
               Bonjour, {profile?.prenom || "Étudiant"}
             </h1>
             <p className="text-muted-foreground mt-1">Bienvenue dans votre espace résident.</p>
           </div>
           {reservationsEnAttente.length > 0 && (
-            <div className="bg-amber-50 border border-amber-200 text-amber-800 px-4 py-2 rounded-md flex items-center gap-2 text-sm">
-              <AlertCircle className="h-4 w-4" />
+            <div className="bg-amber-50 border border-amber-200 text-amber-800 px-4 py-2 rounded-md flex items-start gap-2 text-sm">
+              <AlertCircle className="h-4 w-4 shrink-0 mt-0.5" />
               <span>Vous avez {reservationsEnAttente.length} réservation(s) en attente de paiement.</span>
             </div>
           )}

@@ -165,9 +165,9 @@ const AdminIncidents = () => {
                 <TableHeader>
                   <TableRow>
                     <TableHead>Incident</TableHead>
-                    <TableHead>Logement / Unité</TableHead>
-                    <TableHead>Étudiant</TableHead>
-                    <TableHead>Priorité</TableHead>
+                    <TableHead className="hidden sm:table-cell">Logement / Unité</TableHead>
+                    <TableHead className="hidden md:table-cell">Étudiant</TableHead>
+                    <TableHead className="hidden sm:table-cell">Priorité</TableHead>
                     <TableHead>Statut</TableHead>
                   </TableRow>
                 </TableHeader>
@@ -178,16 +178,18 @@ const AdminIncidents = () => {
                         <p className="font-medium">{inc.titre}</p>
                         <p className="text-xs text-muted-foreground capitalize">{inc.categorie}</p>
                         <p className="text-xs text-muted-foreground">{new Date(inc.created_at).toLocaleDateString("fr-FR")}</p>
+                        {/* Infos supplémentaires visibles uniquement sur mobile */}
+                        <p className="text-xs text-muted-foreground sm:hidden mt-0.5">{inc.logement?.nom || "N/A"}</p>
                       </TableCell>
-                      <TableCell>
+                      <TableCell className="hidden sm:table-cell">
                         <p className="font-medium">{inc.logement?.nom || "N/A"}</p>
                         <p className="text-xs text-muted-foreground">{inc.chambre?.nom || "Global"}</p>
                       </TableCell>
-                      <TableCell>
+                      <TableCell className="hidden md:table-cell">
                         <p className="font-medium">{inc.etudiant?.prenom} {inc.etudiant?.nom}</p>
                         <p className="text-xs text-muted-foreground">{inc.etudiant?.telephone}</p>
                       </TableCell>
-                      <TableCell>
+                      <TableCell className="hidden sm:table-cell">
                         <span className={`text-xs font-semibold ${prioriteConfig[inc.priorite]?.color}`}>{prioriteConfig[inc.priorite]?.label}</span>
                       </TableCell>
                       <TableCell>

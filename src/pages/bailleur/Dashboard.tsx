@@ -55,7 +55,7 @@ const BailleurDashboard = () => {
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 border-b border-border/50 pb-6">
           <div>
-            <h1 className="font-serif text-3xl font-bold text-foreground">
+            <h1 className="font-serif text-2xl sm:text-3xl font-bold text-foreground">
               Espace Bailleur Partenaire
             </h1>
             <p className="text-muted-foreground mt-2">

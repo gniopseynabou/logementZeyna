@@ -210,7 +210,7 @@ const LogementDetail = () => {
 
             {/* Right: Chambres & Reservation */}
             <div className="space-y-4">
-              <Card className="borlg:sticky lg:hadow-premium sticky top-24">
+              <Card className="border-0 shadow-premium lg:sticky lg:top-24">
                 <CardHeader>
                   <CardTitle className="font-serif">{unitLabel}s disponibles</CardTitle>
                 </CardHeader>

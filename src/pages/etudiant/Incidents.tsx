@@ -125,7 +125,7 @@ const EtudiantIncidents = () => {
                   <Input required placeholder="Ex: Fuite d'eau dans la salle de bain" value={titre} onChange={e => setTitre(e.target.value)} />
                 </div>
                 
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <label className="text-sm font-medium">Catégorie</label>
                     <Select value={categorie} onValueChange={(v: any) => setCategorie(v)}>
@@ -158,9 +158,9 @@ const EtudiantIncidents = () => {
                   <Textarea required rows={4} placeholder="Merci de donner le maximum de détails..." value={description} onChange={e => setDescription(e.target.value)} />
                 </div>
 
-                <DialogFooter className="mt-6">
-                  <Button type="button" variant="outline" onClick={() => setIsDialogOpen(false)}>Annuler</Button>
-                  <Button type="submit" disabled={createMutation.isPending} className="bg-accent hover:bg-accent/90 text-white">
+                <DialogFooter className="mt-6 flex-col-reverse sm:flex-row gap-2">
+                  <Button type="button" variant="outline" className="w-full sm:w-auto" onClick={() => setIsDialogOpen(false)}>Annuler</Button>
+                  <Button type="submit" disabled={createMutation.isPending} className="bg-accent hover:bg-accent/90 text-white w-full sm:w-auto">
                     {createMutation.isPending ? "Envoi..." : "Envoyer le signalement"}
                   </Button>
                 </DialogFooter>
