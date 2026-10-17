@@ -68,12 +68,147 @@ const PaiementPage = () => {
   };
 
   if (isLoading || !reservation) {
-    return <DashboardLayout><div className="flex items-center justify-center py-20"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" /></div></DashboardLayout>;
+    return (
+      <DashboardLayout>
+        <div className="flex items-center justify-center py-20">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" />
+        </div>
+      </DashboardLayout>
+    );
   }
 
   const montant = reservation.montant_total;
   const logement = (reservation as any).logements;
   const chambre = (reservation as any).chambres;
+
+  const isPendingConfirmation =
+    reservation.statut === "en_attente_confirmation" ||
+    (reservation.statut === "en_attente" && !reservation.date_expiration);
+  const isRefused = reservation.statut === "refusee";
+  const isCancelled =
+    reservation.statut === "annulee_utilisateur" || reservation.statut === "annulee";
+  const isPaid = reservation.statut === "payee";
+  const isExpired =
+    reservation.statut === "expiree" ||
+    (reservation.date_expiration && new Date(reservation.date_expiration) < new Date());
+  const isRoomOccupied = chambre?.est_disponible === false;
+
+  // Si la réservation n'est pas éligible au paiement
+  if (isPendingConfirmation || isRefused || isCancelled || isPaid || isExpired || isRoomOccupied) {
+    return (
+      <DashboardLayout>
+        <div className="max-w-xl mx-auto space-y-6 py-6">
+          <Card className="border-0 shadow-premium">
+            <CardContent className="p-6 text-center space-y-4">
+              {isPendingConfirmation && (
+                <>
+                  <div className="w-14 h-14 rounded-full bg-amber-500/10 text-amber-600 flex items-center justify-center mx-auto">
+                    <Shield className="h-7 w-7" />
+                  </div>
+                  <h2 className="font-serif text-xl font-bold text-foreground">
+                    Réservation en cours de vérification
+                  </h2>
+                  <p className="text-sm text-muted-foreground leading-relaxed">
+                    Votre demande de réservation pour <strong>{logement?.nom} ({chambre?.nom})</strong> a bien été enregistrée. Notre équipe contacte actuellement le propriétaire pour vérifier sa disponibilité réelle.
+                  </p>
+                  <p className="text-xs font-semibold text-amber-700 bg-amber-500/10 p-2.5 rounded-lg">
+                    Le paiement n'est pas accessible tant que l'administrateur n'a pas validé la disponibilité.
+                  </p>
+                </>
+              )}
+
+              {isRefused && (
+                <>
+                  <div className="w-14 h-14 rounded-full bg-destructive/10 text-destructive flex items-center justify-center mx-auto">
+                    <CheckCircle2 className="h-7 w-7 rotate-45" />
+                  </div>
+                  <h2 className="font-serif text-xl font-bold text-destructive">
+                    Réservation non acceptée
+                  </h2>
+                  {reservation.motif_refus && (
+                    <div className="p-3 bg-destructive/10 rounded-lg text-sm text-foreground text-left">
+                      <strong>Motif communiqué :</strong> {reservation.motif_refus}
+                    </div>
+                  )}
+                  <p className="text-sm text-muted-foreground">
+                    Cette réservation est clôturée et le paiement n'est pas autorisé.
+                  </p>
+                </>
+              )}
+
+              {isExpired && (
+                <>
+                  <div className="w-14 h-14 rounded-full bg-red-500/10 text-red-600 flex items-center justify-center mx-auto">
+                    <Shield className="h-7 w-7" />
+                  </div>
+                  <h2 className="font-serif text-xl font-bold text-destructive">
+                    Délai de paiement expiré (24h)
+                  </h2>
+                  <p className="text-sm text-muted-foreground">
+                    Le délai strict de 24 heures pour régler la caution a été dépassé. Conformément à nos règles de premier arrivé premier servi, le logement a été remis à disposition.
+                  </p>
+                </>
+              )}
+
+              {isRoomOccupied && !isPaid && (
+                <>
+                  <div className="w-14 h-14 rounded-full bg-amber-500/10 text-amber-600 flex items-center justify-center mx-auto">
+                    <Shield className="h-7 w-7" />
+                  </div>
+                  <h2 className="font-serif text-xl font-bold text-foreground">
+                    Logement déjà attribué
+                  </h2>
+                  <p className="text-sm text-muted-foreground">
+                    Ce logement a été confirmé et payé par un autre locataire (règle du premier arrivé, premier servi). Le paiement n'est plus possible.
+                  </p>
+                </>
+              )}
+
+              {isPaid && (
+                <>
+                  <div className="w-14 h-14 rounded-full bg-emerald-500/10 text-emerald-600 flex items-center justify-center mx-auto">
+                    <CheckCircle2 className="h-7 w-7" />
+                  </div>
+                  <h2 className="font-serif text-xl font-bold text-emerald-600">
+                    Paiement déjà effectué !
+                  </h2>
+                  <p className="text-sm text-muted-foreground">
+                    Votre paiement a déjà été validé et votre contrat de location est disponible.
+                  </p>
+                </>
+              )}
+
+              {isCancelled && (
+                <>
+                  <h2 className="font-serif text-xl font-bold text-foreground">
+                    Réservation annulée
+                  </h2>
+                  <p className="text-sm text-muted-foreground">
+                    Cette réservation a été annulée. Aucun paiement ne peut être effectué.
+                  </p>
+                </>
+              )}
+
+              <div className="pt-3 flex gap-2 justify-center flex-wrap">
+                <Button asChild variant="outline">
+                  <a href="/etudiant/reservations">Mes réservations</a>
+                </Button>
+                <Button asChild className="bg-gradient-gold text-accent-foreground">
+                  <a href="/logements">Explorer les logements</a>
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      </DashboardLayout>
+    );
+  }
+
+  // Calcul du temps restant pour paiement
+  const expDate = reservation.date_expiration ? new Date(reservation.date_expiration) : null;
+  const tempsRestant = expDate
+    ? formatDistanceToNow(expDate, { locale: fr, addSuffix: true })
+    : "24h";
 
   return (
     <DashboardLayout>
@@ -85,6 +220,18 @@ const PaiementPage = () => {
           <p className="text-muted-foreground mt-1">
             Dernière étape ! Veuillez consulter et accepter le contrat de location avant de régler la caution.
           </p>
+        </div>
+
+        {/* Alerte décompte 24 heures */}
+        <div className="flex items-center gap-3 p-4 bg-blue-500/10 border border-blue-500/30 rounded-xl text-blue-900 dark:text-blue-200">
+          <Clock className="h-5 w-5 text-blue-600 shrink-0 animate-pulse" />
+          <div className="text-sm">
+            <strong>Délai de paiement : 24 heures</strong>
+            <p className="text-xs text-muted-foreground mt-0.5">
+              Votre réservation a été validée par l'administrateur. Elle expirera <strong>{tempsRestant}</strong>
+              {expDate && ` (le ${format(expDate, "dd MMMM yyyy à HH:mm", { locale: fr })})`}.
+            </p>
+          </div>
         </div>
 
         <Card className="border-0 shadow-premium">
@@ -175,9 +322,7 @@ const PaiementPage = () => {
             >
               {[
                 { value: "orange_money", label: "Orange Money", icon: <Smartphone className="h-4 w-4 text-orange-500" /> },
-                { value: "mtn_money", label: "MTN Money", icon: <Smartphone className="h-4 w-4 text-yellow-500" /> },
-                { value: "moov_money", label: "Moov Money", icon: <Smartphone className="h-4 w-4 text-blue-500" /> },
-                { value: "carte_bancaire", label: "Virement Bancaire", icon: <CreditCard className="h-4 w-4 text-primary" /> },
+                { value: "mtn_money", label: "Wave", icon: <Smartphone className="h-4 w-4 text-yellow-500" /> },
               ].map((m) => (
                 <Label key={m.value} htmlFor={m.value} className={`flex items-center gap-3 p-4 rounded-xl border-2 cursor-pointer transition-all ${methode === m.value ? "border-accent bg-accent/5" : "border-border"}`}>
                   <RadioGroupItem value={m.value} id={m.value} />

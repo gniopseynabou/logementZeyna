@@ -81,7 +81,7 @@ const Register = () => {
           transition={{ staggerChildren: 0.05, delayChildren: 0.1 }}
         >
 
-          <motion.div variants={itemVariants} className="grid grid-cols-2 gap-3 pt-2">
+          <motion.div variants={itemVariants} className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
             <div className="space-y-2 group">
               <Label htmlFor="nom" className="transition-colors group-focus-within:text-accent">Nom</Label>
               <Input id="nom" placeholder="Diallo" value={form.nom} onChange={(e) => update("nom", e.target.value)} required className="transition-all duration-300 focus:border-accent focus:ring-1 focus:ring-accent" />

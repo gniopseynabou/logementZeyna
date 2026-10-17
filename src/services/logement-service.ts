@@ -23,6 +23,12 @@ interface NewLogementInput {
   }>;
   images: File[];
   onUploadingImages?: (uploading: boolean) => void;
+  proprietaire?: {
+    prenom: string;
+    nom: string;
+    telephone: string;
+    email?: string;
+  };
 }
 
 export const createLandlordLogement = async ({
@@ -38,6 +44,7 @@ export const createLandlordLogement = async ({
   chambres,
   images,
   onUploadingImages,
+  proprietaire,
 }: NewLogementInput) => {
   const { data: logement, error: logementError } = await supabase
     .from("logements")
@@ -58,6 +65,21 @@ export const createLandlordLogement = async ({
 
   if (logementError) throw logementError;
   if (!logement) throw new Error("Le logement créé est introuvable.");
+
+  if (proprietaire && proprietaire.nom && proprietaire.prenom && proprietaire.telephone) {
+    const { error: proprietaireError } = await supabase
+      .from("logement_proprietaires")
+      .insert({
+        logement_id: logement.id,
+        nom: proprietaire.nom.trim(),
+        prenom: proprietaire.prenom.trim(),
+        telephone: proprietaire.telephone.trim(),
+        email: proprietaire.email?.trim() || null,
+      });
+    if (proprietaireError) {
+      console.error("Erreur lors de l'enregistrement du propriétaire:", proprietaireError);
+    }
+  }
 
   if (images.length > 0) {
     onUploadingImages?.(true);
@@ -97,6 +119,20 @@ export const createLandlordLogement = async ({
   if (chambresError) throw chambresError;
 
   return logement;
+};
+
+export const getLogementProprietaire = async (logementId: string) => {
+  const { data, error } = await supabase
+    .from("logement_proprietaires")
+    .select("*")
+    .eq("logement_id", logementId)
+    .maybeSingle();
+
+  if (error) {
+    console.error("Erreur lecture proprietaire:", error);
+    return null;
+  }
+  return data;
 };
 
 export const getPublicLogements = async () => {

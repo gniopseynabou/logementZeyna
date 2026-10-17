@@ -18,7 +18,7 @@ import Footer from "@/components/landing/Footer";
 const avantages = [
   { icon: TrendingUp, titre: "Visibilité maximale",    desc: "Vos logements présentés à des milliers d'étudiants en recherche active à Saint-Louis." },
   { icon: Phone,      titre: "Gestion simplifiée",     desc: "Réservations, paiements et contrats centralisés dans un seul tableau de bord." },
-  { icon: Shield,     titre: "Paiements sécurisés",    desc: "Orange Money, MTN, Moov - vos loyers garantis et reversés directement." },
+  { icon: Shield,     titre: "Paiements sécurisés",    desc: "Orange Money, Wave - vos loyers garantis et reversés directement." },
   { icon: Handshake,  titre: "Partenariat humain",     desc: "Notre équipe vous accompagne à chaque étape et reste disponible." },
 ];
 
@@ -156,7 +156,7 @@ const DevenirBailleur = () => {
                         </p>
                       </div>
                       <form onSubmit={handleSubmit} className="space-y-5">
-                        <div className="grid grid-cols-2 gap-4">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                           <div className="space-y-2">
                             <Label htmlFor="prenom">Prénom *</Label>
                             <Input id="prenom" placeholder="Aminata" value={form.prenom} onChange={(e) => update("prenom", e.target.value)} required />
@@ -177,7 +177,7 @@ const DevenirBailleur = () => {
                           <Input id="email" type="email" placeholder="votre@email.com" value={form.email} onChange={(e) => update("email", e.target.value)} />
                         </div>
 
-                        <div className="grid grid-cols-2 gap-4">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                           <div className="space-y-2">
                             <Label>Ville</Label>
                             <Select value={form.ville} onValueChange={(v) => update("ville", v)}>

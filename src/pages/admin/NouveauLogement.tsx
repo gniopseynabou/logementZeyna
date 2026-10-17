@@ -10,7 +10,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { createLandlordLogement } from "@/services/logement-service";
 import { useToast } from "@/hooks/use-toast";
-import { Plus, Trash2, Upload, ArrowLeft, CheckCircle } from "lucide-react";
+import { Plus, Trash2, Upload, ArrowLeft, CheckCircle, Shield, Phone, Mail, User } from "lucide-react";
 import { useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -43,6 +43,13 @@ const AdminNouveauLogement = () => {
     conditions_electricite: "Éclairage et chauffe-eau inclus.",
     latitude: "",
     longitude: "",
+  });
+
+  const [proprietaire, setProprietaire] = useState({
+    prenom: "",
+    nom: "",
+    telephone: "",
+    email: "",
   });
 
   const [chambres, setChambres] = useState<ChambreForm[]>([
@@ -100,12 +107,19 @@ const AdminNouveauLogement = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (!proprietaire.prenom.trim() || !proprietaire.nom.trim() || !proprietaire.telephone.trim()) {
+      toast({
+        title: "Coordonnées du propriétaire requises",
+        description: "Veuillez renseigner le prénom, le nom et le numéro de téléphone du propriétaire.",
+        variant: "destructive",
+      });
+      return;
+    }
+
     setSaving(true);
 
     try {
-      // L'admin crée le logement et l'approuve immédiatement
-      // On récupère le premier bailleur disponible ou on crée le logement sans bailleur
-      // Pour l'admin, on peut utiliser son propre user ID comme propriétaire interne
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error("Non authentifié");
 
@@ -122,6 +136,12 @@ const AdminNouveauLogement = () => {
         chambres,
         images: imageFiles,
         onUploadingImages: setUploading,
+        proprietaire: {
+          prenom: proprietaire.prenom.trim(),
+          nom: proprietaire.nom.trim(),
+          telephone: proprietaire.telephone.trim(),
+          email: proprietaire.email.trim() || undefined,
+        },
       });
 
       // L'admin valide le logement immédiatement
@@ -167,6 +187,74 @@ const AdminNouveauLogement = () => {
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-6">
+          {/* Informations du propriétaire (Usage Interne Administrateur) */}
+          <Card className="border-0 shadow-premium border-l-4 border-l-accent">
+            <CardHeader className="pb-3">
+              <div className="flex items-center justify-between">
+                <CardTitle className="font-serif text-lg flex items-center gap-2">
+                  <User className="h-5 w-5 text-accent" />
+                  Informations du Propriétaire
+                </CardTitle>
+                <span className="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-accent/10 text-accent flex items-center gap-1">
+                  <Shield className="h-3 w-3" /> Confidentiel Admin
+                </span>
+              </div>
+              <p className="text-xs text-muted-foreground mt-1">
+                Ces coordonnées sont strictement réservées aux administrateurs pour joindre le propriétaire (disponibilités, réservations, incidents). Elles ne sont jamais affichées aux étudiants ni au public.
+              </p>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="proprio-prenom">Prénom du propriétaire *</Label>
+                  <Input
+                    id="proprio-prenom"
+                    placeholder="Ex: Ibrahima"
+                    value={proprietaire.prenom}
+                    onChange={(e) => setProprietaire({ ...proprietaire, prenom: e.target.value })}
+                    required
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="proprio-nom">Nom du propriétaire *</Label>
+                  <Input
+                    id="proprio-nom"
+                    placeholder="Ex: Sarr"
+                    value={proprietaire.nom}
+                    onChange={(e) => setProprietaire({ ...proprietaire, nom: e.target.value })}
+                    required
+                  />
+                </div>
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="proprio-tel" className="flex items-center gap-1.5">
+                    <Phone className="h-3.5 w-3.5 text-accent" /> Téléphone *
+                  </Label>
+                  <Input
+                    id="proprio-tel"
+                    placeholder="Ex: +221 77 123 45 67"
+                    value={proprietaire.telephone}
+                    onChange={(e) => setProprietaire({ ...proprietaire, telephone: e.target.value })}
+                    required
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="proprio-email" className="flex items-center gap-1.5">
+                    <Mail className="h-3.5 w-3.5 text-muted-foreground" /> Adresse e-mail (facultative)
+                  </Label>
+                  <Input
+                    id="proprio-email"
+                    type="email"
+                    placeholder="Ex: proprietaire@email.com"
+                    value={proprietaire.email}
+                    onChange={(e) => setProprietaire({ ...proprietaire, email: e.target.value })}
+                  />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
           {/* Informations générales */}
           <Card className="border-0 shadow-premium">
             <CardHeader><CardTitle className="font-serif text-lg">Informations du logement</CardTitle></CardHeader>
@@ -179,7 +267,7 @@ const AdminNouveauLogement = () => {
                 <Label>Adresse complète *</Label>
                 <Input placeholder="Ex: Quartier Sanar, près de l'UGB" value={form.adresse} onChange={(e) => setForm({ ...form, adresse: e.target.value })} required />
               </div>
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label>Ville</Label>
                   <Input value={form.ville} onChange={(e) => setForm({ ...form, ville: e.target.value })} />
@@ -207,7 +295,7 @@ const AdminNouveauLogement = () => {
                 <Label>Conditions d'électricité</Label>
                 <Textarea value={form.conditions_electricite} onChange={(e) => setForm({ ...form, conditions_electricite: e.target.value })} rows={2} />
               </div>
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label>Latitude (GPS)</Label>
                   <Input type="number" step="any" placeholder="16.0617" value={form.latitude} onChange={(e) => setForm({ ...form, latitude: e.target.value })} />
@@ -225,7 +313,7 @@ const AdminNouveauLogement = () => {
             <CardHeader><CardTitle className="font-serif text-lg">Photos du logement</CardTitle></CardHeader>
             <CardContent className="space-y-4">
               <input type="file" accept="image/*" multiple ref={fileInputRef} onChange={handleImageSelect} className="hidden" />
-              <div className="grid grid-cols-3 gap-3">
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
                 {imagePreviews.map((preview, i) => (
                   <div key={i} className="relative aspect-video rounded-lg overflow-hidden border">
                     <img src={preview} alt="" className="w-full h-full object-cover" />
@@ -276,7 +364,7 @@ const AdminNouveauLogement = () => {
                       </Button>
                     )}
                   </div>
-                  <div className="grid grid-cols-2 gap-3">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div className="space-y-1">
                       <Label className="text-xs">Nom</Label>
                       <Input value={c.nom} onChange={(e) => updateChambre(i, "nom", e.target.value)} />
