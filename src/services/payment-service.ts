@@ -207,7 +207,8 @@ export const getReservationForPayment = async (reservationId: string) => {
       chambres (
         nom,
         prix_zeyna,
-        caution
+        caution,
+        est_disponible
       )
     `)
     .eq("id", reservationId)

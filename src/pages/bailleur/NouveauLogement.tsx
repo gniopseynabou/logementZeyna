@@ -138,7 +138,7 @@ const NouveauLogement = () => {
                 <Label>Adresse complète *</Label>
                 <Input placeholder="Ex: Quartier Sanar, près de l'UGB" value={form.adresse} onChange={(e) => setForm({ ...form, adresse: e.target.value })} required />
               </div>
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label>Ville</Label>
                   <Input value={form.ville} onChange={(e) => setForm({ ...form, ville: e.target.value })} />
@@ -165,7 +165,7 @@ const NouveauLogement = () => {
                 <Label>Conditions d'électricité</Label>
                 <Textarea value={form.conditions_electricite} onChange={(e) => setForm({ ...form, conditions_electricite: e.target.value })} rows={2} />
               </div>
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label>Latitude (GPS)</Label>
                   <Input type="number" step="any" placeholder="16.0617" value={form.latitude} onChange={(e) => setForm({ ...form, latitude: e.target.value })} />
@@ -190,7 +190,7 @@ const NouveauLogement = () => {
                 onChange={handleImageSelect}
                 className="hidden"
               />
-              <div className="grid grid-cols-2 sm:grid-cols-2 sm:grid-cols-3 gap-3">
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
                 {imagePreviews.map((preview, i) => (
                   <div key={i} className="relative aspect-video rounded-lg overflow-hidden border">
                     <img src={preview} alt="" className="w-full h-full object-cover" />
@@ -236,7 +236,7 @@ const NouveauLogement = () => {
                       <Button type="button" variant="ghost" size="icon" className="text-destructive" onClick={() => removeChambre(i)}><Trash2 className="h-4 w-4" /></Button>
                     )}
                   </div>
-                  <div className="grid grid-cols-2 gap-3">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div className="space-y-1">
                       <Label className="text-xs">Nom</Label>
                       <Input value={c.nom} onChange={(e) => updateChambre(i, "nom", e.target.value)} />

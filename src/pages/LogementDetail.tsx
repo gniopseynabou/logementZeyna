@@ -89,7 +89,10 @@ const LogementDetail = () => {
       if (error) {
         toast({ title: "Erreur", description: error.message, variant: "destructive" });
       } else {
-        toast({ title: "Réservation créée !", description: "Procédez au paiement de la caution pour confirmer." });
+        toast({
+          title: "Demande de réservation envoyée ✅",
+          description: "Votre demande est en cours de vérification auprès du propriétaire. Vous recevrez une notification dès validation pour procéder au paiement.",
+        });
         navigate("/etudiant/reservations");
       }
     } finally {
@@ -273,7 +276,7 @@ const LogementDetail = () => {
                   </Button>
 
                   <p className="text-xs text-center text-muted-foreground">
-                    La réservation sera confirmée après paiement de la caution
+                    La disponibilité sera vérifiée auprès du propriétaire avant ouverture du délai de paiement (24h)
                   </p>
                 </CardContent>
               </Card>

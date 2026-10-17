@@ -6,10 +6,11 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { FileText, Search, Download, Eye, Plus, FileLock, FileCheck, Loader2 } from "lucide-react";
+import { FileText, Search, Download, Eye, Plus, FileLock, FileCheck, Loader2, Clock } from "lucide-react";
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { getStudentContracts } from "@/services/contract-service";
+import { ContractRenewalManager } from "@/components/admin/ContractRenewalManager";
 import { supabase } from "@/integrations/supabase/client";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
@@ -210,9 +211,13 @@ const AdminDocuments = () => {
 
         {/* Onglets */}
         <Tabs defaultValue="contrats-clients">
-          <TabsList>
+          <TabsList className="grid grid-cols-1 sm:grid-cols-3 w-full max-w-2xl">
             <TabsTrigger value="contrats-clients">Contrats clients</TabsTrigger>
             <TabsTrigger value="conventions-bailleurs">Conventions bailleurs</TabsTrigger>
+            <TabsTrigger value="echeances-renouvellements" className="flex items-center gap-1.5">
+              <Clock className="h-4 w-4" />
+              <span>Échéances & Renouvellements</span>
+            </TabsTrigger>
           </TabsList>
 
           {/* ── CONTRATS CLIENTS ── */}
@@ -304,6 +309,10 @@ const AdminDocuments = () => {
                 ))}
               </div>
             )}
+          </TabsContent>
+          {/* ── ÉCHÉANCES & RENOUVELLEMENTS ── */}
+          <TabsContent value="echeances-renouvellements" className="mt-4">
+            <ContractRenewalManager />
           </TabsContent>
         </Tabs>
       </div>

@@ -74,25 +74,37 @@ export type Database = {
         Row: {
           contenu: Json | null
           created_at: string
+          date_debut: string | null
+          date_fin: string | null
           etudiant_id: string
           id: string
+          loyer_mensuel: number | null
           reservation_id: string
+          statut_contrat: string
           url_pdf: string | null
         }
         Insert: {
           contenu?: Json | null
           created_at?: string
+          date_debut?: string | null
+          date_fin?: string | null
           etudiant_id: string
           id?: string
+          loyer_mensuel?: number | null
           reservation_id: string
+          statut_contrat?: string
           url_pdf?: string | null
         }
         Update: {
           contenu?: Json | null
           created_at?: string
+          date_debut?: string | null
+          date_fin?: string | null
           etudiant_id?: string
           id?: string
+          loyer_mensuel?: number | null
           reservation_id?: string
+          statut_contrat?: string
           url_pdf?: string | null
         }
         Relationships: [
@@ -101,6 +113,159 @@ export type Database = {
             columns: ["reservation_id"]
             isOneToOne: false
             referencedRelation: "reservations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      contrat_rappels: {
+        Row: {
+          administrateur_id: string | null
+          contrat_id: string
+          created_at: string
+          date_rappel: string
+          id: string
+          message: string
+          notes: string | null
+          statut_envoi: string
+          type_canal: string
+        }
+        Insert: {
+          administrateur_id?: string | null
+          contrat_id: string
+          created_at?: string
+          date_rappel?: string
+          id?: string
+          message: string
+          notes?: string | null
+          statut_envoi?: string
+          type_canal?: string
+        }
+        Update: {
+          administrateur_id?: string | null
+          contrat_id?: string
+          created_at?: string
+          date_rappel?: string
+          id?: string
+          message?: string
+          notes?: string | null
+          statut_envoi?: string
+          type_canal?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "contrat_rappels_contrat_id_fkey"
+            columns: ["contrat_id"]
+            isOneToOne: false
+            referencedRelation: "contrats"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      contrat_renouvellements: {
+        Row: {
+          contrat_id: string
+          created_at: string
+          date_acceptation_etudiant: string | null
+          date_decision: string | null
+          etudiant_id: string
+          id: string
+          motif_modification_tarif: string | null
+          motif_refus: string | null
+          nouveau_tarif_propose: number | null
+          nouvelle_date_debut: string
+          nouvelle_date_fin: string
+          periode_precedente_debut: string | null
+          periode_precedente_fin: string | null
+          statut: string
+          tarif_precedent: number
+          updated_at: string
+        }
+        Insert: {
+          contrat_id: string
+          created_at?: string
+          date_acceptation_etudiant?: string | null
+          date_decision?: string | null
+          etudiant_id: string
+          id?: string
+          motif_modification_tarif?: string | null
+          motif_refus?: string | null
+          nouveau_tarif_propose?: number | null
+          nouvelle_date_debut: string
+          nouvelle_date_fin: string
+          periode_precedente_debut?: string | null
+          periode_precedente_fin?: string | null
+          statut?: string
+          tarif_precedent: number
+          updated_at?: string
+        }
+        Update: {
+          contrat_id?: string
+          created_at?: string
+          date_acceptation_etudiant?: string | null
+          date_decision?: string | null
+          etudiant_id?: string
+          id?: string
+          motif_modification_tarif?: string | null
+          motif_refus?: string | null
+          nouveau_tarif_propose?: number | null
+          nouvelle_date_debut?: string
+          nouvelle_date_fin?: string
+          periode_precedente_debut?: string | null
+          periode_precedente_fin?: string | null
+          statut?: string
+          tarif_precedent?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "contrat_renouvellements_contrat_id_fkey"
+            columns: ["contrat_id"]
+            isOneToOne: false
+            referencedRelation: "contrats"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      contrat_periodes_historique: {
+        Row: {
+          contrat_id: string
+          created_at: string
+          date_debut: string
+          date_fin: string
+          id: string
+          loyer_mensuel: number
+          motif_modification: string | null
+          numero_periode: number
+          renouvellement_id: string | null
+        }
+        Insert: {
+          contrat_id: string
+          created_at?: string
+          date_debut: string
+          date_fin: string
+          id?: string
+          loyer_mensuel: number
+          motif_modification?: string | null
+          numero_periode?: number
+          renouvellement_id?: string | null
+        }
+        Update: {
+          contrat_id?: string
+          created_at?: string
+          date_debut?: string
+          date_fin?: string
+          id?: string
+          loyer_mensuel?: number
+          motif_modification?: string | null
+          numero_periode?: number
+          renouvellement_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "contrat_periodes_historique_contrat_id_fkey"
+            columns: ["contrat_id"]
+            isOneToOne: false
+            referencedRelation: "contrats"
             referencedColumns: ["id"]
           },
         ]
@@ -131,6 +296,46 @@ export type Database = {
           reponse?: string
         }
         Relationships: []
+      logement_proprietaires: {
+        Row: {
+          created_at: string
+          email: string | null
+          id: string
+          logement_id: string
+          nom: string
+          prenom: string
+          telephone: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          email?: string | null
+          id?: string
+          logement_id: string
+          nom: string
+          prenom: string
+          telephone: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          email?: string | null
+          id?: string
+          logement_id?: string
+          nom?: string
+          prenom?: string
+          telephone?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "logement_proprietaires_logement_id_fkey"
+            columns: ["logement_id"]
+            isOneToOne: true
+            referencedRelation: "logements"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       logements: {
         Row: {
@@ -268,11 +473,14 @@ export type Database = {
           chambre_id: string
           created_at: string
           date_debut: string
+          date_expiration: string | null
           date_fin: string | null
+          date_validation: string | null
           etudiant_id: string
           id: string
           logement_id: string
           montant_total: number
+          motif_refus: string | null
           statut: Database["public"]["Enums"]["reservation_statut"]
           updated_at: string
         }
@@ -280,11 +488,14 @@ export type Database = {
           chambre_id: string
           created_at?: string
           date_debut: string
+          date_expiration?: string | null
           date_fin?: string | null
+          date_validation?: string | null
           etudiant_id: string
           id?: string
           logement_id: string
           montant_total: number
+          motif_refus?: string | null
           statut?: Database["public"]["Enums"]["reservation_statut"]
           updated_at?: string
         }
@@ -292,11 +503,14 @@ export type Database = {
           chambre_id?: string
           created_at?: string
           date_debut?: string
+          date_expiration?: string | null
           date_fin?: string | null
+          date_validation?: string | null
           etudiant_id?: string
           id?: string
           logement_id?: string
           montant_total?: number
+          motif_refus?: string | null
           statut?: Database["public"]["Enums"]["reservation_statut"]
           updated_at?: string
         }
@@ -420,7 +634,16 @@ export type Database = {
         | "mtn_money"
         | "moov_money"
         | "carte_bancaire"
-      reservation_statut: "en_attente" | "confirmee" | "annulee"
+      reservation_statut:
+        | "en_attente"
+        | "confirmee"
+        | "annulee"
+        | "en_attente_confirmation"
+        | "confirmee_paiement_en_attente"
+        | "payee"
+        | "refusee"
+        | "annulee_utilisateur"
+        | "expiree"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -556,7 +779,17 @@ export const Constants = {
         "moov_money",
         "carte_bancaire",
       ],
-      reservation_statut: ["en_attente", "confirmee", "annulee"],
+      reservation_statut: [
+        "en_attente",
+        "confirmee",
+        "annulee",
+        "en_attente_confirmation",
+        "confirmee_paiement_en_attente",
+        "payee",
+        "refusee",
+        "annulee_utilisateur",
+        "expiree",
+      ],
     },
   },
 } as const

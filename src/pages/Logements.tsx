@@ -262,7 +262,7 @@ const Logements = () => {
               </div>
 
               {totalPages > 1 && (
-                <div className="flex justify-center gap-2 mt-8">
+                <div className="flex flex-wrap justify-center gap-2 mt-8">
                   {Array.from({ length: totalPages }, (_, i) => (
                     <Button key={i} variant={page === i + 1 ? "default" : "outline"} size="sm" onClick={() => setPage(i + 1)}>
                       {i + 1}
