@@ -276,7 +276,7 @@ const AdminClients = () => {
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
             <h1 className="font-serif text-2xl font-bold">
-              Clients &amp; Étudiants
+              Clients & Étudiants
             </h1>
             <p className="text-muted-foreground text-sm">
               {stats?.etudiant ?? "-"} client(s) enregistré(s)

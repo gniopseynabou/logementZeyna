@@ -50,6 +50,7 @@ const Confidentialite = lazy(() => import("./pages/legal/Confidentialite"));
 const ProfilePage = lazy(() => import("./pages/shared/Profile"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 const DevenirBailleur = lazy(() => import("./pages/DevenirBailleur"));
+const PaiementEtGaranties = lazy(() => import("./pages/PaiementEtGaranties"));
 
 const PageLoader = () => (
   <div className="min-h-screen flex items-center justify-center bg-background">
@@ -93,6 +94,7 @@ const App = () => (
               <Route path="/logements" element={<Logements />} />
               <Route path="/logements/:id" element={<LogementDetail />} />
               <Route path="/devenir-bailleur" element={<DevenirBailleur />} />
+              <Route path="/paiement-et-garanties" element={<PaiementEtGaranties />} />
               
               {/* Légal */}
               <Route path="/mentions-legales" element={<MentionsLegales />} />

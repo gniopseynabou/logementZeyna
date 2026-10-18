@@ -6,16 +6,24 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { FileText, Search, Download, Eye, Plus, FileLock, FileCheck, Loader2, Clock } from "lucide-react";
+import { FileText, Search, Download, Eye, Plus, FileLock, FileCheck, Loader2, Clock, ShieldCheck, Receipt, CheckCircle2 } from "lucide-react";
 import { useState } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { getStudentContracts } from "@/services/contract-service";
 import { ContractRenewalManager } from "@/components/admin/ContractRenewalManager";
+import { OperationsAndReceiptsManager } from "@/components/admin/OperationsAndReceiptsManager";
+import { createOrUpdateAccord, getAdminAccords } from "@/services/accord-proprietaire-service";
 import { supabase } from "@/integrations/supabase/client";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
+import { useToast } from "@/hooks/use-toast";
 
-import { generateContratClientHTML, generateConventionBailleurHTML, generateBonAffectationHTML } from "@/lib/contract-templates";
+import {
+  generateContratClientHTML,
+  generateConventionBailleurHTML,
+  generateBonAffectationHTML,
+  generatePolitiqueCautionHTML,
+} from "@/lib/contract-templates";
 
 export const printDocument = (htmlContent: string) => {
   const win = window.open("", "_blank");
@@ -33,6 +41,43 @@ export const printDocument = (htmlContent: string) => {
 const AdminDocuments = () => {
   const [search, setSearch] = useState("");
   const [searchBailleur, setSearchBailleur] = useState("");
+  const { toast } = useToast();
+  const queryClient = useQueryClient();
+
+  // Accords écrits propriétaires
+  const { data: accordsBailleurs } = useQuery({
+    queryKey: ["admin-accords-bailleurs"],
+    queryFn: getAdminAccords,
+  });
+
+  const accordsMap = new Map<string, any>();
+  (accordsBailleurs || []).forEach((a) => {
+    accordsMap.set(a.logement_id, a);
+  });
+
+  const signAccordMutation = useMutation({
+    mutationFn: async ({ logementId, bailleurId }: { logementId: string; bailleurId: string }) => {
+      return await createOrUpdateAccord({
+        logement_id: logementId,
+        bailleur_id: bailleurId,
+        statut: "signe",
+      });
+    },
+    onSuccess: () => {
+      toast({
+        title: "Accord formalisé",
+        description: "L'accord écrit de gestion et de sous-location a été validé et archivé.",
+      });
+      queryClient.invalidateQueries({ queryKey: ["admin-accords-bailleurs"] });
+    },
+    onError: (err: any) => {
+      toast({
+        title: "Erreur",
+        description: err.message || "Impossible de formaliser l'accord.",
+        variant: "destructive",
+      });
+    },
+  });
 
   // Contrats clients
   const { data: contrats, isLoading: loadingContrats } = useQuery({
@@ -176,21 +221,30 @@ const AdminDocuments = () => {
         {/* En-tête */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
-            <h1 className="font-serif text-2xl font-bold">Documents</h1>
-            <p className="text-muted-foreground text-sm">Contrats clients et conventions bailleurs</p>
+            <h1 className="font-serif text-2xl font-bold">Documents & Registres</h1>
+            <p className="text-muted-foreground text-sm">
+              Contrats de location, accords écrits propriétaires, reçus et registre des opérations
+            </p>
           </div>
+          <Button
+            variant="outline"
+            className="w-full sm:w-auto border-primary/30 text-primary hover:bg-primary/5"
+            onClick={() => printDocument(generatePolitiqueCautionHTML())}
+          >
+            <ShieldCheck className="h-4 w-4 mr-2 text-primary" /> Politique de caution (PDF)
+          </Button>
         </div>
 
         {/* Compteurs */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           <Card className="border-0 shadow-premium">
             <CardContent className="p-5 flex items-start gap-4">
               <div className="p-3 rounded-xl bg-primary/10 text-primary shrink-0"><FileCheck className="h-5 w-5" /></div>
               <div>
-                <h3 className="font-serif font-semibold">Contrats clients</h3>
-                <p className="text-sm text-muted-foreground mt-0.5">Convention Zeyna - Locataire</p>
+                <h3 className="font-serif font-semibold">Contrats locataires</h3>
+                <p className="text-sm text-muted-foreground mt-0.5">Sous-locations étudiantes</p>
                 <p className="text-xs text-muted-foreground mt-1 font-ui font-bold">
-                  {loadingContrats ? "-" : `${contrats?.length || 0} document(s)`}
+                  {loadingContrats ? "-" : `${contrats?.length || 0} contrat(s)`}
                 </p>
               </div>
             </CardContent>
@@ -199,10 +253,22 @@ const AdminDocuments = () => {
             <CardContent className="p-5 flex items-start gap-4">
               <div className="p-3 rounded-xl bg-amber-100 text-amber-700 shrink-0"><FileLock className="h-5 w-5" /></div>
               <div>
-                <h3 className="font-serif font-semibold">Conventions bailleurs</h3>
-                <p className="text-sm text-muted-foreground mt-0.5">Convention Zeyna - Bailleur partenaire</p>
+                <h3 className="font-serif font-semibold">Accords propriétaires</h3>
+                <p className="text-sm text-muted-foreground mt-0.5">Conventions de gestion</p>
                 <p className="text-xs text-muted-foreground mt-1 font-ui font-bold">
-                  {loadingLogements ? "-" : `${logements?.length || 0} logement(s) éligible(s)`}
+                  {loadingLogements ? "-" : `${logements?.length || 0} logement(s) partenaires`}
+                </p>
+              </div>
+            </CardContent>
+          </Card>
+          <Card className="border-0 shadow-premium">
+            <CardContent className="p-5 flex items-start gap-4">
+              <div className="p-3 rounded-xl bg-purple-100 text-purple-700 shrink-0"><Receipt className="h-5 w-5" /></div>
+              <div>
+                <h3 className="font-serif font-semibold">Reçus & Registre</h3>
+                <p className="text-sm text-muted-foreground mt-0.5">Quittances & journal des flux</p>
+                <p className="text-xs text-muted-foreground mt-1 font-ui font-bold text-purple-700">
+                  Traçabilité financière 100%
                 </p>
               </div>
             </CardContent>
@@ -211,12 +277,16 @@ const AdminDocuments = () => {
 
         {/* Onglets */}
         <Tabs defaultValue="contrats-clients">
-          <TabsList className="grid grid-cols-1 sm:grid-cols-3 w-full max-w-2xl">
-            <TabsTrigger value="contrats-clients">Contrats clients</TabsTrigger>
-            <TabsTrigger value="conventions-bailleurs">Conventions bailleurs</TabsTrigger>
+          <TabsList className="grid grid-cols-2 lg:grid-cols-4 w-full">
+            <TabsTrigger value="contrats-clients">Contrats locataires</TabsTrigger>
+            <TabsTrigger value="conventions-bailleurs">Accords propriétaires</TabsTrigger>
+            <TabsTrigger value="recus-registre" className="flex items-center gap-1.5">
+              <Receipt className="h-4 w-4" />
+              <span>Reçus & Registre</span>
+            </TabsTrigger>
             <TabsTrigger value="echeances-renouvellements" className="flex items-center gap-1.5">
               <Clock className="h-4 w-4" />
-              <span>Échéances & Renouvellements</span>
+              <span>Échéances & Renouv.</span>
             </TabsTrigger>
           </TabsList>
 
@@ -288,28 +358,62 @@ const AdminDocuments = () => {
               </Card>
             ) : (
               <div className="space-y-3">
-                {filteredLogements.map((l: any) => (
-                  <Card key={l.id} className="border-0 shadow-premium">
-                    <CardContent className="p-5 flex items-center justify-between gap-4">
-                      <div className="flex items-center gap-4">
-                        <div className="p-3 bg-amber-100 rounded-xl shrink-0"><FileLock className="h-5 w-5 text-amber-700" /></div>
-                        <div className="min-w-0">
-                          <p className="font-medium truncate">{l.nom}</p>
-                          <p className="text-sm text-muted-foreground capitalize">{l.type}</p>
-                          <p className="text-xs text-muted-foreground">
-                            Bailleur : {l.bailleur?.prenom} {l.bailleur?.nom} · {l.chambres?.length || 0} unité(s)
-                          </p>
+                {filteredLogements.map((l: any) => {
+                  const accord = accordsMap.get(l.id);
+                  const isSigned = accord && (accord.statut === "signe" || accord.statut === "actif");
+
+                  return (
+                    <Card key={l.id} className="border-0 shadow-premium">
+                      <CardContent className="p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                        <div className="flex items-center gap-4">
+                          <div className="p-3 bg-amber-100 rounded-xl shrink-0"><FileLock className="h-5 w-5 text-amber-700" /></div>
+                          <div className="min-w-0">
+                            <div className="flex items-center gap-2 flex-wrap">
+                              <p className="font-medium truncate">{l.nom}</p>
+                              {isSigned ? (
+                                <span className="inline-flex items-center gap-1 text-[11px] font-medium text-emerald-700 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-full">
+                                  <CheckCircle2 className="h-3 w-3" /> Accord signé (Réf: {accord.reference_accord})
+                                </span>
+                              ) : (
+                                <span className="inline-flex items-center text-[11px] font-medium text-amber-700 bg-amber-50 border border-amber-200 px-2 py-0.5 rounded-full">
+                                  Accord à formaliser
+                                </span>
+                              )}
+                            </div>
+                            <p className="text-sm text-muted-foreground capitalize">{l.type}</p>
+                            <p className="text-xs text-muted-foreground">
+                              Bailleur : {l.bailleur?.prenom} {l.bailleur?.nom} · {l.chambres?.length || 0} unité(s)
+                            </p>
+                          </div>
                         </div>
-                      </div>
-                      <Button variant="outline" size="sm" onClick={() => handlePreviewConvention(l)}>
-                        <Eye className="h-4 w-4 mr-1" /> Générer / PDF
-                      </Button>
-                    </CardContent>
-                  </Card>
-                ))}
+                        <div className="flex items-center gap-2 flex-wrap sm:flex-nowrap">
+                          {!isSigned && l.bailleur_id && (
+                            <Button
+                              size="sm"
+                              className="bg-emerald-600 text-white hover:bg-emerald-700"
+                              disabled={signAccordMutation.isPending}
+                              onClick={() => signAccordMutation.mutate({ logementId: l.id, bailleurId: l.bailleur_id })}
+                            >
+                              <CheckCircle2 className="h-3.5 w-3.5 mr-1" /> Formaliser l'accord
+                            </Button>
+                          )}
+                          <Button variant="outline" size="sm" onClick={() => handlePreviewConvention(l)}>
+                            <Eye className="h-4 w-4 mr-1" /> Convention (PDF)
+                          </Button>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  );
+                })}
               </div>
             )}
           </TabsContent>
+
+          {/* ── REÇUS & REGISTRE DES OPÉRATIONS ── */}
+          <TabsContent value="recus-registre" className="mt-4">
+            <OperationsAndReceiptsManager />
+          </TabsContent>
+
           {/* ── ÉCHÉANCES & RENOUVELLEMENTS ── */}
           <TabsContent value="echeances-renouvellements" className="mt-4">
             <ContractRenewalManager />

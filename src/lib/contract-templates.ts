@@ -48,7 +48,7 @@ export const getCompanyInfo = () => ({
 export function escapeHtml(value?: string | number | null): string {
   if (value === null || value === undefined) return "";
   return String(value)
-    .replace(/&/g, "&amp;")
+    .replace(/&/g, "&")
     .replace(/</g, "&lt;")
     .replace(/>/g, "&gt;")
     .replace(/"/g, "&quot;")
@@ -615,7 +615,188 @@ export const generateBonAffectationHTML = (data: {
 };
 
 // ─────────────────────────────────────────────────────────────────────────────
-// 4. Utilitaire d'impression
+// 4. REÇU DE PAIEMENT OFFICIEL (AUTOMATIQUE OU MANUEL)
+// ─────────────────────────────────────────────────────────────────────────────
+
+export interface RecuPaiementData {
+  reference: string;
+  dateEmission: string;
+  payeur: {
+    prenom: string;
+    nom: string;
+    telephone?: string;
+    email?: string;
+    qualite?: string;
+  };
+  logement?: {
+    nom: string;
+    adresse?: string;
+    chambre?: string;
+  };
+  typeRecu: "caution" | "loyer" | "frais_dossier" | "manuel" | "autre";
+  typeGeneration?: "automatique" | "manuel";
+  montant: number;
+  methodePaiement: string;
+  referencePaiement?: string;
+  motif: string;
+  observations?: string;
+}
+
+export const generateRecuPaiementHTML = (data: RecuPaiementData): string => {
+  const c = getCompanyInfo();
+  const ref = escapeHtml(data.reference);
+  const date = escapeHtml(data.dateEmission);
+  const payeurNom = `${escapeHtml(data.payeur.prenom)} ${escapeHtml(data.payeur.nom)}`.trim();
+  const payeurTel = escapeHtml(data.payeur.telephone || "-");
+  const payeurEmail = escapeHtml(data.payeur.email || "-");
+  const logNom = escapeHtml(data.logement?.nom || "Non spécifié");
+  const chambreNom = escapeHtml(data.logement?.chambre || "Non spécifiée");
+  const mode = escapeHtml(data.methodePaiement);
+  const refPaiement = escapeHtml(data.referencePaiement || "Non spécifiée");
+  const motif = escapeHtml(data.motif);
+  const typeLabel =
+    data.typeRecu === "caution"
+      ? "Dépôt de garantie (Caution)"
+      : data.typeRecu === "loyer"
+      ? "Loyer mensuel d'habitation"
+      : data.typeRecu === "frais_dossier"
+      ? "Frais de dossier / service"
+      : "Règlement / Régularisation";
+
+  const body = `
+  ${header(ref, date)}
+
+  <div class="doc-title">REÇU DE PAIEMENT OFFICIEL</div>
+  <div class="doc-subtitle">Quittance libératoire d'encaissement · ${escapeHtml(data.typeGeneration === "manuel" ? "Émission administrative manuelle" : "Génération automatique sécurisée")}</div>
+
+  <div style="background:#f9f9f9;border:1px solid #ddd;border-radius:6px;padding:15px;margin:20px 0;display:flex;justify-content:space-between;align-items:center;">
+    <div>
+      <span style="font-size:10pt;color:#666;text-transform:uppercase;letter-spacing:0.05em;display:block;">Montant total encaissé</span>
+      <span style="font-size:20pt;font-weight:bold;color:#111;">${data.montant.toLocaleString("fr-FR")} FCFA</span>
+    </div>
+    <div style="text-align:right;">
+      <span style="display:inline-block;padding:4px 10px;background:#e2f7e5;color:#1e7e34;border:1px solid #c3e6cb;border-radius:4px;font-size:9pt;font-weight:bold;">PAIEMENT CONFIRMÉ</span>
+      <p style="font-size:8.5pt;color:#666;margin-top:4px;">Date d'encaissement : ${date}</p>
+    </div>
+  </div>
+
+  <h2 class="partie-title">1. INFORMATIONS DU BÉNÉFICIAIRE / PAYEUR</h2>
+  <table>
+    <tr><th style="width:30%;">Nom et Prénom</th><td><strong>${payeurNom}</strong></td></tr>
+    <tr><th>Qualité</th><td>${escapeHtml(data.payeur.qualite || "Locataire")}</td></tr>
+    <tr><th>Téléphone</th><td>${payeurTel}</td></tr>
+    <tr><th>Email</th><td>${payeurEmail}</td></tr>
+  </table>
+
+  <h2 class="partie-title">2. DÉTAILS DE L'OPÉRATION & DU LOGEMENT</h2>
+  <table>
+    <tr><th style="width:30%;">Logement concerné</th><td><strong>${logNom}</strong></td></tr>
+    <tr><th>Chambre / Unité</th><td>${chambreNom}</td></tr>
+    <tr><th>Nature du versement</th><td><strong>${typeLabel}</strong></td></tr>
+    <tr><th>Motif / Objet</th><td>${motif}</td></tr>
+    <tr><th>Mode de règlement</th><td>${mode}</td></tr>
+    <tr><th>Référence de transaction</th><td><span style="font-family:monospace;font-weight:bold;">${refPaiement}</span></td></tr>
+  </table>
+
+  ${data.observations ? `
+  <div style="margin-top:15px;padding:10px;border-left:3px solid #666;background:#f5f5f5;font-size:9.5pt;">
+    <strong>Observations particulières :</strong> ${escapeHtml(data.observations)}
+  </div>` : ""}
+
+  <div style="margin-top:25px;font-size:9pt;color:#444;line-height:1.6;border-top:1px solid #eee;padding-top:12px;">
+    <p><strong>Note légale :</strong> Le présent reçu atteste de la réception effective de la somme mentionnée ci-dessus par <em>${c.nom}</em> pour le compte désigné. Il tient lieu de quittance libératoire pour le montant et le motif exclusivement indiqués.</p>
+    <p style="margin-top:4px;">En cas de contestation ou de vérification comptable, veuillez vous adresser au service gestion : ${c.email} / ${c.telephone}.</p>
+  </div>
+
+  <div class="signatures" style="margin-top:35px;">
+    <div class="sig-box">
+      <div class="sig-label">Pour le Payeur / Locataire</div>
+      <div class="sig-hint">Nom : ${payeurNom}<br/>Signature pour acquit :</div>
+    </div>
+    <div class="sig-box">
+      <div class="sig-label">Pour la Direction ZEYNA</div>
+      <div class="sig-hint">Cachet et signature habilitée<br/><br/>
+        <div style="border:2px dashed #999;padding:6px;width:180px;text-align:center;font-size:8pt;color:#555;border-radius:4px;">
+          LES LOGEMENTS DE ZEYNA<br/>
+          SERVICE COMPTABILITÉ<br/>
+          VALIDE ET ENREGISTRÉ
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="doc-footer">
+    <span>${c.nom} · ${c.forme} · RCCM ${c.rccm} · NINEA ${c.ninea}</span>
+    <span>Réf : ${ref} · Édité le ${date}</span>
+  </div>`;
+
+  return wrap(body);
+};
+
+// ─────────────────────────────────────────────────────────────────────────────
+// 5. POLITIQUE DE CAUTION ET DÉPÔT DE GARANTIE
+// ─────────────────────────────────────────────────────────────────────────────
+
+export const generatePolitiqueCautionHTML = (): string => {
+  const c = getCompanyInfo();
+  const date = new Date().toLocaleDateString("fr-FR");
+
+  const body = `
+  ${header("POL-CAUTION-2026", date)}
+
+  <div class="doc-title">POLITIQUE DE CAUTION ET DE DÉPÔT DE GARANTIE</div>
+  <div class="doc-subtitle">Cadre de gestion, de sécurisation et de restitution de la caution locative</div>
+
+  <div class="important-box">
+    <p>ENGAGEMENT DE TRANSPARENCE ZEYNA</p>
+    <p>Cette politique régit l'encaissement, la conservation et la restitution des dépôts de garantie pour tous les logements loués via la plateforme <strong>Les Logements de ZEYNA</strong>, dans le strict respect du Code des Obligations Civiles et Commerciales (COCC) du Sénégal.</p>
+  </div>
+
+  <h3 class="article-title">ARTICLE 1 – NATURE ET DESTINATION DU DÉPÔT DE GARANTIE</h3>
+  <p>Le dépôt de garantie (communément désigné « caution ») a pour objet exclusif de garantir la bonne exécution des obligations du locataire, notamment :</p>
+  <ul>
+    <li>La réparation des dégradations anormales causées aux locaux, meubles ou équipements mis à disposition ;</li>
+    <li>Le paiement des éventuels arriérés de loyers, charges ou consommations d'eau et d'électricité convenues ;</li>
+    <li>La remise intégrale des clés et accessoires à la fin du séjour.</li>
+  </ul>
+  <p><strong>Règle fondamentale :</strong> Le dépôt de garantie <em>ne constitue en aucun cas une avance sur loyer</em>. L'étudiant ne peut en aucun cas s'abstenir de régler son dernier mois de loyer sous prétexte qu'une caution a été versée.</p>
+
+  <h3 class="article-title">ARTICLE 2 – SÉQUESTRATION ET SÉCURISATION DES FONDS</h3>
+  <p>Les fonds reçus au titre du dépôt de garantie sont séquestrés sur un compte dédié géré par <strong>${c.nom}</strong>. Ils demeurent indisponibles jusqu'à la clôture contradictoire du bail et l'établissement de l'état des lieux de sortie.</p>
+
+  <h3 class="article-title">ARTICLE 3 – ÉTAT DES LIEUX CONTRADICTOIRE</h3>
+  <p>La restitution ou toute retenue sur caution repose impérativement sur la comparaison entre deux états des lieux contradictoires :</p>
+  <ul>
+    <li><strong>L'état des lieux d'entrée :</strong> Réalisé conjointement lors de la remise des clés, avec inventaire détaillé du mobilier et des équipements.</li>
+    <li><strong>L'état des lieux de sortie :</strong> Établi au moment du départ définitif de l'étudiant et de la restitution de l'ensemble des clés.</li>
+  </ul>
+
+  <h3 class="article-title">ARTICLE 4 – DÉLAIS ET CONDITIONS DE RESTITUTION</h3>
+  <p>La restitution de la caution s'effectue selon le calendrier suivant :</p>
+  <ul>
+    <li><strong>Sous 15 jours calendaires :</strong> Lorsque l'état des lieux de sortie est rigoureusement conforme à l'entrée et qu'aucun impayé n'est constaté, la caution est restituée intégralement sous 15 jours via le moyen de paiement convenu (Wave, Orange Money ou virement bancaire).</li>
+    <li><strong>Sous 30 jours calendaires au maximum :</strong> Si des retenues doivent être opérées, un décompte contradictoire détaillé accompagné des justificatifs (devis, factures d'artisans, relevés de consommation) est communiqué à l'étudiant, et le solde restant est restitué dans un délai ne pouvant excéder 30 jours à compter de la restitution des clés.</li>
+  </ul>
+
+  <h3 class="article-title">ARTICLE 5 – DISTINCTION ENTRE USURE NORMALE ET DÉGRADATION</h3>
+  <p>Aucune retenue ne peut être appliquée au titre de la vétusté ou de l'usure normale résultant d'un usage paisible des lieux (ex : légère altération de la peinture par le temps, usure naturelle des joints ou serrures). Seules les dégradations manifestes, casses, disparitions de mobilier ou manquements manifestes d'entretien imputables à l'occupant font l'objet d'une retenue.</p>
+
+  <h3 class="article-title">ARTICLE 6 – COMMISSION DE GARANTIE ET CAUTION BAILLEUR</h3>
+  <p>Dans les cas où une commission de gestion de garantie Zeyna est appliquée à la caution, celle-ci est clairement ventilée et détaillée dès l'initialisation de la réservation. Le montant de la caution versé au bailleur et la garantie Zeyna sont consignés de manière transparente dans le contrat de location.</p>
+
+  <h3 class="article-title">ARTICLE 7 – RECOURS ET MÉDIATION</h3>
+  <p>En cas de désaccord sur le montant des retenues, l'étudiant dispose d'un droit de saisine directe de la Direction Générale de <strong>${c.nom}</strong> via la section Support / Incidents de la plateforme ou par courriel à <em>${c.email}</em>. Une médiation contradictoire est engagée sous 7 jours ouvrés.</p>
+
+  <div class="doc-footer">
+    <span>${c.nom} · Document de référence conforme COCC</span>
+    <span>Date d'application : ${date}</span>
+  </div>`;
+
+  return wrap(body);
+};
+
+// ─────────────────────────────────────────────────────────────────────────────
+// 6. Utilitaire d'impression
 // ─────────────────────────────────────────────────────────────────────────────
 
 export const printDocument = (htmlContent: string): void => {

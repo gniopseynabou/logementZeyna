@@ -9,22 +9,27 @@ import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { PaginationControls } from "@/components/ui/PaginationControls";
-import { AlertCircle } from "lucide-react";
+import { AlertCircle, Printer, Receipt, Plus } from "lucide-react";
+import { generateRecuPaiementHTML, printDocument } from "@/lib/contract-templates";
+import { ManualReceiptDialog } from "@/components/admin/ManualReceiptDialog";
+import { OperationsAndReceiptsManager } from "@/components/admin/OperationsAndReceiptsManager";
 
 const AdminPaiements = () => {
   const { toast } = useToast();
   const qc = useQueryClient();
 
-  const [tab, setTab] = useState<"en_attente" | "confirmes">("en_attente");
+  const [tab, setTab] = useState<"en_attente" | "confirmes" | "recus_registre">("en_attente");
+  const [manualReceiptOpen, setManualReceiptOpen] = useState(false);
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(20);
 
   // Filtre mapped: onglet → statusFilter pour l'API
-  const statusFilter = tab === "en_attente" ? "false" : "true";
+  const statusFilter = tab === "confirmes" ? "true" : "false";
 
   const { data: paiementsData, isLoading, isError, error } = useQuery({
     queryKey: ["admin-paiements", page, pageSize, statusFilter],
     queryFn: () => getAdminPayments({ page, pageSize, statusFilter }),
+    enabled: tab !== "recus_registre",
   });
 
   const { data: stats } = useQuery({
@@ -54,7 +59,9 @@ const AdminPaiements = () => {
       await invalidateGroups(qc, ["PAIEMENT_CHANGED"]);
       qc.invalidateQueries({ queryKey: ["admin-paiements"] });
       qc.invalidateQueries({ queryKey: ["admin-paiements-stats"] });
-      toast({ title: "Paiement confirmé ✅", description: "Réservation confirmée et chambre bloquée." });
+      qc.invalidateQueries({ queryKey: ["admin-all-receipts"] });
+      qc.invalidateQueries({ queryKey: ["admin-operations-register"] });
+      toast({ title: "Paiement confirmé ✅", description: "Réservation confirmée, chambre bloquée et reçu généré." });
     },
     onError: (err) => {
       toast({ title: "Erreur de confirmation", description: err.message, variant: "destructive" });
@@ -62,7 +69,7 @@ const AdminPaiements = () => {
   });
 
   const handleTabChange = (value: string) => {
-    setTab(value as "en_attente" | "confirmes");
+    setTab(value as "en_attente" | "confirmes" | "recus_registre");
     setPage(1);
   };
 
@@ -112,6 +119,37 @@ const AdminPaiements = () => {
                       {p.est_confirme ? "Confirmé" : "En attente"}
                     </Badge>
                   </div>
+                  {p.est_confirme && (
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => {
+                        const res = (p as any).reservations;
+                        const html = generateRecuPaiementHTML({
+                          reference: p.reference || `REC-${p.id.slice(0, 8).toUpperCase()}`,
+                          dateEmission: new Date(p.created_at).toLocaleDateString("fr-FR"),
+                          payeur: {
+                            prenom: "",
+                            nom: "Locataire Étudiant",
+                            qualite: "Locataire Étudiant",
+                          },
+                          logement: {
+                            nom: res?.logements?.nom || "Logement",
+                            chambre: res?.chambres?.nom,
+                          },
+                          typeRecu: "caution",
+                          typeGeneration: "automatique",
+                          montant: p.montant,
+                          methodePaiement: p.methode?.replace("_", " ") || "Wave",
+                          referencePaiement: p.reference,
+                          motif: "Paiement de la caution et confirmation de réservation",
+                        });
+                        printDocument(html);
+                      }}
+                    >
+                      <Printer className="h-3.5 w-3.5 mr-1" /> Reçu (PDF)
+                    </Button>
+                  )}
                   {showConfirmBtn && (
                     <Button
                       size="sm"
@@ -148,37 +186,53 @@ const AdminPaiements = () => {
   return (
     <DashboardLayout>
       <div className="space-y-6">
-        {/* En-tête avec stats */}
+        {/* En-tête avec stats et bouton d'action principal */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
-            <h1 className="font-serif text-2xl font-bold">Paiements</h1>
+            <h1 className="font-serif text-2xl font-bold">Paiements & Reçus</h1>
             <p className="text-muted-foreground text-sm">
-              {stats?.all ?? "-"} paiement(s) au total
+              {stats?.all ?? "-"} paiement(s) enregistrés · Gestion des encaissements et quittances libératoires
             </p>
           </div>
-          <div className="grid grid-cols-2 gap-3">
-            <Card className="border-0 shadow-premium">
-              <CardContent className="p-3 text-center">
-                <p className="text-xs text-muted-foreground">En attente</p>
-                <p className="text-xl font-bold text-amber-600 font-ui">{stats?.en_attente ?? "-"}</p>
-              </CardContent>
-            </Card>
-            <Card className="border-0 shadow-premium">
-              <CardContent className="p-3 text-center">
-                <p className="text-xs text-muted-foreground">Confirmés</p>
-                <p className="text-xl font-bold text-green-600 font-ui">{stats?.confirme ?? "-"}</p>
-              </CardContent>
-            </Card>
+
+          <div className="flex flex-wrap items-center gap-3">
+            <Button
+              onClick={() => setManualReceiptOpen(true)}
+              className="bg-primary text-white hover:bg-primary/95 flex items-center gap-2 shadow-sm font-medium"
+            >
+              <Plus className="h-4 w-4" />
+              <Receipt className="h-4 w-4" />
+              <span>Émettre un reçu manuel</span>
+            </Button>
+
+            <div className="flex gap-2">
+              <Card className="border-0 shadow-premium">
+                <CardContent className="p-3 text-center">
+                  <p className="text-[10px] text-muted-foreground uppercase font-semibold">En attente</p>
+                  <p className="text-lg font-bold text-amber-600 font-ui">{stats?.en_attente ?? "-"}</p>
+                </CardContent>
+              </Card>
+              <Card className="border-0 shadow-premium">
+                <CardContent className="p-3 text-center">
+                  <p className="text-[10px] text-muted-foreground uppercase font-semibold">Confirmés</p>
+                  <p className="text-lg font-bold text-green-600 font-ui">{stats?.confirme ?? "-"}</p>
+                </CardContent>
+              </Card>
+            </div>
           </div>
         </div>
 
         <Tabs value={tab} onValueChange={handleTabChange}>
-          <TabsList>
+          <TabsList className="grid grid-cols-1 sm:grid-cols-3 w-full max-w-xl">
             <TabsTrigger value="en_attente">
               En attente ({stats?.en_attente ?? "…"})
             </TabsTrigger>
             <TabsTrigger value="confirmes">
               Confirmés ({stats?.confirme ?? "…"})
+            </TabsTrigger>
+            <TabsTrigger value="recus_registre" className="flex items-center gap-1.5">
+              <Receipt className="h-4 w-4" />
+              <span>Reçus & Registre</span>
             </TabsTrigger>
           </TabsList>
           <TabsContent value="en_attente" className="mt-4">
@@ -187,7 +241,16 @@ const AdminPaiements = () => {
           <TabsContent value="confirmes" className="mt-4">
             {renderContent(false)}
           </TabsContent>
+          <TabsContent value="recus_registre" className="mt-4">
+            <OperationsAndReceiptsManager />
+          </TabsContent>
         </Tabs>
+
+        {/* Dialogue d'émission de reçu manuel */}
+        <ManualReceiptDialog
+          open={manualReceiptOpen}
+          onOpenChange={setManualReceiptOpen}
+        />
       </div>
     </DashboardLayout>
   );

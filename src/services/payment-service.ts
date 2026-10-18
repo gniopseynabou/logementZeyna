@@ -141,6 +141,19 @@ export const confirmAdminPayment = async ({
   });
 
   if (!rpcError) {
+    // Enregistrement asynchrone du reçu automatique et de l'opération traçable
+    import("@/services/receipt-service").then(({ generateOrGetReceiptForPayment, registerOperation }) => {
+      generateOrGetReceiptForPayment(paymentId).catch(() => {});
+      registerOperation({
+        typeOperation: "encaissement_etudiant",
+        montant: amount,
+        modeReglement: "Wave",
+        referenceExterne: reference || undefined,
+        description: `Paiement caution/loyer validé pour ${logementName || "Logement"} (${roomName || "Chambre"})`,
+        entiteType: "paiements",
+        entiteId: paymentId,
+      }).catch(() => {});
+    }).catch(() => {});
     return data;
   }
 
@@ -185,6 +198,20 @@ export const confirmAdminPayment = async ({
       },
     });
     if (contractError) throw contractError;
+
+    // Enregistrement asynchrone du reçu automatique et de l'opération traçable
+    import("@/services/receipt-service").then(({ generateOrGetReceiptForPayment, registerOperation }) => {
+      generateOrGetReceiptForPayment(paymentId).catch(() => {});
+      registerOperation({
+        typeOperation: "encaissement_etudiant",
+        montant: amount,
+        modeReglement: "Wave",
+        referenceExterne: reference || undefined,
+        description: `Paiement caution/loyer validé pour ${logementName || "Logement"} (${roomName || "Chambre"})`,
+        entiteType: "paiements",
+        entiteId: paymentId,
+      }).catch(() => {});
+    }).catch(() => {});
     return;
   }
 

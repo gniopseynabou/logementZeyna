@@ -60,4 +60,46 @@ describe("SEC-001 : Protection XSS sur les Contrats", () => {
     expect(html).toContain("&lt;script&gt;steal()&lt;/script&gt;");
     expect(html).toContain("&lt;img src=x onerror=&quot;alert(1)&quot;&gt;");
   });
+
+  it("generateRecuPaiementHTML génère un reçu conforme avec protection XSS et quittance libératoire", async () => {
+    const { generateRecuPaiementHTML } = await import("./contract-templates");
+    const html = generateRecuPaiementHTML({
+      reference: "REC-2026-TEST",
+      dateEmission: "18/10/2026",
+      payeur: {
+        prenom: '<script>alert("payeur")</script>',
+        nom: "Fall",
+        telephone: "+221 78 123 45 67",
+      },
+      logement: {
+        nom: "Résidence Zeyna",
+        chambre: "Chambre 2",
+      },
+      typeRecu: "caution",
+      typeGeneration: "automatique",
+      montant: 50000,
+      methodePaiement: "Wave",
+      referencePaiement: "TX-WV-1029",
+      motif: "Paiement caution test",
+    });
+
+    expect(html).toContain("REÇU DE PAIEMENT OFFICIEL");
+    expect(html).toContain((50000).toLocaleString("fr-FR"));
+    expect(html).toContain("FCFA");
+    expect(html).toContain("REC-2026-TEST");
+    expect(html).toContain("TX-WV-1029");
+    expect(html).not.toContain('<script>alert("payeur")</script>');
+    expect(html).toContain("&lt;script&gt;alert(&quot;payeur&quot;)&lt;/script&gt;");
+  });
+
+  it("generatePolitiqueCautionHTML contient les règles de séquestre, délais de 15/30j et conformité COCC", async () => {
+    const { generatePolitiqueCautionHTML } = await import("./contract-templates");
+    const html = generatePolitiqueCautionHTML();
+
+    expect(html).toContain("POLITIQUE DE CAUTION ET DE DÉPÔT DE GARANTIE");
+    expect(html).toContain("15 jours");
+    expect(html).toContain("30 jours");
+    expect(html).toContain("séquestrés");
+    expect(html).toContain("COCC");
+  });
 });

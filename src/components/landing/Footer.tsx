@@ -50,8 +50,9 @@ const Footer = () => {
 
           {/* Services */}
           <div>
-            <h4 className="font-serif font-bold mb-6 text-background tracking-wide">Services</h4>
+            <h4 className="font-serif font-bold mb-6 text-background tracking-wide">Services & Garanties</h4>
             <ul className="space-y-3 text-sm text-background/60">
+              <li><Link to="/paiement-et-garanties" className="hover:text-accent transition-colors">Paiement & Garanties</Link></li>
               <li>Location étudiante sécurisée</li>
               <li>Gestion pour bailleurs</li>
               <li>Paiement digital (Mobile Money)</li>
@@ -86,6 +87,7 @@ const Footer = () => {
             &copy; {new Date().getFullYear()} Les Logements de Zeyna. Tous droits réservés.
           </p>
           <div className="flex flex-wrap justify-center gap-4 sm:gap-6">
+            <Link to="/paiement-et-garanties" className="hover:text-background text-accent/80 transition-colors">Paiement & Garanties</Link>
             <Link to="/mentions-legales" className="hover:text-background transition-colors">Mentions légales</Link>
             <Link to="/cgu" className="hover:text-background transition-colors">CGU</Link>
             <Link to="/cgv" className="hover:text-background transition-colors">CGV</Link>

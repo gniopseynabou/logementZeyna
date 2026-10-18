@@ -41,9 +41,10 @@ const Navbar = () => {
           </Link>
 
           {/* Desktop nav */}
-          <div className="hidden md:flex items-center gap-8">
+          <div className="hidden md:flex items-center gap-7">
             <Link to="/" className="text-sm font-medium text-foreground hover:text-accent transition-colors">Accueil</Link>
             <Link to="/logements" className="text-sm font-medium text-foreground hover:text-accent transition-colors">Logements</Link>
+            {/*<Link to="/paiement-et-garanties" className="text-sm font-medium text-foreground hover:text-accent transition-colors">Paiement & Garanties</Link>*/}
             <Link to="/devenir-bailleur" className="text-sm font-medium text-accent hover:text-accent/80 transition-colors">Devenir Bailleur</Link>
 
             {user ? (
@@ -77,6 +78,7 @@ const Navbar = () => {
             <div className="flex flex-col gap-3">
               <Link to="/" className="px-4 py-2 text-sm font-medium hover:bg-muted rounded-md" onClick={() => setIsOpen(false)}>Accueil</Link>
               <Link to="/logements" className="px-4 py-2 text-sm font-medium hover:bg-muted rounded-md" onClick={() => setIsOpen(false)}>Logements</Link>
+              <Link to="/paiement-et-garanties" className="px-4 py-2 text-sm font-medium hover:bg-muted rounded-md" onClick={() => setIsOpen(false)}>Paiement & Garanties</Link>
               <Link to="/devenir-bailleur" className="px-4 py-2 text-sm font-medium text-accent hover:bg-accent/10 rounded-md" onClick={() => setIsOpen(false)}>Devenir Bailleur</Link>
 
               {user ? (

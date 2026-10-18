@@ -4,8 +4,10 @@ import { getStudentPaymentHistory } from "@/services/payment-service";
 import DashboardLayout from "@/components/dashboard/DashboardLayout";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { CreditCard, Smartphone } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { CreditCard, Smartphone, Printer } from "lucide-react";
 import { METHODE_LABELS } from "@/lib/supabase-utils";
+import { generateRecuPaiementHTML, printDocument } from "@/lib/contract-templates";
 
 const METHODE_ICONS: Record<string, React.ReactNode> = {
   orange_money: <Smartphone className="h-4 w-4 text-orange-500" />,
@@ -15,13 +17,39 @@ const METHODE_ICONS: Record<string, React.ReactNode> = {
 };
 
 const EtudiantPaiements = () => {
-  const { user } = useAuth();
+  const { user, profile } = useAuth();
 
   const { data: paiements, isLoading, isError, error } = useQuery({
     queryKey: ["etudiant-paiements-full", user?.id],
     queryFn: () => getStudentPaymentHistory(user!.id),
     enabled: !!user,
   });
+
+  const handlePrintReceipt = (p: any) => {
+    const res = (p as any).reservations;
+    const html = generateRecuPaiementHTML({
+      reference: p.reference || `REC-${p.id.slice(0, 8).toUpperCase()}`,
+      dateEmission: new Date(p.created_at).toLocaleDateString("fr-FR"),
+      payeur: {
+        prenom: profile?.prenom || "",
+        nom: profile?.nom || "Locataire Étudiant",
+        telephone: profile?.telephone,
+        email: profile?.email,
+        qualite: "Étudiant Locataire",
+      },
+      logement: {
+        nom: res?.logements?.nom || "Logement",
+        chambre: res?.chambres?.nom,
+      },
+      typeRecu: "caution",
+      typeGeneration: "automatique",
+      montant: p.montant,
+      methodePaiement: METHODE_LABELS[p.methode] || p.methode,
+      referencePaiement: p.reference || undefined,
+      motif: "Paiement de la caution et confirmation de réservation",
+    });
+    printDocument(html);
+  };
 
   const totalPaye = (paiements || [])
     .filter((p) => p.est_confirme)
@@ -97,16 +125,28 @@ const EtudiantPaiements = () => {
                       </p>
                     </div>
                   </div>
-                  <div className="text-right shrink-0">
+                  <div className="flex flex-col sm:items-end justify-between gap-2 shrink-0">
                     <p className="text-xl font-bold text-accent font-ui">
                       {p.montant.toLocaleString()} FCFA
                     </p>
-                    <Badge
-                      variant={p.est_confirme ? "default" : "secondary"}
-                      className="mt-1"
-                    >
-                      {p.est_confirme ? "✓ Confirmé" : "En attente"}
-                    </Badge>
+                    <div className="flex items-center gap-2">
+                      <Badge
+                        variant={p.est_confirme ? "default" : "secondary"}
+                        className={p.est_confirme ? "bg-emerald-100 text-emerald-800 border-emerald-200" : ""}
+                      >
+                        {p.est_confirme ? "✓ Confirmé" : "En attente"}
+                      </Badge>
+                      {p.est_confirme && (
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="text-xs h-7 px-2.5"
+                          onClick={() => handlePrintReceipt(p)}
+                        >
+                          <Printer className="h-3 w-3 mr-1" /> Reçu (PDF)
+                        </Button>
+                      )}
+                    </div>
                   </div>
                 </CardContent>
               </Card>

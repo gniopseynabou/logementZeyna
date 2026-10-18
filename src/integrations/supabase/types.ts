@@ -612,6 +612,193 @@ export type Database = {
         }
         Relationships: []
       }
+      accords_proprietaires: {
+        Row: {
+          id: string
+          logement_id: string
+          bailleur_id: string | null
+          reference_accord: string
+          type_accord: string
+          statut: "en_attente_signature" | "signe" | "actif" | "renouvele" | "resilie"
+          date_effet: string
+          date_fin: string | null
+          date_signature: string | null
+          conditions_particulieres: string | null
+          representant_zeyna: string | null
+          commission_pourcentage: number | null
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          logement_id: string
+          bailleur_id?: string | null
+          reference_accord: string
+          type_accord?: string
+          statut?: "en_attente_signature" | "signe" | "actif" | "renouvele" | "resilie"
+          date_effet?: string
+          date_fin?: string | null
+          date_signature?: string | null
+          conditions_particulieres?: string | null
+          representant_zeyna?: string | null
+          commission_pourcentage?: number | null
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          logement_id?: string
+          bailleur_id?: string | null
+          reference_accord?: string
+          type_accord?: string
+          statut?: "en_attente_signature" | "signe" | "actif" | "renouvele" | "resilie"
+          date_effet?: string
+          date_fin?: string | null
+          date_signature?: string | null
+          conditions_particulieres?: string | null
+          representant_zeyna?: string | null
+          commission_pourcentage?: number | null
+          created_at?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "accords_proprietaires_logement_id_fkey"
+            columns: ["logement_id"]
+            isOneToOne: false
+            referencedRelation: "logements"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
+      recus_paiements: {
+        Row: {
+          id: string
+          reference: string
+          paiement_id: string | null
+          etudiant_id: string | null
+          logement_id: string | null
+          chambre_id: string | null
+          type_recu: "caution" | "loyer" | "frais_dossier" | "manuel" | "autre"
+          type_generation: "automatique" | "manuel"
+          montant: number
+          methode_paiement: string
+          reference_paiement: string | null
+          payeur_nom_complet: string
+          payeur_telephone: string | null
+          payeur_email: string | null
+          motif: string
+          date_emission: string
+          emetteur_id: string | null
+          details_json: Json | null
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          reference: string
+          paiement_id?: string | null
+          etudiant_id?: string | null
+          logement_id?: string | null
+          chambre_id?: string | null
+          type_recu: "caution" | "loyer" | "frais_dossier" | "manuel" | "autre"
+          type_generation: "automatique" | "manuel"
+          montant: number
+          methode_paiement?: string
+          reference_paiement?: string | null
+          payeur_nom_complet: string
+          payeur_telephone?: string | null
+          payeur_email?: string | null
+          motif: string
+          date_emission?: string
+          emetteur_id?: string | null
+          details_json?: Json | null
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          reference?: string
+          paiement_id?: string | null
+          etudiant_id?: string | null
+          logement_id?: string | null
+          chambre_id?: string | null
+          type_recu?: "caution" | "loyer" | "frais_dossier" | "manuel" | "autre"
+          type_generation?: "automatique" | "manuel"
+          montant?: number
+          methode_paiement?: string
+          reference_paiement?: string | null
+          payeur_nom_complet?: string
+          payeur_telephone?: string | null
+          payeur_email?: string | null
+          motif?: string
+          date_emission?: string
+          emetteur_id?: string | null
+          details_json?: Json | null
+          created_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "recus_paiements_paiement_id_fkey"
+            columns: ["paiement_id"]
+            isOneToOne: false
+            referencedRelation: "paiements"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
+      registre_operations: {
+        Row: {
+          id: string
+          reference_operation: string
+          type_operation: "encaissement_etudiant" | "reversement_bailleur" | "remboursement_caution" | "recu_manuel" | "ajustement"
+          montant: number
+          devise: string
+          statut: "en_attente" | "valide" | "rejete" | "annule"
+          mode_reglement: string
+          reference_externe: string | null
+          acteur_id: string | null
+          entite_type: string | null
+          entite_id: string | null
+          description: string
+          date_operation: string
+          metadata: Json | null
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          reference_operation: string
+          type_operation: "encaissement_etudiant" | "reversement_bailleur" | "remboursement_caution" | "recu_manuel" | "ajustement"
+          montant: number
+          devise?: string
+          statut?: "en_attente" | "valide" | "rejete" | "annule"
+          mode_reglement?: string
+          reference_externe?: string | null
+          acteur_id?: string | null
+          entite_type?: string | null
+          entite_id?: string | null
+          description: string
+          date_operation?: string
+          metadata?: Json | null
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          reference_operation?: string
+          type_operation?: "encaissement_etudiant" | "reversement_bailleur" | "remboursement_caution" | "recu_manuel" | "ajustement"
+          montant?: number
+          devise?: string
+          statut?: "en_attente" | "valide" | "rejete" | "annule"
+          mode_reglement?: string
+          reference_externe?: string | null
+          acteur_id?: string | null
+          entite_type?: string | null
+          entite_id?: string | null
+          description?: string
+          date_operation?: string
+          metadata?: Json | null
+          created_at?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never

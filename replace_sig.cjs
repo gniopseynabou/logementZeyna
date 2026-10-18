@@ -6,8 +6,8 @@ content = content.replace(
   '<div class="sig-label">Le Sous-Bailleur (ZEYNA)</div>'
 );
 content = content.replace(
-  '<div class="sig-hint">Nom, fonction, date &amp; cachet</div>',
-  '<div class="sig-hint">Nom, fonction &amp; date</div>'
+  '<div class="sig-hint">Nom, fonction, date & cachet</div>',
+  '<div class="sig-hint">Nom, fonction & date</div>'
 );
 content = content.replace(
   /<div class="sig-hint">Signature précédée de « Lu et approuvé »<\/div>/g,
