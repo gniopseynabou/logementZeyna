@@ -31,3 +31,4 @@ USING (
     AND l.bailleur_id = auth.uid()
   )
 );
+  

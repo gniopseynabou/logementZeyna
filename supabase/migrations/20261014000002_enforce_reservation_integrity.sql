@@ -45,7 +45,7 @@ BEGIN
 
   -- E. Forcer le calcul du montant total côté serveur (Prix ZEYNA + Caution)
   -- Neutralise toute falsification de prix envoyée depuis le navigateur
-  NEW.montant_total := COALESCE(v_chambre.prix_zeyna, v_chambre.prix_bailleur, 0) + COALESCE(v_chambre.caution, 0);
+  NEW.montant_total :=COALESCE(v_chambre.caution, 0);
 
   -- F. Pour tout utilisateur non-administrateur, forcer le statut initial en 'en_attente'
   IF NOT public.is_admin_or_super(auth.uid()) THEN
