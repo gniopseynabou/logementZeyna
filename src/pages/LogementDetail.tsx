@@ -8,8 +8,10 @@ import Footer from "@/components/landing/Footer";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
-import { MapPin, Users, Zap, ArrowLeft, Shield, ChevronLeft, ChevronRight } from "lucide-react";
+import { MapPin, Users, Zap, ArrowLeft, Shield, ChevronLeft, ChevronRight, UserCheck, Calendar, Info } from "lucide-react";
 import logement1 from "@/assets/logement-1.jpg";
 import logement2 from "@/assets/logement-2.jpg";
 import logement3 from "@/assets/logement-3.jpg";
@@ -24,6 +26,9 @@ const LogementDetail = () => {
   const { user, role } = useAuth();
   const { toast } = useToast();
   const [selectedChambre, setSelectedChambre] = useState<string | null>(null);
+  const [selectedPlaces, setSelectedPlaces] = useState<number>(1);
+  const [dateDebut, setDateDebut] = useState<string>(() => new Date().toISOString().split("T")[0]);
+  const [dateFin, setDateFin] = useState<string>("");
   const [imgIndex, setImgIndex] = useState(0);
   const [reserving, setReserving] = useState(false);
 
@@ -58,6 +63,30 @@ const LogementDetail = () => {
 
   const images = logement.images && logement.images.length > 0 ? logement.images : fallbackImages;
   const chambres = logement.chambres || [];
+  const currentChambre = chambres.find((c: any) => c.id === selectedChambre);
+
+  const isParPersonne = !!currentChambre?.tarification_par_personne;
+  const isCollectif = currentChambre?.mode_reservation === "collectif";
+  const capaciteChambre = currentChambre?.nombre_personnes || 1;
+
+  // Calculs détaillés
+  const effectivePlaces = isCollectif ? capaciteChambre : Math.min(selectedPlaces, capaciteChambre);
+  const loyerUnitaire = currentChambre?.prix_zeyna || currentChambre?.prix_bailleur || 0;
+  const cautionUnitaire = currentChambre?.caution || 0;
+
+  const loyerTotal = isParPersonne ? loyerUnitaire * effectivePlaces : loyerUnitaire;
+  const cautionTotale = isParPersonne ? cautionUnitaire * effectivePlaces : cautionUnitaire;
+  // À la réservation / validation : seul le dépôt de garantie (caution) est à payer pour sécuriser le logement
+  const totalAPayer = cautionTotale;
+
+  const handleChambreSelect = (chambre: any) => {
+    setSelectedChambre(chambre.id);
+    if (chambre.mode_reservation === "collectif") {
+      setSelectedPlaces(chambre.nombre_personnes || 1);
+    } else {
+      setSelectedPlaces(1);
+    }
+  };
 
   const handleReserve = async () => {
     if (!user) {
@@ -69,21 +98,23 @@ const LogementDetail = () => {
       toast({ title: "Réservation réservée aux étudiants", description: "Seuls les étudiants peuvent réserver.", variant: "destructive" });
       return;
     }
-    if (!selectedChambre) {
+    if (!selectedChambre || !currentChambre) {
       toast({ title: "Sélectionnez une chambre", description: "Veuillez choisir une chambre.", variant: "destructive" });
       return;
     }
 
     setReserving(true);
-    const chambre = chambres.find((c: any) => c.id === selectedChambre);
-    const montant = chambre?.caution || chambre?.prix_zeyna || 0;
 
     try {
       const { error } = await createReservation({
         studentId: user.id,
         roomId: selectedChambre,
         logementId: logement.id,
-        amount: montant,
+        amount: totalAPayer,
+        nombrePlaces: effectivePlaces,
+        typeReservation: isCollectif ? "collectif" : "individuel",
+        dateDebut: dateDebut || undefined,
+        dateFin: dateFin || undefined,
       });
 
       if (error) {
@@ -91,7 +122,9 @@ const LogementDetail = () => {
       } else {
         toast({
           title: "Demande de réservation envoyée ✅",
-          description: "Votre demande est en cours de vérification auprès du propriétaire. Vous recevrez une notification dès validation pour procéder au paiement.",
+          description: isCollectif
+            ? `Votre demande collective pour l'ensemble des ${capaciteChambre} places est en cours de vérification.`
+            : `Votre demande pour ${effectivePlaces} place(s) est en cours de vérification.`,
         });
         navigate("/etudiant/reservations");
       }
@@ -221,50 +254,167 @@ const LogementDetail = () => {
                   {chambres.length === 0 ? (
                     <p className="text-sm text-muted-foreground">Aucune chambre disponible</p>
                   ) : (
-                    chambres.map((chambre: any) => (
-                      <button
-                        key={chambre.id}
-                        className={`w-full text-left p-4 rounded-xl border-2 transition-all ${
-                          selectedChambre === chambre.id
-                            ? "border-accent bg-accent/5"
-                            : chambre.est_disponible
-                            ? "border-border hover:border-accent/30"
-                            : "border-border opacity-50 cursor-not-allowed"
-                        }`}
-                        onClick={() => chambre.est_disponible && setSelectedChambre(chambre.id)}
-                        disabled={!chambre.est_disponible}
-                      >
-                        <div className="flex justify-between items-start">
-                          <div>
-                            <p className="font-medium text-foreground">{chambre.nom}</p>
-                            <div className="flex items-center gap-1 text-sm text-muted-foreground mt-1">
-                              <Users className="h-3.5 w-3.5" />
-                              {chambre.nombre_personnes} personne(s)
+                    chambres.map((chambre: any) => {
+                      const isChambreCollectif = chambre.mode_reservation === "collectif";
+                      const isChambreParPersonne = !!chambre.tarification_par_personne;
+
+                      return (
+                        <button
+                          key={chambre.id}
+                          className={`w-full text-left p-4 rounded-xl border-2 transition-all ${
+                            selectedChambre === chambre.id
+                              ? "border-accent bg-accent/5"
+                              : chambre.est_disponible
+                              ? "border-border hover:border-accent/30"
+                              : "border-border opacity-50 cursor-not-allowed"
+                          }`}
+                          onClick={() => chambre.est_disponible && handleChambreSelect(chambre)}
+                          disabled={!chambre.est_disponible}
+                        >
+                          <div className="flex justify-between items-start gap-2">
+                            <div>
+                              <div className="flex items-center gap-2 flex-wrap">
+                                <p className="font-medium text-foreground">{chambre.nom}</p>
+                                <Badge
+                                  variant={isChambreCollectif ? "default" : "secondary"}
+                                  className={`text-[10px] ${
+                                    isChambreCollectif
+                                      ? "bg-purple-600/10 text-purple-700 border-purple-300 dark:text-purple-400"
+                                      : "bg-blue-600/10 text-blue-700 border-blue-300 dark:text-blue-400"
+                                  }`}
+                                >
+                                  {isChambreCollectif ? "Réservation Collective" : "Réservation Individuelle"}
+                                </Badge>
+                              </div>
+
+                              <div className="flex items-center gap-1.5 text-xs text-muted-foreground mt-1">
+                                <Users className="h-3.5 w-3.5" />
+                                {chambre.nombre_personnes} personne(s) max
+                                {isChambreCollectif && (
+                                  <span className="text-[11px] text-purple-600 dark:text-purple-400 font-medium ml-1">
+                                    • Logement entier ({chambre.nombre_personnes} places)
+                                  </span>
+                                )}
+                              </div>
+
+                              {chambre.description && (
+                                <p className="text-xs text-muted-foreground mt-1">{chambre.description}</p>
+                              )}
                             </div>
-                            {chambre.description && (
-                              <p className="text-xs text-muted-foreground mt-1">{chambre.description}</p>
-                            )}
+
+                            <div className="text-right shrink-0">
+                              <p className="text-lg font-bold text-accent font-ui">
+                                {chambre.prix_zeyna ? `${chambre.prix_zeyna.toLocaleString()} F` : "N/A"}
+                              </p>
+                              <span className="text-xs text-muted-foreground">
+                                {isChambreParPersonne ? "/pers/mois" : "/mois"}
+                              </span>
+                            </div>
                           </div>
-                          <div className="text-right">
-                            <p className="text-lg font-bold text-accent font-ui">
-                              {chambre.prix_zeyna ? `${chambre.prix_zeyna.toLocaleString()} F` : "N/A"}
-                            </p>
-                            <span className="text-xs text-muted-foreground">/mois</span>
+
+                          {chambre.caution > 0 && (
+                            <div className="mt-2 pt-2 border-t border-border/50 flex items-center justify-between text-xs text-muted-foreground">
+                              <span>
+                                <Shield className="h-3 w-3 inline mr-1 text-accent" />
+                                Caution : {chambre.caution.toLocaleString()} FCFA{isChambreParPersonne ? " /personne" : ""}
+                              </span>
+                              {isChambreParPersonne && (
+                                <Badge variant="outline" className="text-[10px]">
+                                  Tarif par personne
+                                </Badge>
+                              )}
+                            </div>
+                          )}
+
+                          {!chambre.est_disponible && (
+                            <Badge variant="secondary" className="mt-2">Complet</Badge>
+                          )}
+                        </button>
+                      );
+                    })
+                  )}
+
+                  {/* Options de réservation une fois une chambre sélectionnée */}
+                  {currentChambre && (
+                    <div className="p-4 rounded-xl bg-muted/40 border space-y-3.5 text-xs">
+                      <div className="flex items-center justify-between font-semibold text-sm">
+                        <span>Détails de votre demande</span>
+                        <Badge variant="outline">
+                          {isCollectif ? "Groupe complet" : `${effectivePlaces} place(s)`}
+                        </Badge>
+                      </div>
+
+                      {/* Sélecteur de places si individuel */}
+                      {!isCollectif && capaciteChambre > 1 ? (
+                        <div className="space-y-1.5">
+                          <Label className="text-xs">Nombre de places souhaitées :</Label>
+                          <div className="flex items-center gap-2">
+                            <Input
+                              type="number"
+                              min={1}
+                              max={capaciteChambre}
+                              value={selectedPlaces}
+                              onChange={(e) => {
+                                const val = Math.max(1, Math.min(capaciteChambre, Number(e.target.value) || 1));
+                                setSelectedPlaces(val);
+                              }}
+                              className="h-8 text-xs max-w-[100px]"
+                            />
+                            <span className="text-muted-foreground">sur {capaciteChambre} place(s) au total</span>
                           </div>
                         </div>
-                        {chambre.caution > 0 && (
-                          <div className="mt-2 pt-2 border-t border-border/50">
-                            <p className="text-xs text-muted-foreground">
-                              <Shield className="h-3 w-3 inline mr-1" />
-                              Caution : {chambre.caution.toLocaleString()} FCFA
-                            </p>
-                          </div>
-                        )}
-                        {!chambre.est_disponible && (
-                          <Badge variant="secondary" className="mt-2">Complet</Badge>
-                        )}
-                      </button>
-                    ))
+                      ) : isCollectif ? (
+                        <div className="p-2.5 rounded-lg bg-purple-500/10 border border-purple-500/20 text-purple-900 dark:text-purple-300">
+                          <strong>Réservation collective obligatoire :</strong> Vous réservez l'intégralité des {capaciteChambre} places pour votre groupe et êtes responsable du montant total.
+                        </div>
+                      ) : null}
+
+                      {/* Choix des dates */}
+                      <div className="grid grid-cols-2 gap-2 pt-1">
+                        <div className="space-y-1">
+                          <Label className="text-[11px] text-muted-foreground flex items-center gap-1">
+                            <Calendar className="h-3 w-3" /> Date d'entrée
+                          </Label>
+                          <Input
+                            type="date"
+                            value={dateDebut}
+                            onChange={(e) => setDateDebut(e.target.value)}
+                            className="h-8 text-xs"
+                          />
+                        </div>
+                        <div className="space-y-1">
+                          <Label className="text-[11px] text-muted-foreground flex items-center gap-1">
+                            <Calendar className="h-3 w-3" /> Date de fin (opt.)
+                          </Label>
+                          <Input
+                            type="date"
+                            value={dateFin}
+                            onChange={(e) => setDateFin(e.target.value)}
+                            className="h-8 text-xs"
+                          />
+                        </div>
+                      </div>
+
+                      {/* Calcul détaillé en temps réel */}
+                      <div className="space-y-1.5 pt-2 border-t text-muted-foreground">
+                        <div className="flex justify-between">
+                          <span>
+                            Dépôt de garantie (Caution) {isParPersonne && effectivePlaces > 1 ? `(${cautionUnitaire.toLocaleString()} F × ${effectivePlaces} pers)` : ""} :
+                          </span>
+                          <span className="font-semibold text-foreground">{cautionTotale.toLocaleString()} FCFA</span>
+                        </div>
+                        <div className="flex justify-between text-[11px] text-muted-foreground italic">
+                          <span>
+                            Loyer mensuel futur {isParPersonne && effectivePlaces > 1 ? `(${loyerUnitaire.toLocaleString()} F × ${effectivePlaces} pers)` : ""} :
+                          </span>
+                          <span>{loyerTotal.toLocaleString()} FCFA / mois (exigible à l'entrée)</span>
+                        </div>
+                        <div className="flex justify-between pt-1 border-t text-sm font-bold text-foreground">
+                          <span>Montant à régler à validation (Caution) :</span>
+                          <span className="text-accent">{totalAPayer.toLocaleString()} FCFA</span>
+                        </div>
+                      </div>
+                    </div>
                   )}
 
                   <Button
@@ -272,11 +422,11 @@ const LogementDetail = () => {
                     disabled={!selectedChambre || reserving}
                     onClick={handleReserve}
                   >
-                    {reserving ? "Réservation..." : "Réserver maintenant"}
+                    {reserving ? "Envoi de la demande..." : "Soumettre la réservation"}
                   </Button>
 
                   <p className="text-xs text-center text-muted-foreground">
-                    La disponibilité sera vérifiée auprès du propriétaire avant ouverture du délai de paiement (24h)
+                    À validation, seule la caution de {totalAPayer.toLocaleString()} FCFA est demandée pour sécuriser vos places (délai de 24h).
                   </p>
                 </CardContent>
               </Card>

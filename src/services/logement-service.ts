@@ -20,6 +20,8 @@ interface NewLogementInput {
     prix_zeyna: number;
     caution: number;
     description: string;
+    mode_reservation?: "individuel" | "collectif";
+    tarification_par_personne?: boolean;
   }>;
   images: File[];
   onUploadingImages?: (uploading: boolean) => void;
@@ -114,6 +116,8 @@ export const createLandlordLogement = async ({
       prix_zeyna: chambre.prix_zeyna,
       caution: chambre.caution,
       description: chambre.description,
+      mode_reservation: chambre.mode_reservation || "individuel",
+      tarification_par_personne: chambre.tarification_par_personne ?? false,
     }))
   );
   if (chambresError) throw chambresError;
@@ -284,24 +288,30 @@ export interface AdminChambrePayload {
   caution: number;
   description?: string;
   est_disponible?: boolean;
+  mode_reservation?: "individuel" | "collectif";
+  tarification_par_personne?: boolean;
 }
 
 export const saveAdminChambre = async (chambre: AdminChambrePayload) => {
   const marge = chambre.marge !== undefined ? chambre.marge : (chambre.prix_zeyna - chambre.prix_bailleur);
 
+  const payload = {
+    nom: chambre.nom,
+    nombre_personnes: chambre.nombre_personnes,
+    prix_bailleur: chambre.prix_bailleur,
+    prix_zeyna: chambre.prix_zeyna,
+    marge,
+    caution: chambre.caution,
+    description: chambre.description ?? "",
+    est_disponible: chambre.est_disponible ?? true,
+    mode_reservation: chambre.mode_reservation || "individuel",
+    tarification_par_personne: chambre.tarification_par_personne ?? false,
+  };
+
   if (chambre.id) {
     const { data, error } = await supabase
       .from("chambres")
-      .update({
-        nom: chambre.nom,
-        nombre_personnes: chambre.nombre_personnes,
-        prix_bailleur: chambre.prix_bailleur,
-        prix_zeyna: chambre.prix_zeyna,
-        marge,
-        caution: chambre.caution,
-        description: chambre.description ?? "",
-        est_disponible: chambre.est_disponible ?? true,
-      })
+      .update(payload)
       .eq("id", chambre.id)
       .select()
       .single();
@@ -313,14 +323,7 @@ export const saveAdminChambre = async (chambre: AdminChambrePayload) => {
       .from("chambres")
       .insert({
         logement_id: chambre.logement_id,
-        nom: chambre.nom,
-        nombre_personnes: chambre.nombre_personnes,
-        prix_bailleur: chambre.prix_bailleur,
-        prix_zeyna: chambre.prix_zeyna,
-        marge,
-        caution: chambre.caution,
-        description: chambre.description ?? "",
-        est_disponible: chambre.est_disponible ?? true,
+        ...payload,
       })
       .select()
       .single();
@@ -353,11 +356,15 @@ export const uploadAdminLogementImages = async (logementId: string, files: File[
   return imageUrls;
 };
 
-interface CreateReservationInput {
+export interface CreateReservationInput {
   studentId: string;
   roomId: string;
   logementId: string;
   amount: number;
+  nombrePlaces?: number;
+  typeReservation?: "individuel" | "collectif";
+  dateDebut?: string;
+  dateFin?: string;
 }
 
 export const createReservation = async ({
@@ -365,13 +372,21 @@ export const createReservation = async ({
   roomId,
   logementId,
   amount,
+  nombrePlaces = 1,
+  typeReservation = "individuel",
+  dateDebut,
+  dateFin,
 }: CreateReservationInput) => {
+  const effectiveDebut = dateDebut || new Date().toISOString().split("T")[0];
   const { error } = await supabase.from("reservations").insert({
     etudiant_id: studentId,
     chambre_id: roomId,
     logement_id: logementId,
     montant_total: amount,
-    date_debut: new Date().toISOString().split("T")[0],
+    nombre_places: nombrePlaces,
+    type_reservation: typeReservation,
+    date_debut: effectiveDebut,
+    date_fin: dateFin || null,
     statut: "en_attente",
   });
 

@@ -212,10 +212,30 @@ const AdminReservations = () => {
                       <Badge className={statusConfig.colorClass} variant={statusConfig.variant}>
                         {statusConfig.label}
                       </Badge>
+                      <Badge
+                        variant="outline"
+                        className={
+                          r.type_reservation === "collectif" || r.chambres?.mode_reservation === "collectif"
+                            ? "border-purple-300 text-purple-700 bg-purple-50 dark:text-purple-400"
+                            : "border-blue-300 text-blue-700 bg-blue-50 dark:text-blue-400"
+                        }
+                      >
+                        {r.type_reservation === "collectif" || r.chambres?.mode_reservation === "collectif"
+                          ? "Groupe (Collectif)"
+                          : "Individuel"}
+                      </Badge>
+                      <Badge variant="secondary" className="font-semibold">
+                        {r.nombre_places || 1} place(s){r.chambres?.nombre_personnes ? ` / ${r.chambres.nombre_personnes}` : ""}
+                      </Badge>
                     </div>
 
                     <p className="text-sm text-muted-foreground">
                       Unité : <strong>{r.chambres?.nom}</strong>
+                      {r.chambres?.tarification_par_personne && (
+                        <span className="text-xs text-accent font-medium ml-2">
+                          (Tarif par personne)
+                        </span>
+                      )}
                     </p>
 
                     <p className="text-xs text-muted-foreground flex items-center gap-1.5">

@@ -22,6 +22,8 @@ interface ChambreForm {
   marge: number;
   caution: number;
   description: string;
+  mode_reservation: "individuel" | "collectif";
+  tarification_par_personne: boolean;
 }
 
 const AdminNouveauLogement = () => {
@@ -53,7 +55,17 @@ const AdminNouveauLogement = () => {
   });
 
   const [chambres, setChambres] = useState<ChambreForm[]>([
-    { nom: "Chambre 1", nombre_personnes: 1, prix_bailleur: 15000, prix_zeyna: 16500, marge: 1500, caution: 15000, description: "" },
+    {
+      nom: "Chambre 1",
+      nombre_personnes: 1,
+      prix_bailleur: 15000,
+      prix_zeyna: 16500,
+      marge: 1500,
+      caution: 15000,
+      description: "",
+      mode_reservation: "individuel",
+      tarification_par_personne: false,
+    },
   ]);
 
   const addChambre = () => {
@@ -64,7 +76,9 @@ const AdminNouveauLogement = () => {
       prix_zeyna: 16500,
       marge: 1500,
       caution: 15000,
-      description: ""
+      description: "",
+      mode_reservation: "individuel",
+      tarification_par_personne: false,
     }]);
   };
 
@@ -370,20 +384,89 @@ const AdminNouveauLogement = () => {
                       <Input value={c.nom} onChange={(e) => updateChambre(i, "nom", e.target.value)} />
                     </div>
                     <div className="space-y-1">
-                      <Label className="text-xs">Nb personnes</Label>
+                      <Label className="text-xs">Capacité max (personnes)</Label>
                       <Input type="number" min={1} value={c.nombre_personnes} onChange={(e) => updateChambre(i, "nombre_personnes", Number(e.target.value))} />
                     </div>
+
                     <div className="space-y-1">
-                      <Label className="text-xs">Prix bailleur (FCFA)</Label>
-                      <Input type="number" value={c.prix_bailleur} onChange={(e) => updateChambre(i, "prix_bailleur", Number(e.target.value))} />
+                      <Label className="text-xs">Mode de réservation</Label>
+                      <Select
+                        value={c.mode_reservation}
+                        onValueChange={(val: "individuel" | "collectif") => {
+                          const updated = [...chambres];
+                          updated[i].mode_reservation = val;
+                          setChambres(updated);
+                        }}
+                      >
+                        <SelectTrigger className="h-9">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="individuel">Réservation Individuelle (place par place)</SelectItem>
+                          <SelectItem value="collectif">Réservation Collective (tout le groupe)</SelectItem>
+                        </SelectContent>
+                      </Select>
                     </div>
+
                     <div className="space-y-1">
-                      <Label className="text-xs">Prix Zeyna (FCFA)</Label>
-                      <Input type="number" value={c.prix_zeyna} onChange={(e) => updateChambre(i, "prix_zeyna", Number(e.target.value))} />
+                      <Label className="text-xs">Type de tarification</Label>
+                      <Select
+                        value={c.tarification_par_personne ? "personne" : "chambre"}
+                        onValueChange={(val) => {
+                          const updated = [...chambres];
+                          updated[i].tarification_par_personne = (val === "personne");
+                          setChambres(updated);
+                        }}
+                      >
+                        <SelectTrigger className="h-9">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="chambre">Prix fixe (pour la chambre entière)</SelectItem>
+                          <SelectItem value="personne">Prix par personne (loyer & caution / pers)</SelectItem>
+                        </SelectContent>
+                      </Select>
                     </div>
+
                     <div className="space-y-1">
-                      <Label className="text-xs">Caution (FCFA)</Label>
-                      <Input type="number" value={c.caution} onChange={(e) => updateChambre(i, "caution", Number(e.target.value))} />
+                      <Label className="text-xs">
+                        Prix total bailleur (FCFA)
+                      </Label>
+                      <Input
+                        type="number"
+                        value={c.prix_bailleur}
+                        onChange={(e) => updateChambre(i, "prix_bailleur", Number(e.target.value))}
+                      />
+                      <p className="text-[10px] text-muted-foreground">
+                        Loyer total reversé au bailleur pour la chambre entière
+                      </p>
+                    </div>
+
+                    <div className="space-y-1">
+                      <Label className="text-xs font-semibold text-accent">
+                        Loyer Zeyna (FCFA) {c.tarification_par_personne ? "/ personne" : "total"}
+                      </Label>
+                      <Input
+                        type="number"
+                        value={c.prix_zeyna}
+                        onChange={(e) => updateChambre(i, "prix_zeyna", Number(e.target.value))}
+                      />
+                      <p className="text-[10px] text-muted-foreground">
+                        {c.tarification_par_personne
+                          ? `Soit ${(c.prix_zeyna * c.nombre_personnes).toLocaleString()} FCFA au total si complet`
+                          : "Prix total payé par le locataire"}
+                      </p>
+                    </div>
+
+                    <div className="space-y-1">
+                      <Label className="text-xs">
+                        Caution (FCFA) {c.tarification_par_personne ? "/ personne" : "totale"}
+                      </Label>
+                      <Input
+                        type="number"
+                        value={c.caution}
+                        onChange={(e) => updateChambre(i, "caution", Number(e.target.value))}
+                      />
                     </div>
                   </div>
                   <div className="space-y-1">

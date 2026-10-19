@@ -126,6 +126,21 @@ const EtudiantReservations = () => {
                           <Badge className={statusConfig.colorClass} variant={statusConfig.variant}>
                             {statusConfig.label}
                           </Badge>
+                          <Badge
+                            variant="outline"
+                            className={
+                              r.type_reservation === "collectif" || r.chambres?.mode_reservation === "collectif"
+                                ? "border-purple-300 text-purple-700 bg-purple-50 dark:text-purple-400"
+                                : "border-blue-300 text-blue-700 bg-blue-50 dark:text-blue-400"
+                            }
+                          >
+                            {r.type_reservation === "collectif" || r.chambres?.mode_reservation === "collectif"
+                              ? "Réservation Collective (Groupe)"
+                              : "Réservation Individuelle"}
+                          </Badge>
+                          <Badge variant="secondary" className="font-medium text-xs">
+                            {r.nombre_places || 1} place(s)
+                          </Badge>
                         </div>
 
                         <p className="text-sm text-muted-foreground">

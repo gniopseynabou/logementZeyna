@@ -90,7 +90,7 @@ export const verifierEtExpirerReservations = async () => {
 export const getStudentReservations = async (studentId: string) => {
   const { data, error } = await supabase
     .from("reservations")
-    .select("*, logements(nom, adresse), chambres(nom, prix_zeyna, caution)")
+    .select("*, logements(nom, adresse, ville), chambres(nom, nombre_personnes, prix_zeyna, caution, mode_reservation, tarification_par_personne)")
     .eq("etudiant_id", studentId)
     .order("created_at", { ascending: false });
 
@@ -148,7 +148,7 @@ export const getAdminReservations = async ({
 
   let query = supabase
     .from("reservations")
-    .select("*, logements(nom), chambres(nom)", { count: "exact" });
+    .select("*, logements(nom, adresse, ville), chambres(nom, nombre_personnes, prix_zeyna, caution, mode_reservation, tarification_par_personne)", { count: "exact" });
 
   if (statusFilter !== "all") {
     // Support des filtres groupés pour compatibilité
@@ -256,6 +256,82 @@ export const getAdminReservationStats = async () => {
   };
 };
 
+export interface ChambreDisponibilitePlaces {
+  chambre_id: string;
+  est_disponible: boolean;
+  capacite_totale: number;
+  places_occupees: number;
+  places_disponibles: number;
+  mode_reservation: "individuel" | "collectif";
+  tarification_par_personne: boolean;
+}
+
+export const getChambreDisponibilitePlaces = async (
+  chambreId: string,
+  dateDebut?: string,
+  dateFin?: string
+): Promise<ChambreDisponibilitePlaces> => {
+  try {
+    const { data, error } = await supabase.rpc("get_chambre_disponibilite_places" as any, {
+      p_chambre_id: chambreId,
+      p_date_debut: dateDebut || new Date().toISOString().split("T")[0],
+      p_date_fin: dateFin || null,
+    });
+    if (!error && data && !data.error) {
+      return data as ChambreDisponibilitePlaces;
+    }
+  } catch {
+    // fallback séquentiel
+  }
+
+  // Fallback client / direct query
+  const { data: chambre, error: chErr } = await supabase
+    .from("chambres")
+    .select("id, nombre_personnes, est_disponible, mode_reservation, tarification_par_personne")
+    .eq("id", chambreId)
+    .single();
+
+  if (chErr || !chambre) {
+    throw new Error("Chambre introuvable");
+  }
+
+  const capacite = chambre.nombre_personnes || 1;
+  if (!chambre.est_disponible) {
+    return {
+      chambre_id: chambreId,
+      est_disponible: false,
+      capacite_totale: capacite,
+      places_occupees: capacite,
+      places_disponibles: 0,
+      mode_reservation: chambre.mode_reservation || "individuel",
+      tarification_par_personne: !!chambre.tarification_par_personne,
+    };
+  }
+
+  // Calcul des places occupées par les réservations actives/confirmées
+  const { data: resData } = await supabase
+    .from("reservations")
+    .select("nombre_places, statut, date_debut, date_fin")
+    .eq("chambre_id", chambreId)
+    .in("statut", ["confirmee_paiement_en_attente", "confirmee", "payee"]);
+
+  const placesOccupees = (resData || []).reduce((acc: number, cur: any) => {
+    return acc + (cur.nombre_places || 1);
+  }, 0);
+
+  const placesDisponibles = Math.max(0, capacite - placesOccupees);
+
+  return {
+    chambre_id: chambreId,
+    est_disponible: placesDisponibles > 0,
+    capacite_totale: capacite,
+    places_occupees: placesOccupees,
+    places_disponibles: placesDisponibles,
+    mode_reservation: chambre.mode_reservation || "individuel",
+    tarification_par_personne: !!chambre.tarification_par_personne,
+  };
+};
+
 export const validerReservationAdmin = async (reservationId: string) => {
   try {
     const { data, error: rpcError } = await supabase.rpc(
@@ -263,8 +339,52 @@ export const validerReservationAdmin = async (reservationId: string) => {
       { p_reservation_id: reservationId }
     );
     if (!rpcError) return data;
-  } catch {
-    // fallback si RPC non disponible
+    if (rpcError && rpcError.message && !rpcError.message.includes("does not exist") && !rpcError.code?.includes("PGRST202")) {
+      throw new Error(rpcError.message);
+    }
+  } catch (err: any) {
+    if (err.message && !err.message.includes("function") && !err.message.includes("PGRST202")) {
+      throw err;
+    }
+  }
+
+  // Fallback transactionnel simulé côté client :
+  // 1. Récupérer la réservation
+  const { data: res, error: resErr } = await supabase
+    .from("reservations")
+    .select("*, chambres(*)")
+    .eq("id", reservationId)
+    .single();
+
+  if (resErr || !res) throw new Error("Réservation introuvable.");
+
+  const chambre = res.chambres as any;
+  if (!chambre || !chambre.est_disponible) {
+    throw new Error("Ce logement ou cette chambre n'est plus disponible.");
+  }
+
+  const placesDemandees = res.nombre_places || 1;
+  const capacite = chambre.nombre_personnes || 1;
+
+  // 2. Vérifier les places occupées concurrentes
+  const { data: actRes } = await supabase
+    .from("reservations")
+    .select("id, nombre_places")
+    .eq("chambre_id", res.chambre_id)
+    .neq("id", reservationId)
+    .in("statut", ["confirmee_paiement_en_attente", "confirmee", "payee"]);
+
+  const placesOccupees = (actRes || []).reduce((acc: number, cur: any) => acc + (cur.nombre_places || 1), 0);
+  const placesRestantes = capacite - placesOccupees;
+
+  if (res.type_reservation === "collectif" || chambre.mode_reservation === "collectif") {
+    if (placesOccupees > 0) {
+      throw new Error(`Impossible de valider la réservation collective : ${placesOccupees} place(s) sont déjà réservées sur cette période.`);
+    }
+  } else {
+    if (placesDemandees > placesRestantes) {
+      throw new Error(`Capacité insuffisante : ${placesDemandees} place(s) demandée(s) mais seulement ${Math.max(0, placesRestantes)} restante(s) disponible(s).`);
+    }
   }
 
   const expireAt = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString();
@@ -278,6 +398,11 @@ export const validerReservationAdmin = async (reservationId: string) => {
     .eq("id", reservationId);
 
   if (error) throw error;
+
+  // Si capacité maximale atteinte, marquer temporairement la chambre comme indisponible
+  if (placesOccupees + placesDemandees >= capacite) {
+    await supabase.from("chambres").update({ est_disponible: false }).eq("id", res.chambre_id);
+  }
 };
 
 export const refuserReservationAdmin = async (reservationId: string, motif: string) => {

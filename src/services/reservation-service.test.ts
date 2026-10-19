@@ -41,7 +41,7 @@ describe("reservation-service", () => {
 
     await expect(getStudentReservations("student-1")).resolves.toBe(data);
     expect(mockFrom).toHaveBeenCalledWith("reservations");
-    expect(mockSelect).toHaveBeenCalledWith("*, logements(nom, adresse), chambres(nom, prix_zeyna, caution)");
+    expect(mockSelect).toHaveBeenCalledWith("*, logements(nom, adresse, ville), chambres(nom, nombre_personnes, prix_zeyna, caution, mode_reservation, tarification_par_personne)");
     expect(mockEq).toHaveBeenCalledWith("etudiant_id", "student-1");
     expect(mockOrder).toHaveBeenCalledWith("created_at", { ascending: false });
   });
@@ -71,7 +71,7 @@ describe("reservation-service", () => {
       data,
       pagination: { page: 1, pageSize: 20, total: 0, totalPages: 0 },
     });
-    expect(mockSelect).toHaveBeenCalledWith("*, logements(nom), chambres(nom)", { count: "exact" });
+    expect(mockSelect).toHaveBeenCalledWith("*, logements(nom, adresse, ville), chambres(nom, nombre_personnes, prix_zeyna, caution, mode_reservation, tarification_par_personne)", { count: "exact" });
     expect(mockOrder).toHaveBeenCalledWith("created_at", { ascending: false });
   });
 

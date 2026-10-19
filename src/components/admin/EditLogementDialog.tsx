@@ -50,6 +50,8 @@ export interface LogementChambre {
   caution: number;
   description?: string;
   est_disponible: boolean;
+  mode_reservation?: "individuel" | "collectif";
+  tarification_par_personne?: boolean;
 }
 
 export interface EditableLogement {
@@ -112,7 +114,7 @@ export const EditLogementDialog = ({
       setNewImagePreviews([]);
       setDeletedChambreIds([]);
       setChambres(
-        (logement.chambres || []).map((c) => ({
+        (logement.chambres || []).map((c: any) => ({
           id: c.id,
           nom: c.nom || "Chambre",
           nombre_personnes: c.nombre_personnes || 1,
@@ -122,6 +124,8 @@ export const EditLogementDialog = ({
           caution: c.caution || 0,
           description: c.description || "",
           est_disponible: c.est_disponible ?? true,
+          mode_reservation: c.mode_reservation || "individuel",
+          tarification_par_personne: !!c.tarification_par_personne,
         }))
       );
     }
@@ -140,6 +144,8 @@ export const EditLogementDialog = ({
         caution: 20000,
         description: "",
         est_disponible: true,
+        mode_reservation: "individuel",
+        tarification_par_personne: false,
       },
     ]);
   };
@@ -244,6 +250,8 @@ export const EditLogementDialog = ({
           caution: Number(ch.caution) || 0,
           description: ch.description || "",
           est_disponible: ch.est_disponible,
+          mode_reservation: ch.mode_reservation || "individuel",
+          tarification_par_personne: ch.tarification_par_personne ?? false,
         });
       }
 
@@ -482,7 +490,45 @@ export const EditLogementDialog = ({
                         </div>
 
                         <div className="space-y-1">
-                          <Label className="text-xs">Prix Bailleur (FCFA)</Label>
+                          <Label className="text-xs">Mode réservation</Label>
+                          <Select
+                            value={chambre.mode_reservation || "individuel"}
+                            onValueChange={(val: "individuel" | "collectif") =>
+                              handleUpdateChambre(idx, "mode_reservation", val)
+                            }
+                          >
+                            <SelectTrigger className="h-8 text-xs">
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="individuel">Individuelle (par place)</SelectItem>
+                              <SelectItem value="collectif">Collective (tout le groupe)</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+
+                        <div className="space-y-1 sm:col-span-2">
+                          <Label className="text-xs">Type de tarification</Label>
+                          <Select
+                            value={chambre.tarification_par_personne ? "personne" : "chambre"}
+                            onValueChange={(val) =>
+                              handleUpdateChambre(idx, "tarification_par_personne", val === "personne")
+                            }
+                          >
+                            <SelectTrigger className="h-8 text-xs">
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="chambre">Prix fixe (chambre entière)</SelectItem>
+                              <SelectItem value="personne">Prix par personne (loyer & caution / pers)</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+
+                        <div className="space-y-1">
+                          <Label className="text-xs">
+                            Prix total Bailleur (FCFA)
+                          </Label>
                           <Input
                             type="number"
                             step="500"
@@ -492,10 +538,15 @@ export const EditLogementDialog = ({
                             }
                             className="h-8 text-xs"
                           />
+                          <p className="text-[10px] text-muted-foreground">
+                            Loyer total dû au bailleur
+                          </p>
                         </div>
 
                         <div className="space-y-1">
-                          <Label className="text-xs font-semibold text-accent">Prix Zeyna (FCFA)</Label>
+                          <Label className="text-xs font-semibold text-accent">
+                            Prix Zeyna (FCFA){chambre.tarification_par_personne ? " /pers" : " total"}
+                          </Label>
                           <Input
                             type="number"
                             step="500"
@@ -505,10 +556,17 @@ export const EditLogementDialog = ({
                             }
                             className="h-8 text-xs font-semibold border-accent"
                           />
+                          <p className="text-[10px] text-muted-foreground">
+                            {chambre.tarification_par_personne
+                              ? `Total Zeyna : ${((chambre.prix_zeyna || 0) * (chambre.nombre_personnes || 1)).toLocaleString()} F`
+                              : "Montant payé par le locataire"}
+                          </p>
                         </div>
 
                         <div className="space-y-1">
-                          <Label className="text-xs">Caution (FCFA)</Label>
+                          <Label className="text-xs">
+                            Caution (FCFA){chambre.tarification_par_personne ? " /pers" : " totale"}
+                          </Label>
                           <Input
                             type="number"
                             step="500"
@@ -523,9 +581,21 @@ export const EditLogementDialog = ({
 
                       <div className="flex items-center justify-between text-xs pt-1 text-muted-foreground">
                         <span>
-                          Marge ZEYNA :{" "}
-                          <strong className={(chambre.marge || 0) >= 0 ? "text-emerald-600" : "text-destructive"}>
-                            {(chambre.marge || 0).toLocaleString()} FCFA
+                          Marge ZEYNA totale à pleine capacité :{" "}
+                          <strong className={
+                            chambre.tarification_par_personne
+                              ? (((chambre.prix_zeyna || 0) * (chambre.nombre_personnes || 1)) - (chambre.prix_bailleur || 0)) >= 0
+                                ? "text-emerald-600"
+                                : "text-destructive"
+                              : ((chambre.prix_zeyna || 0) - (chambre.prix_bailleur || 0)) >= 0
+                              ? "text-emerald-600"
+                              : "text-destructive"
+                          }>
+                            {(
+                              chambre.tarification_par_personne
+                                ? ((chambre.prix_zeyna || 0) * (chambre.nombre_personnes || 1)) - (chambre.prix_bailleur || 0)
+                                : (chambre.prix_zeyna || 0) - (chambre.prix_bailleur || 0)
+                            ).toLocaleString()} FCFA
                           </strong>
                         </span>
                       </div>

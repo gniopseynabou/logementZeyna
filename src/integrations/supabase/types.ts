@@ -24,10 +24,12 @@ export type Database = {
           images: string[] | null
           logement_id: string
           marge: number | null
+          mode_reservation: "individuel" | "collectif"
           nom: string
           nombre_personnes: number
           prix_bailleur: number
           prix_zeyna: number | null
+          tarification_par_personne: boolean
           updated_at: string
         }
         Insert: {
@@ -39,10 +41,12 @@ export type Database = {
           images?: string[] | null
           logement_id: string
           marge?: number | null
+          mode_reservation?: "individuel" | "collectif"
           nom: string
           nombre_personnes?: number
           prix_bailleur: number
           prix_zeyna?: number | null
+          tarification_par_personne?: boolean
           updated_at?: string
         }
         Update: {
@@ -54,10 +58,12 @@ export type Database = {
           images?: string[] | null
           logement_id?: string
           marge?: number | null
+          mode_reservation?: "individuel" | "collectif"
           nom?: string
           nombre_personnes?: number
           prix_bailleur?: number
           prix_zeyna?: number | null
+          tarification_par_personne?: boolean
           updated_at?: string
         }
         Relationships: [
@@ -481,7 +487,9 @@ export type Database = {
           logement_id: string
           montant_total: number
           motif_refus: string | null
+          nombre_places: number
           statut: Database["public"]["Enums"]["reservation_statut"]
+          type_reservation: "individuel" | "collectif"
           updated_at: string
         }
         Insert: {
@@ -496,7 +504,9 @@ export type Database = {
           logement_id: string
           montant_total: number
           motif_refus?: string | null
+          nombre_places?: number
           statut?: Database["public"]["Enums"]["reservation_statut"]
+          type_reservation?: "individuel" | "collectif"
           updated_at?: string
         }
         Update: {
@@ -511,7 +521,9 @@ export type Database = {
           logement_id?: string
           montant_total?: number
           motif_refus?: string | null
+          nombre_places?: number
           statut?: Database["public"]["Enums"]["reservation_statut"]
+          type_reservation?: "individuel" | "collectif"
           updated_at?: string
         }
         Relationships: [
