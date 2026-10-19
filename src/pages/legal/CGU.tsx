@@ -10,7 +10,7 @@ const CGU = () => {
           title: "Article 1- Objet",
           content: (
             <>
-              <p>Les présentes conditions générales d’utilisation définissent les règles d’accès et d’utilisation de la plateforme Les Logements de ZEYNA, accessible à l’adresse www.logements-zeyna.sn.</p>
+              <p>Les présentes conditions générales d’utilisation définissent les règles d’accès et d’utilisation de la plateforme Les Logements de ZEYNA, accessible à l’adresse www.logements-zeyna.site.</p>
               <p>Elles s’appliquent aux visiteurs, aux étudiants, aux bailleurs et aux autres utilisateurs autorisés à accéder aux fonctionnalités de la plateforme.</p>
               <p>Elles complètent les contrats spécifiques conclus avec ZEYNA, sans les remplacer.</p>
             </>
@@ -153,8 +153,8 @@ const CGU = () => {
             <>
               <p>Pour toute difficulté liée à l’utilisation de la plateforme, l’utilisateur peut contacter ZEYNA :</p>
               <ul className="list-disc pl-5 space-y-2 mt-4 mb-4">
-                <li><strong>E-mail :</strong> contact@logements-zeyna.sn</li>
-                <li><strong>Téléphone :</strong> +221 77 000 00 00</li>
+                <li><strong>E-mail :</strong> zeydagroup01@gmail.com</li>
+                <li><strong>Téléphone :</strong> +221 77 432 64 86</li>
               </ul>
               <p>ZEYNA examine les demandes et assure leur suivi dans la mesure de ses obligations et des informations nécessaires à leur traitement.</p>
             </>

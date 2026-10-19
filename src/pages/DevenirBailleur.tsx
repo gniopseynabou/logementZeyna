@@ -169,7 +169,7 @@ const DevenirBailleur = () => {
 
                         <div className="space-y-2">
                           <Label htmlFor="telephone">Téléphone * <span className="text-muted-foreground text-xs">(nous vous rappelons ici)</span></Label>
-                          <Input id="telephone" placeholder="+221 77 000 00 00" value={form.telephone} onChange={(e) => update("telephone", e.target.value)} required />
+                          <Input id="telephone" placeholder="+221 77 432 64 86" value={form.telephone} onChange={(e) => update("telephone", e.target.value)} required />
                         </div>
 
                         <div className="space-y-2">

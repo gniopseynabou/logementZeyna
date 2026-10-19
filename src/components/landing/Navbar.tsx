@@ -88,8 +88,8 @@ const Navbar = () => {
                 </>
               ) : (
                 <>
-                  <Link to="/login" className="px-4 py-2 text-sm font-medium hover:bg-muted rounded-md" onClick={() => setIsOpen(false)}>Connexion</Link>
-                  <Button asChild className="bg-gradient-gold text-accent-foreground mx-4">
+                  <Link to="/login" className="px-4 py-2 text-sm font-medium hover:bg-muted rounded-sm" onClick={() => setIsOpen(false)}>Connexion</Link>
+                  <Button asChild className="bg-accent hover:bg-accent/90 text-white rounded-sm mx-4 font-ui">
                     <Link to="/register" onClick={() => setIsOpen(false)}>Créer un compte</Link>
                   </Button>
                 </>

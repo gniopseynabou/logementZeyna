@@ -1,68 +1,81 @@
-import { Search, CreditCard, Home, ArrowRight } from "lucide-react";
+import { Search, ShieldCheck, KeyRound } from "lucide-react";
 
 const steps = [
   {
     icon: Search,
     num: "01",
-    title: "Recherchez",
-    description: "Parcourez les logements vérifiés à Saint-Louis et Sanar. Filtrez par quartier, budget ou capacité.",
+    tag: "Audit & Choix",
+    title: "Explorez les résidences",
+    description: "Consultez les photos réelles, le mode (place individuelle ou logement entier) et la proximité de l'UGB ou du centre-ville.",
   },
   {
-    icon: CreditCard,
+    icon: ShieldCheck,
     num: "02",
-    title: "Réservez & payez",
-    description: "Réservez en ligne et payez via Mobile Money ou carte. Votre caution est sécurisée.",
+    tag: "Caution uniquement",
+    title: "Bloquez votre place",
+    description: "Une fois votre demande validée par l'administration, réglez la caution sous 24h par Mobile Money ou carte pour sécuriser l'attribution.",
   },
   {
-    icon: Home,
+    icon: KeyRound,
     num: "03",
-    title: "Emménagez",
-    description: "Recevez votre contrat, récupérez vos clés et profitez de votre logement.",
+    tag: "Bail & Reçu",
+    title: "Emménagez sereinement",
+    description: "Recevez votre contrat numérique certifié avec reçu officiel. Votre loyer ne commence qu'à la date d'entrée convenue.",
   },
 ];
 
 const HowItWorks = () => {
   return (
-    <section className="py-24 md:py-32 bg-background">
-      <div className="container mx-auto px-4">
+    <section className="py-24 lg:py-32 bg-background border-b border-border/50">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
 
-        {/* En-tête */}
-        <div className="max-w-xl mb-16">
-          <p className="text-xs font-bold text-accent uppercase tracking-widest mb-3">Simple & rapide</p>
-          <h2 className="font-serif text-3xl md:text-4xl font-bold text-foreground">
-            Comment ça marche ?
+        {/* En-tête architectural */}
+        <div className="max-w-2xl mb-16">
+          <div className="inline-flex items-center gap-2 mb-2">
+            <span className="w-1.5 h-1.5 bg-accent rounded-full" />
+            <p className="text-xs font-semibold font-ui text-accent uppercase tracking-widest">
+              Protocole Résidentiel
+            </p>
+          </div>
+          <h2 className="font-serif text-3xl sm:text-4xl font-normal text-foreground tracking-tight">
+            Comment fonctionne Zeyna ?
           </h2>
-          <p className="text-muted-foreground mt-4 leading-relaxed">
-            Trois étapes suffisent pour trouver et sécuriser votre logement étudiant.
+          <p className="text-muted-foreground mt-3 text-sm sm:text-base leading-relaxed">
+            Un processus transparent en 3 étapes, sans commissions occultes et avec une traçabilité intégrale pour les locataires et les bailleurs.
           </p>
         </div>
 
-        {/* Étapes */}
-        <div className="grid md:grid-cols-3 gap-0 max-w-5xl">
-          {steps.map((step, i) => (
-            <div key={step.num} className="flex md:flex-col items-start gap-6 md:gap-0 relative pr-8 md:pr-0 pb-8 md:pb-0">
+        {/* Triptyque architectural */}
+        <div className="grid md:grid-cols-3 gap-8 max-w-6xl">
+          {steps.map((step) => (
+            <div
+              key={step.num}
+              className="bg-card border border-border p-8 rounded-sm flex flex-col justify-between hover:border-accent/60 transition-all group"
+            >
+              <div>
+                <div className="flex items-center justify-between mb-6">
+                  <span className="text-2xl font-bold font-ui text-accent/80 tracking-tight">
+                    {step.num}
+                  </span>
+                  <span className="text-[10px] font-ui uppercase tracking-wider text-muted-foreground bg-muted px-2 py-0.5 rounded-sm">
+                    {step.tag}
+                  </span>
+                </div>
 
-              {/* Connecteur horizontal (desktop) */}
-              {i < steps.length - 1 && (
-                <div className="hidden md:block absolute top-6 left-[calc(50%+28px)] right-0 h-px bg-border" />
-              )}
-              {/* Connecteur vertical (mobile) */}
-              {i < steps.length - 1 && (
-                <div className="md:hidden absolute top-12 left-6 bottom-0 w-px bg-border" />
-              )}
-
-              {/* Icône + numéro */}
-              <div className="relative shrink-0 md:mb-6">
-                <div className="w-12 h-12 rounded-sm bg-accent flex items-center justify-center text-white relative z-10">
+                <div className="w-10 h-10 rounded-sm bg-accent/10 border border-accent/20 flex items-center justify-center text-accent mb-6 group-hover:bg-accent group-hover:text-white transition-colors">
                   <step.icon className="h-5 w-5" />
                 </div>
-                <span className="absolute -top-2 -right-3 text-xs font-bold font-ui text-muted-foreground/40">{step.num}</span>
+
+                <h3 className="font-serif text-xl font-normal text-foreground mb-3">
+                  {step.title}
+                </h3>
+                <p className="text-muted-foreground text-xs sm:text-sm leading-relaxed">
+                  {step.description}
+                </p>
               </div>
 
-              {/* Texte */}
-              <div className="md:mt-4">
-                <h3 className="font-serif text-lg font-bold text-foreground mb-2">{step.title}</h3>
-                <p className="text-muted-foreground text-sm leading-relaxed">{step.description}</p>
+              <div className="mt-8 pt-4 border-t border-border/40 text-[11px] font-ui text-muted-foreground uppercase tracking-wider">
+                Garantie de service Zeyna
               </div>
             </div>
           ))}
@@ -73,3 +86,4 @@ const HowItWorks = () => {
 };
 
 export default HowItWorks;
+

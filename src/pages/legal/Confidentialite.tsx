@@ -23,8 +23,8 @@ const Confidentialite = () => {
               <ul className="list-disc pl-5 space-y-2 mt-4 mb-4">
                 <li><strong>Nom ou raison sociale :</strong> Les Logements de ZEYNA</li>
                 <li><strong>Adresse :</strong> Saint-Louis, Sénégal</li>
-                <li><strong>E-mail :</strong> dpo@logements-zeyna.sn</li>
-                <li><strong>Téléphone :</strong> +221 77 000 00 00</li>
+                <li><strong>E-mail :</strong> zeydagroup01@gmail.com</li>
+                <li><strong>Téléphone :</strong> +221 77 432 64 86</li>
               </ul>
             </>
           )
@@ -127,7 +127,7 @@ const Confidentialite = () => {
               <p>Conformément à la réglementation applicable, les personnes concernées peuvent exercer les droits qui leur sont reconnus, notamment demander l’accès à leurs données, leur rectification, s’opposer à certains traitements ou demander la suppression de données.</p>
               <p>Pour exercer vos droits, adressez votre demande à :</p>
               <ul className="list-disc pl-5 space-y-2 mt-4 mb-4">
-                <li><strong>E-mail :</strong> dpo@logements-zeyna.sn</li>
+                <li><strong>E-mail :</strong> zeydagroup01@gmail.com</li>
                 <li><strong>Adresse :</strong> Saint-Louis, Sénégal</li>
               </ul>
               <p>ZEYNA peut demander des éléments raisonnables permettant de vérifier l’identité du demandeur afin d’éviter toute divulgation non autorisée.</p>

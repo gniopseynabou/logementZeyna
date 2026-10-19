@@ -57,14 +57,20 @@ export default {
           light: "hsl(var(--gold-light))",
           dark: "hsl(var(--gold-dark))",
         },
-        teal: {
-          DEFAULT: "hsl(var(--teal))",
-          light: "hsl(var(--teal-light))",
-          dark: "hsl(var(--teal-dark))",
+        ochre: {
+          DEFAULT: "hsl(38 46% 52%)",
+          light: "hsl(38 46% 65%)",
+          dark: "hsl(38 50% 38%)",
         },
-        terracotta: {
-          DEFAULT: "hsl(var(--terracotta))",
-          light: "hsl(var(--terracotta-light))",
+        basalt: {
+          DEFAULT: "hsl(0 0% 9%)",
+          soft: "hsl(0 0% 14%)",
+        },
+        sand: {
+          50: "hsl(42 30% 98%)",
+          100: "hsl(40 25% 95%)",
+          200: "hsl(40 18% 90%)",
+          300: "hsl(40 14% 82%)",
         },
         charcoal: "hsl(var(--charcoal))",
         cream: "hsl(var(--cream))",

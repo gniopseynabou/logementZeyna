@@ -57,7 +57,7 @@ Deno.serve(async (req: Request) => {
           parsed.hostname === '127.0.0.1' ||
           parsed.hostname.endsWith('logements-zeyna.sn') ||
           parsed.hostname.endsWith('supabase.co') ||
-          parsed.hostname.endsWith('vercel.app')
+          parsed.hostname.endsWith('netlify.app')
 
         if (isAllowedHost) {
           safeRedirectTo = redirectTo

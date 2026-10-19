@@ -482,7 +482,7 @@ export const OperationsAndReceiptsManager = () => {
                 </Label>
                 <Input
                   id="payeur_tel"
-                  placeholder="+221 77 000 00 00"
+                  placeholder="+221 77 432 64 86"
                   value={payeurTel}
                   onChange={(e) => setPayeurTel(e.target.value)}
                 />

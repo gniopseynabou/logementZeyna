@@ -40,8 +40,8 @@ export const getCompanyInfo = () => ({
   ninea: "000 000 000 0X0 X2",
   adresse: "Saint-Louis, Sénégal",
   representant: "Direction Générale",
-  email: "contact@logements-zeyna.sn",
-  telephone: "+221 77 000 00 00",
+  email: "zeydagroup01@gmail.com",
+  telephone: "+221 77 432 64 86",
 });
 
 

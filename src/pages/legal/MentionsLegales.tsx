@@ -15,9 +15,9 @@ const MentionsLegales = () => {
                 <li><strong>Nom commercial :</strong> Les Logements de ZEYNA</li>
                 <li><strong>Forme juridique :</strong> SAS</li>
                 <li><strong>Adresse :</strong> Saint-Louis, Sénégal</li>
-                <li><strong>Téléphone :</strong> +221 77 000 00 00</li>
-                <li><strong>Adresse e-mail :</strong> contact@logements-zeyna.sn</li>
-                <li><strong>Site Internet :</strong> www.logements-zeyna.sn</li>
+                <li><strong>Téléphone :</strong> +221 77 432 64 86</li>
+                <li><strong>Adresse e-mail :</strong> zeydagroup01@gmail.com</li>
+                <li><strong>Site Internet :</strong> www.logements-zeyna.site</li>
               </ul>
               <p className="mt-4">Ces informations identifient l’entité ou la personne qui exploite effectivement la plateforme.</p>
             </>
@@ -32,7 +32,7 @@ const MentionsLegales = () => {
               <ul className="list-disc pl-5 space-y-2 mt-4">
                 <li><strong>Nom et prénom :</strong> Équipe ZEYNA</li>
                 <li><strong>Fonction :</strong> Direction de la publication</li>
-                <li><strong>Adresse e-mail :</strong> direction@logements-zeyna.sn</li>
+                <li><strong>Adresse e-mail :</strong> zeydagroup01@gmail.com</li>
               </ul>
             </>
           ),
@@ -44,9 +44,9 @@ const MentionsLegales = () => {
             <>
               <p>La plateforme est hébergée par :</p>
               <ul className="list-disc pl-5 space-y-2 mt-4">
-                <li><strong>Prestataire :</strong> Supabase Inc. / Vercel</li>
+                <li><strong>Prestataire :</strong> Supabase Inc. / netlify</li>
                 <li><strong>Adresse :</strong> 970 3rd St, San Francisco, CA 94107, USA</li>
-                <li><strong>Site Internet :</strong> supabase.com / vercel.com</li>
+                <li><strong>Site Internet :</strong> supabase.com / netlify.com</li>
               </ul>
             </>
           ),
@@ -100,8 +100,8 @@ const MentionsLegales = () => {
             <>
               <p>Pour toute question concernant la plateforme ou les présentes mentions légales :</p>
               <ul className="list-disc pl-5 space-y-2 mt-4">
-                <li><strong>E-mail :</strong> contact@logements-zeyna.sn</li>
-                <li><strong>Téléphone :</strong> +221 77 000 00 00</li>
+                <li><strong>E-mail :</strong> zeydagroup01@gmail.com</li>
+                <li><strong>Téléphone :</strong> +221 77 432 64 86</li>
                 <li><strong>Adresse :</strong> Saint-Louis, Sénégal</li>
               </ul>
             </>
