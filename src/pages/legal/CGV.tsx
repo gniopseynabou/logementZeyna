@@ -1,4 +1,4 @@
-import { LegalDocument, LegalPart } from "@/components/legal/LegalDocument";
+﻿import { LegalDocument, LegalPart } from "@/components/legal/LegalDocument";
 
 const CGV = () => {
   const parts: LegalPart[] = [
@@ -245,6 +245,9 @@ const CGV = () => {
     <LegalDocument 
       title="Conditions Générales de Vente et de Sous-location" 
       lastUpdated="Octobre 2026"
+      seoDescription="Conditions Générales de Vente et de Sous-location de Les Logements de Zeyna."
+      seoKeywords="CGV location étudiant Sénégal, conditions vente sous-location, contrat location étudiant Saint-Louis"
+      canonical="/cgv"
       parts={parts}
     />
   );

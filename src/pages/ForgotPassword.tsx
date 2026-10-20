@@ -1,4 +1,5 @@
-import { useState } from "react";
+﻿import { useState } from "react";
+import SEOHead from "@/components/SEOHead";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
@@ -45,6 +46,13 @@ const ForgotPassword = () => {
   };
 
   return (
+    <>
+    <SEOHead
+      title="Mot de passe oublié"
+      description="Réinitialisez votre mot de passe pour accéder à votre espace Les Logements de Zeyna."
+      keywords="mot de passe oublié Zeyna, réinitialiser mot de passe logement étudiant"
+      canonical="/forgot-password"
+    />
     <Card className="border-0 shadow-premium w-full bg-card overflow-hidden">
       <div className="h-1 w-full bg-gradient-to-r from-accent/50 to-accent" />
       <CardHeader className="pb-6">
@@ -121,6 +129,7 @@ const ForgotPassword = () => {
         )}
       </CardContent>
     </Card>
+    </>
   );
 };
 

@@ -1,4 +1,5 @@
-import { useState } from "react";
+﻿import { useState } from "react";
+import SEOHead from "@/components/SEOHead";
 import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
@@ -63,6 +64,13 @@ const Register = () => {
   const update = (key: string, value: string) => setForm((prev) => ({ ...prev, [key]: value }));
 
   return (
+    <>
+    <SEOHead
+      title="Créer un compte"
+      description="Créez votre compte étudiant sur Les Logements de Zeyna et réservez votre chambre ou studio à Saint-Louis du Sénégal en quelques minutes."
+      keywords="inscription logement étudiant Sénégal, créer compte étudiant Zeyna, s'inscrire logement Saint-Louis, nouveau compte locataire étudiant"
+      canonical="/register"
+    />
     <Card className="border-0 shadow-premium w-full bg-card overflow-hidden">
       <div className="h-1 w-full bg-gradient-to-r from-accent/50 to-accent" />
       <CardHeader className="pb-4">
@@ -148,6 +156,7 @@ const Register = () => {
         </motion.p>
       </CardContent>
     </Card>
+    </>
   );
 };
 

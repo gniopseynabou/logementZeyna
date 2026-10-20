@@ -1,4 +1,4 @@
-import { LegalDocument, LegalPart } from "@/components/legal/LegalDocument";
+﻿import { LegalDocument, LegalPart } from "@/components/legal/LegalDocument";
 
 const CGU = () => {
   const parts: LegalPart[] = [
@@ -188,6 +188,9 @@ const CGU = () => {
     <LegalDocument 
       title="Conditions Générales d'Utilisation" 
       lastUpdated="Octobre 2026"
+      seoDescription="Conditions Générales d'Utilisation de la plateforme Les Logements de Zeyna."
+      seoKeywords="CGU logement étudiant Sénégal, conditions utilisation plateforme logement, règles utilisation Zeyna"
+      canonical="/cgu"
       parts={parts}
     />
   );

@@ -1,4 +1,4 @@
-import { LegalDocument, LegalPart } from "@/components/legal/LegalDocument";
+﻿import { LegalDocument, LegalPart } from "@/components/legal/LegalDocument";
 
 const MentionsLegales = () => {
   const parts: LegalPart[] = [
@@ -124,6 +124,9 @@ const MentionsLegales = () => {
     <LegalDocument 
       title="Mentions Légales" 
       lastUpdated="Octobre 2026"
+      seoDescription="Mentions légales de la plateforme Les Logements de Zeyna : éditeur, hébergeur et cadre réglementaire."
+      seoKeywords="mentions légales Les Logements de Zeyna, éditeur plateforme logement étudiant, informations légales Sénégal"
+      canonical="/mentions-legales"
       intro={
         <p>Bienvenue sur <strong>Les Logements de ZEYNA</strong>, une plateforme dédiée à la recherche et à la gestion de logements, notamment pour les étudiants.<br/><br/>Les présentes mentions légales permettent aux utilisateurs d’identifier l’éditeur de la plateforme, son responsable et les prestataires techniques concernés.</p>
       }

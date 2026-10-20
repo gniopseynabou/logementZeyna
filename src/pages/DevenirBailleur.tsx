@@ -1,4 +1,4 @@
-import { useState } from "react";
+﻿import { useState } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
@@ -14,6 +14,7 @@ import { useToast } from "@/hooks/use-toast";
 import { CheckCircle, Building2, Handshake, Phone, Shield, TrendingUp, ArrowLeft, Loader2 } from "lucide-react";
 import Navbar from "@/components/landing/Navbar";
 import Footer from "@/components/landing/Footer";
+import SEOHead from "@/components/SEOHead";
 
 const avantages = [
   { icon: TrendingUp, titre: "Visibilité maximale",    desc: "Vos logements présentés à des milliers d'étudiants en recherche active à Saint-Louis." },
@@ -62,6 +63,12 @@ const DevenirBailleur = () => {
 
   return (
     <div className="min-h-screen flex flex-col bg-background">
+      <SEOHead
+        title="Devenir Bailleur Partenaire"
+        description="Confiez vos logements à Les Logements de Zeyna. Gérez vos réservations, paiements et contrats avec des étudiants sérieux à Saint-Louis du Sénégal."
+        keywords="devenir bailleur Saint-Louis, louer logement étudiant Sénégal, propriétaire partenaire Zeyna, gestion locative Saint-Louis, proposer logement étudiant UGB, revenus locatifs Saint-Louis, bailleur étudiant Sénégal"
+        canonical="/devenir-bailleur"
+      />
       <Navbar />
 
       <main className="flex-1">

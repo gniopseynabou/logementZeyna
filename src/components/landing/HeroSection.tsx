@@ -1,4 +1,4 @@
-import { useState } from "react";
+﻿import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, MapPin, ShieldCheck, CheckCircle2, Search } from "lucide-react";
@@ -38,7 +38,7 @@ const HeroSection = () => {
       <div className="absolute inset-0 z-0">
         <img
           src={heroBg}
-          alt="Résidence étudiante à Saint-Louis"
+          alt="Logement étudiant à Saint-Louis du Sénégal — campus UGB et Sanar"
           className="w-full h-full object-cover object-center opacity-100 filter contrast-100 saturate-100"
           fetchpriority="high"
         />
@@ -74,7 +74,7 @@ const HeroSection = () => {
 
             {/* Chapeau explicatif */}
             <p className="text-white/70 text-base sm:text-lg leading-relaxed max-w-2xl font-light">
-              Zeyna sélectionne, normalise et administre des logements pour les étudiants de l'Université Gaston Berger et les jeunes actifs. Réservation transparente et gestion directe de la caution.
+              Zeyna sélectionne, normalise et administre des chambres et studios pour les étudiants de l'Université Gaston Berger (UGB). Logements hors campus à Sanar, Bango, Khor — réservation transparente et caution sécurisée.
             </p>
 
             {/* Moteur de recherche rapide intégré */}

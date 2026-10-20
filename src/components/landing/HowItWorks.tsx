@@ -1,4 +1,4 @@
-import { Search, ShieldCheck, KeyRound } from "lucide-react";
+﻿import { Search, ShieldCheck, KeyRound } from "lucide-react";
 
 const steps = [
   {
@@ -6,7 +6,7 @@ const steps = [
     num: "01",
     tag: "Audit & Choix",
     title: "Explorez les résidences",
-    description: "Consultez les photos réelles, le mode (place individuelle ou logement entier) et la proximité de l'UGB ou du centre-ville.",
+    description: "Consultez les photos réelles de chaque chambre étudiant à Saint-Louis : logements hors campus à Sanar, Bango ou Khor, avec la distance exacte de l'UGB.",
   },
   {
     icon: ShieldCheck,
@@ -38,10 +38,10 @@ const HowItWorks = () => {
             </p>
           </div>
           <h2 className="font-serif text-3xl sm:text-4xl font-normal text-foreground tracking-tight">
-            Comment fonctionne Zeyna ?
+            Comment trouver votre logement étudiant à Saint-Louis ?
           </h2>
           <p className="text-muted-foreground mt-3 text-sm sm:text-base leading-relaxed">
-            Un processus transparent en 3 étapes, sans commissions occultes et avec une traçabilité intégrale pour les locataires et les bailleurs.
+            Un processus transparent en 3 étapes pour louer votre chambre près de l'UGB (Sanar, Bango, Khor) — sans commissions occultes et avec une traçabilité intégrale.
           </p>
         </div>
 
