@@ -40,6 +40,7 @@ const DevenirBailleur = () => {
     ville: "Saint-Louis",
     nombre_logements: "1",
     message: "",
+    website: "",
   });
 
   const update = (key: string, value: string) =>
@@ -47,6 +48,7 @@ const DevenirBailleur = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (form.website) { setSubmitted(true); return; } // Honeypot bot protection
     setLoading(true);
     try {
       await submitDemandePartenariat({
@@ -163,6 +165,9 @@ const DevenirBailleur = () => {
                         </p>
                       </div>
                       <form onSubmit={handleSubmit} className="space-y-5">
+                        <div className="hidden" aria-hidden="true">
+  <input type="text" name="website" value={form.website} onChange={(e) => update("website", e.target.value)} tabIndex={-1} autoComplete="off" />
+</div>
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                           <div className="space-y-2">
                             <Label htmlFor="prenom">Prénom *</Label>

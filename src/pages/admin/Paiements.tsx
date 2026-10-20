@@ -1,4 +1,4 @@
-import { useState } from "react";
+﻿import { useState } from "react";
 import { invalidateGroups } from "@/lib/invalidate-helpers";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { confirmAdminPayment, getAdminPayments, getAdminPaymentStats } from "@/services/payment-service";
@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { PaginationControls } from "@/components/ui/PaginationControls";
-import { AlertCircle, Printer, Receipt, Plus } from "lucide-react";
+import { AlertCircle, Printer, Receipt, Plus, Download } from "lucide-react";
 import { generateRecuPaiementHTML, printDocument } from "@/lib/contract-templates";
 import { ManualReceiptDialog } from "@/components/admin/ManualReceiptDialog";
 import { OperationsAndReceiptsManager } from "@/components/admin/OperationsAndReceiptsManager";
