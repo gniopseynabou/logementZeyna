@@ -25,7 +25,7 @@ export const commonCSS = `
   th { background-color: #e8e8e8; font-weight: bold; font-size: 9.5pt; }
   .signatures { display: flex; justify-content: space-between; margin-top: 50px; gap: 40px; }
   .sig-box { flex: 1; border-top: 1.5px solid #000; padding-top: 8px; }
-  .sig-label { font-weight: bold; font-size: 10pt; margin-bottom: 50px; }
+  .sig-label { font-weight: bold; font-size: 10pt; margin-bottom: 20px; }
   .sig-hint { font-size: 9pt; }
   .page-break { page-break-before: always; padding-top: 30px; }
   .checkbox { display: inline-block; width: 12px; height: 12px; border: 1px solid #000; margin-right: 5px; vertical-align: middle; }
@@ -710,12 +710,12 @@ export const generateRecuPaiementHTML = (data: RecuPaiementData): string => {
 
   <div class="signatures" style="margin-top:35px;">
     <div class="sig-box">
-      <div class="sig-label">Pour le Payeur / Locataire</div>
-      <div class="sig-hint">Nom : ${payeurNom}<br/>Signature pour acquit :</div>
+      <div class="sig-label">Payeur / Locataire</div>
+      <div class="sig-hint">Nom : ${payeurNom}</div>
     </div>
     <div class="sig-box">
-      <div class="sig-label">Pour la Direction ZEYNA</div>
-      <div class="sig-hint">Cachet et signature habilitée<br/><br/>
+      <div class="sig-label">Direction ZEYNA</div>
+      <div class="sig-hint">
         <div style="border:2px dashed #999;padding:6px;width:180px;text-align:center;font-size:8pt;color:#555;border-radius:4px;">
           LES LOGEMENTS DE ZEYNA<br/>
           SERVICE COMPTABILITÉ<br/>
