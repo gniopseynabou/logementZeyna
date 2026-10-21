@@ -1,4 +1,4 @@
-User-agent: *
+﻿User-agent: *
 Allow: /
 
-Sitemap: https://leslogementsdezeyna.com/sitemap.xml
+Sitemap: https://logements-zeyna.site/sitemap.xml

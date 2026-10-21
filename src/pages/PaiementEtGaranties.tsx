@@ -1,4 +1,4 @@
-import { useState } from "react";
+﻿import { useState } from "react";
 import Navbar from "@/components/landing/Navbar";
 import Footer from "@/components/landing/Footer";
 import SEOHead from "@/components/SEOHead";
@@ -63,6 +63,8 @@ const PaiementEtGaranties = () => {
       <SEOHead
         title="Paiement & Garanties"
         description="Découvrez notre politique de paiement sécurisé, de séquestre de caution transparente et les garanties offertes aux étudiants et propriétaires par Les Logements de Zeyna."
+        keywords="paiement loyer étudiant Sénégal, Wave Orange Money loyer, caution logement étudiant Saint-Louis, garanties locatives Sénégal, séquestre caution étudiant, restitution caution logement, paiement mobile loyer, contrat location étudiant COCC"
+        canonical="/paiement-et-garanties"
       />
       <Navbar />
 

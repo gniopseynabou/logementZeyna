@@ -1,4 +1,4 @@
-import { Shield, MapPin, Wallet, HeadphonesIcon, CheckCircle, Zap } from "lucide-react";
+﻿import { Shield, MapPin, Wallet, HeadphonesIcon, CheckCircle, Zap } from "lucide-react";
 
 const advantages = [
   {
@@ -14,7 +14,7 @@ const advantages = [
   {
     icon: MapPin,
     title: "Bien situés",
-    description: "Proches de l'UGB, dans les meilleurs quartiers de Saint-Louis et Sanar.",
+    description: "Proches de l'UGB à Sanar, Bango et Khor — les meilleurs quartiers pour un logement étudiant hors campus à Saint-Louis.",
   },
   {
     icon: Zap,
@@ -46,7 +46,7 @@ const Advantages = () => {
               Ce que Zeyna vous apporte
             </h2>
             <p className="text-background/60 leading-relaxed max-w-sm">
-              Nous simplifions la recherche de logement étudiant à Saint-Louis en combinant rigueur de sélection, clarté financière et accompagnement humain.
+              Nous simplifions la recherche de chambre étudiant à Saint-Louis du Sénégal — logements hors campus à Sanar, Bango et Khor, proches de l'UGB, avec rigueur de sélection et accompagnement humain.
             </p>
             <div className="mt-8 pt-8 border-t border-background/10">
               <p className="text-4xl font-bold font-ui text-accent">100%</p>

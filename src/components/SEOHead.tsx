@@ -1,8 +1,9 @@
-import { Helmet } from "react-helmet-async";
+﻿import { Helmet } from "react-helmet-async";
 
 interface SEOHeadProps {
   title?: string;
   description?: string;
+  keywords?: string;
   canonical?: string;
   ogImage?: string;
   ogType?: "website" | "article";
@@ -11,14 +12,17 @@ interface SEOHeadProps {
 }
 
 const SITE_NAME = "Les Logements de Zeyna";
-const SITE_URL = "https://leslogementsdezeyna.com";
+const SITE_URL = "https://logements-zeyna.site";
 const DEFAULT_DESCRIPTION =
   "Trouvez votre logement étudiant à Saint-Louis du Sénégal. Chambres, studios et appartements vérifiés, sécurisés et à prix juste - avec Les Logements de Zeyna.";
 const DEFAULT_OG_IMAGE = `${SITE_URL}/og-image.jpg`;
+const DEFAULT_KEYWORDS =
+  "logement étudiant Saint-Louis Sénégal, chambre étudiant Saint-Louis, studio étudiant Sénégal, location étudiant Saint-Louis, logement UGB, logement Université Gaston Berger, appartement étudiant Saint-Louis, loger étudiant Sénégal, Les Logements de Zeyna, Zeyna logement";
 
 const SEOHead = ({
   title,
   description = DEFAULT_DESCRIPTION,
+  keywords = DEFAULT_KEYWORDS,
   canonical,
   ogImage = DEFAULT_OG_IMAGE,
   ogType = "website",
@@ -37,6 +41,7 @@ const SEOHead = ({
       {/* Titre */}
       <title>{fullTitle}</title>
       <meta name="description" content={description} />
+      <meta name="keywords" content={keywords} />
 
       {/* Canonique */}
       <link rel="canonical" href={canonicalUrl} />

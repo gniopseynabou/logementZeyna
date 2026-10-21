@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+﻿import { useState, useEffect } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { getPublicLogements } from "@/services/logement-service";
@@ -114,9 +114,10 @@ const Logements = () => {
 
   return (
     <div className="min-h-screen bg-sand-50/30 flex flex-col justify-between">
-      <SEOHead 
-        title="Catalogue des logements" 
-        description="Consultez l'ensemble de nos logements étudiants à Saint-Louis et Sanar : chambres individuelles, collectifs, studios et résidences."
+      <SEOHead
+        title="Chambres & Studios Étudiants à louer — Saint-Louis, Sanar, UGB"
+        description="Trouvez votre chambre étudiant à louer près de l'UGB et du campus Sanar à Saint-Louis du Sénégal. Logements hors campus vérifiés : chambres individuelles, collectives, studios à prix transparent."
+        keywords="logement étudiant Saint-Louis Sénégal, chambre étudiant UGB, logement étudiant Sanar, chambre à louer près de l'UGB, logement hors campus Saint-Louis, studio étudiant Sénégal, chambre étudiant Bango, résidence étudiante Sanar, loyer étudiant FCFA, chambre individuelle étudiant"
         canonical="/logements"
       />
       <div>

@@ -1,4 +1,5 @@
-import { useState } from "react";
+﻿import { useState } from "react";
+import SEOHead from "@/components/SEOHead";
 import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
@@ -42,6 +43,13 @@ const Login = () => {
   };
 
   return (
+    <>
+    <SEOHead
+      title="Connexion"
+      description="Connectez-vous à votre espace Les Logements de Zeyna pour gérer vos réservations, paiements et contrats de logement étudiant à Saint-Louis."
+      keywords="connexion logement étudiant Zeyna, login espace locataire, se connecter Les Logements de Zeyna"
+      canonical="/login"
+    />
     <Card className="border-0 shadow-premium w-full bg-card overflow-hidden">
       <div className="h-1 w-full bg-gradient-to-r from-accent/50 to-accent" />
       <CardHeader className="pb-6">
@@ -134,6 +142,7 @@ const Login = () => {
         </motion.p>
       </CardContent>
     </Card>
+    </>
   );
 };
 

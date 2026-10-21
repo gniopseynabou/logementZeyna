@@ -1,4 +1,4 @@
-import { useState } from "react";
+﻿import { useState } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
@@ -14,6 +14,7 @@ import { useToast } from "@/hooks/use-toast";
 import { CheckCircle, Building2, Handshake, Phone, Shield, TrendingUp, ArrowLeft, Loader2 } from "lucide-react";
 import Navbar from "@/components/landing/Navbar";
 import Footer from "@/components/landing/Footer";
+import SEOHead from "@/components/SEOHead";
 
 const avantages = [
   { icon: TrendingUp, titre: "Visibilité maximale",    desc: "Vos logements présentés à des milliers d'étudiants en recherche active à Saint-Louis." },
@@ -39,6 +40,7 @@ const DevenirBailleur = () => {
     ville: "Saint-Louis",
     nombre_logements: "1",
     message: "",
+    website: "",
   });
 
   const update = (key: string, value: string) =>
@@ -46,6 +48,7 @@ const DevenirBailleur = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (form.website) { setSubmitted(true); return; } // Honeypot bot protection
     setLoading(true);
     try {
       await submitDemandePartenariat({
@@ -62,6 +65,12 @@ const DevenirBailleur = () => {
 
   return (
     <div className="min-h-screen flex flex-col bg-background">
+      <SEOHead
+        title="Devenir Bailleur Partenaire"
+        description="Confiez vos logements à Les Logements de Zeyna. Gérez vos réservations, paiements et contrats avec des étudiants sérieux à Saint-Louis du Sénégal."
+        keywords="devenir bailleur Saint-Louis, louer logement étudiant Sénégal, propriétaire partenaire Zeyna, gestion locative Saint-Louis, proposer logement étudiant UGB, revenus locatifs Saint-Louis, bailleur étudiant Sénégal"
+        canonical="/devenir-bailleur"
+      />
       <Navbar />
 
       <main className="flex-1">
@@ -156,6 +165,9 @@ const DevenirBailleur = () => {
                         </p>
                       </div>
                       <form onSubmit={handleSubmit} className="space-y-5">
+                        <div className="hidden" aria-hidden="true">
+  <input type="text" name="website" value={form.website} onChange={(e) => update("website", e.target.value)} tabIndex={-1} autoComplete="off" />
+</div>
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                           <div className="space-y-2">
                             <Label htmlFor="prenom">Prénom *</Label>

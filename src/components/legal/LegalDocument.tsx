@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from "react";
+﻿import React, { useState, useEffect } from "react";
 import Navbar from "@/components/landing/Navbar";
 import Footer from "@/components/landing/Footer";
+import SEOHead from "@/components/SEOHead";
 
 export interface LegalSection {
   id: string;
@@ -15,12 +16,15 @@ export interface LegalPart {
 
 interface LegalDocumentProps {
   title: string;
+  seoDescription?: string;
+  seoKeywords?: string;
+  canonical?: string;
   lastUpdated: string;
   intro?: React.ReactNode;
   parts: LegalPart[];
 }
 
-export const LegalDocument = ({ title, lastUpdated, intro, parts }: LegalDocumentProps) => {
+export const LegalDocument = ({ title, lastUpdated, intro, parts, seoDescription, seoKeywords, canonical }: LegalDocumentProps) => {
   const [activeSection, setActiveSection] = useState<string>("");
 
   useEffect(() => {
@@ -50,6 +54,7 @@ export const LegalDocument = ({ title, lastUpdated, intro, parts }: LegalDocumen
 
   return (
     <div className="min-h-screen bg-[#fafaf9] flex flex-col font-sans text-gray-900">
+      <SEOHead title={title} description={seoDescription} keywords={seoKeywords} canonical={canonical} />
       <div className="print:hidden">
         <Navbar />
       </div>

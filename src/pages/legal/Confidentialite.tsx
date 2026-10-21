@@ -1,4 +1,4 @@
-import { LegalDocument, LegalPart } from "@/components/legal/LegalDocument";
+﻿import { LegalDocument, LegalPart } from "@/components/legal/LegalDocument";
 
 const Confidentialite = () => {
   const parts: LegalPart[] = [
@@ -162,6 +162,9 @@ const Confidentialite = () => {
     <LegalDocument 
       title="Politique de Confidentialité" 
       lastUpdated="Octobre 2026"
+      seoDescription="Politique de confidentialité et protection des données personnelles de Les Logements de Zeyna."
+      seoKeywords="confidentialité données logement étudiant, protection données personnelles Sénégal, vie privée Zeyna"
+      canonical="/confidentialite"
       parts={parts}
     />
   );

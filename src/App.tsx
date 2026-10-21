@@ -1,4 +1,4 @@
-import { lazy, Suspense } from "react";
+﻿import { lazy, Suspense } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -71,6 +71,7 @@ const queryClient = new QueryClient({
 
 import MaintenanceGuard from "./components/MaintenanceGuard";
 import { HelmetProvider } from "react-helmet-async";
+import WhatsAppButton from "@/components/WhatsAppButton";
 
 const App = () => (
   <HelmetProvider>
@@ -141,6 +142,7 @@ const App = () => (
             </Routes>
               </Suspense>
             </MaintenanceGuard>
+            <WhatsAppButton />
           </BrowserRouter>
       </TooltipProvider>
     </AuthProvider>
