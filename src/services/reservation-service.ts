@@ -25,7 +25,7 @@ export const STATUT_RESERVATION_CONFIG: Record<
     description: "Vérification en cours auprès du propriétaire. Paiement indisponible à cette étape.",
   },
   confirmee_paiement_en_attente: {
-    label: "Confirmée — paiement en attente",
+    label: "Confirmée - paiement en attente",
     variant: "default",
     colorClass: "bg-blue-500/10 text-blue-700 border-blue-300 dark:text-blue-400",
     description: "Réservation validée ! Délai strict de 24 heures pour effectuer le paiement.",
@@ -61,7 +61,7 @@ export const STATUT_RESERVATION_CONFIG: Record<
     description: "Réservation annulée.",
   },
   expiree: {
-    label: "Expirée — délai dépassé",
+    label: "Expirée - délai dépassé",
     variant: "destructive",
     colorClass: "bg-red-500/10 text-red-700 border-red-300 dark:text-red-400",
     description: "Le délai de paiement de 24h a été dépassé. Le logement a été remis à disposition.",

@@ -309,7 +309,7 @@ export const generateConventionBailleurHTML = (data: {
       <th>Plafond / validation</th>
     </tr>
     ${chambresRows}
-    <tr><td><strong>TOTAL</strong></td><td></td><td>—</td><td></td><td>[Vérification globale]</td></tr>
+    <tr><td><strong>TOTAL</strong></td><td></td><td>-</td><td></td><td>[Vérification globale]</td></tr>
   </table>
   <p style="font-size:9pt">* La « part de loyer principal retenue » est une clé de suivi à justifier et à faire valider ; elle ne constitue pas, à elle seule, une interprétation officielle du plafond prévu à l'article 578 du COCC.</p>
   <table>

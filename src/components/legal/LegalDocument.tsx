@@ -114,11 +114,11 @@ export const LegalDocument = ({ title, lastUpdated, intro, parts }: LegalDocumen
                       {part.sections.map((sec) => (
                         <article key={sec.id} id={sec.id} className="scroll-mt-32 relative group">
                           <h3 className="text-xl font-bold text-gray-900 mb-4 flex flex-col sm:flex-row sm:items-baseline gap-1 sm:gap-3">
-                            <span className="text-accent font-serif print:text-black">{sec.title.split("—")[0]}</span>
-                            {sec.title.includes("—") && (
+                            <span className="text-accent font-serif print:text-black">{sec.title.split("-")[0]}</span>
+                            {sec.title.includes("-") && (
                               <>
-                                <span className="hidden sm:inline text-gray-300 print:hidden">—</span>
-                                <span>{sec.title.split("—").slice(1).join("—").trim()}</span>
+                                <span className="hidden sm:inline text-gray-300 print:hidden">-</span>
+                                <span>{sec.title.split("-").slice(1).join("-").trim()}</span>
                               </>
                             )}
                           </h3>

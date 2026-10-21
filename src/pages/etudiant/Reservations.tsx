@@ -166,7 +166,7 @@ const EtudiantReservations = () => {
                           </div>
                         )}
 
-                        {/* ÉTAT 2 : Confirmée — paiement en attente (délai 24h) */}
+                        {/* ÉTAT 2 : Confirmée - paiement en attente (délai 24h) */}
                         {isPaymentPending && !estExpireClient && (
                           <div className="flex items-start gap-2 p-3 bg-blue-500/10 border border-blue-500/20 rounded-lg text-xs text-blue-800 dark:text-blue-300">
                             <Clock className="h-4 w-4 shrink-0 mt-0.5 text-blue-600 animate-pulse" />
