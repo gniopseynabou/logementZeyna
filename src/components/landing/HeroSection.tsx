@@ -43,7 +43,7 @@ const HeroSection = () => {
   };
 
   return (
-    <section className="relative min-h-[94vh] flex items-center bg-basalt text-white overflow-hidden pt-28 pb-16 lg:pt-32 lg:pb-24 border-b border-white/10">
+    <section className="relative min-h-[94vh] flex items-center bg-basalt text-white overflow-hidden pt-24 pb-12 sm:pt-28 sm:pb-16 lg:pt-32 lg:pb-24 border-b border-white/10">
       {/* ── Toile photographique d'ancrage avec double filtre minéral et quadrillage cadastral ── */}
       <div className="absolute inset-0 z-0">
         <img
@@ -65,7 +65,7 @@ const HeroSection = () => {
 
       {/* ── Contenu Principal ── */}
       <div className="relative z-10 container mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid lg:grid-cols-12 gap-12 lg:gap-10 items-center">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 sm:gap-10 lg:gap-10 items-start lg:items-center">
           
           {/* Colonne Gauche (7 col) : Manifeste Éditorial & Moteur de Secteur */}
           <div className="lg:col-span-7 xl:col-span-8 space-y-7">

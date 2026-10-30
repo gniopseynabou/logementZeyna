@@ -13,9 +13,9 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
-import { CreditCard, Smartphone, Shield, FileText, CheckCircle2, Loader2, Send } from "lucide-react";
+import { CreditCard, Smartphone, Shield, FileText, CheckCircle2, Loader2, Send, Clock } from "lucide-react";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { format } from "date-fns";
+import { format, formatDistanceToNow } from "date-fns";
 import { fr } from "date-fns/locale";
 
 const PaiementPage = () => {
@@ -324,16 +324,16 @@ const PaiementPage = () => {
                 { value: "orange_money", label: "Orange Money", icon: <Smartphone className="h-4 w-4 text-orange-500" /> },
                 { value: "mtn_money", label: "Wave", icon: <Smartphone className="h-4 w-4 text-yellow-500" /> },
               ].map((m) => (
-                <Label key={m.value} htmlFor={m.value} className={`flex items-center gap-3 p-4 rounded-xl border-2 cursor-pointer transition-all ${methode === m.value ? "border-accent bg-accent/5" : "border-border"}`}>
-                  <RadioGroupItem value={m.value} id={m.value} />
+                <Label key={m.value} htmlFor={m.value} className={`flex items-center gap-3 p-4 min-h-[52px] rounded-xl border-2 cursor-pointer transition-all ${methode === m.value ? "border-accent bg-accent/5 ring-1 ring-accent" : "border-border hover:border-accent/40"}`}>
+                  <RadioGroupItem value={m.value} id={m.value} className="h-5 w-5" />
                   {m.icon}
-                  <span className="font-medium">{m.label}</span>
+                  <span className="font-medium text-sm sm:text-base">{m.label}</span>
                 </Label>
               ))}
             </RadioGroup>
 
             <Button 
-              className="w-full bg-gradient-gold text-accent-foreground shadow-gold text-lg h-12" 
+              className="w-full bg-accent hover:bg-accent/90 text-white font-ui text-sm sm:text-base uppercase tracking-wider font-semibold shadow-gold hover:shadow-none h-12 transition-premium" 
               disabled={!contractAccepted} 
               onClick={handlePayClick}
             >
@@ -348,33 +348,34 @@ const PaiementPage = () => {
 
       {/* DIALOG DE PREUVE DE PAIEMENT */}
       <Dialog open={showProofDialog} onOpenChange={setShowProofDialog}>
-        <DialogContent className="sm:max-w-md">
+        <DialogContent className="w-[calc(100vw-2rem)] sm:max-w-md max-h-[90vh] overflow-y-auto p-5 sm:p-6">
           <DialogHeader>
-            <DialogTitle className="font-serif text-xl">Preuve de paiement</DialogTitle>
-            <DialogDescription>
-              Veuillez effectuer le transfert de <strong>{montant.toLocaleString()} FCFA</strong> via {methode.replace("_", " ").toUpperCase()} sur le numéro ZEYNA. Puis, saisissez la référence de transaction ci-dessous.
+            <DialogTitle className="font-serif text-lg sm:text-xl">Preuve de paiement</DialogTitle>
+            <DialogDescription className="text-xs sm:text-sm leading-relaxed">
+              Veuillez effectuer le transfert de <strong className="text-foreground">{montant.toLocaleString()} FCFA</strong> via {methode.replace("_", " ").toUpperCase()} sur le numéro ZEYNA. Puis, saisissez la référence de transaction ci-dessous.
             </DialogDescription>
           </DialogHeader>
-          <div className="space-y-4 py-4">
+          <div className="space-y-4 py-3 sm:py-4">
             <div className="space-y-2">
-              <Label htmlFor="reference">Numéro de transaction (Référence)</Label>
+              <Label htmlFor="reference" className="text-xs sm:text-sm font-medium">Numéro de transaction (Référence)</Label>
               <Input 
                 id="reference" 
                 placeholder="Ex: MP2409... ou ID de transfert" 
                 value={reference}
                 onChange={(e) => setReference(e.target.value)}
+                className="h-11 text-sm font-mono"
               />
-              <p className="text-xs text-muted-foreground mt-1 flex items-center gap-1">
-                <Shield className="h-3 w-3" /> Cette référence sera vérifiée par notre équipe.
+              <p className="text-xs text-muted-foreground mt-1 flex items-center gap-1.5">
+                <Shield className="h-3.5 w-3.5 text-accent shrink-0" /> Cette référence sera vérifiée par notre équipe.
               </p>
             </div>
           </div>
-          <DialogFooter className="flex-col sm:flex-row gap-2">
-            <Button variant="outline" onClick={() => setShowProofDialog(false)} className="w-full sm:w-auto">
+          <DialogFooter className="flex-col-reverse sm:flex-row gap-2 pt-2">
+            <Button variant="outline" onClick={() => setShowProofDialog(false)} className="w-full sm:w-auto h-11 text-xs uppercase tracking-wider font-ui font-semibold">
               Annuler
             </Button>
             <Button 
-              className="w-full sm:w-auto bg-accent hover:bg-accent/90 text-white gap-2" 
+              className="w-full sm:w-auto bg-accent hover:bg-accent/90 text-white h-11 text-xs uppercase tracking-wider font-ui font-semibold gap-2 shadow-gold hover:shadow-none transition-premium" 
               onClick={() => submitProof.mutate()}
               disabled={!reference.trim() || submitProof.isPending}
             >

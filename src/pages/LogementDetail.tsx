@@ -176,14 +176,14 @@ const LogementDetail = () => {
                     {images.length > 1 && (
                       <>
                         <button
-                          className="absolute left-3 top-1/2 -translate-y-1/2 bg-basalt/70 hover:bg-basalt text-white rounded-sm p-2 backdrop-blur-sm transition-colors"
+                          className="absolute left-2.5 sm:left-3 top-1/2 -translate-y-1/2 bg-basalt/80 hover:bg-basalt text-white rounded-sm min-h-[44px] min-w-[44px] flex items-center justify-center backdrop-blur-sm transition-colors z-10"
                           onClick={() => setImgIndex((imgIndex - 1 + images.length) % images.length)}
                           aria-label="Image précédente"
                         >
                           <ChevronLeft className="h-5 w-5" />
                         </button>
                         <button
-                          className="absolute right-3 top-1/2 -translate-y-1/2 bg-basalt/70 hover:bg-basalt text-white rounded-sm p-2 backdrop-blur-sm transition-colors"
+                          className="absolute right-2.5 sm:right-3 top-1/2 -translate-y-1/2 bg-basalt/80 hover:bg-basalt text-white rounded-sm min-h-[44px] min-w-[44px] flex items-center justify-center backdrop-blur-sm transition-colors z-10"
                           onClick={() => setImgIndex((imgIndex + 1) % images.length)}
                           aria-label="Image suivante"
                         >
@@ -193,16 +193,16 @@ const LogementDetail = () => {
                     )}
 
                     <div className="absolute top-4 left-4 flex gap-2">
-                      <span className="px-2.5 py-1 text-[11px] font-semibold font-ui uppercase tracking-wider bg-white/95 text-basalt backdrop-blur-md">
+                      <span className="px-2.5 py-1 text-[11px] font-semibold font-ui uppercase tracking-wider bg-white/95 text-basalt backdrop-blur-md shadow-sm">
                         {logement.type}
                       </span>
                     </div>
 
-                    <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1.5 bg-black/40 px-3 py-1 rounded-full backdrop-blur-sm">
+                    <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1.5 bg-black/50 px-3 py-1.5 rounded-full backdrop-blur-sm">
                       {images.map((_: any, i: number) => (
                         <button
                           key={i}
-                          className={`w-2 h-2 rounded-full transition-all ${i === imgIndex ? "bg-accent scale-125" : "bg-white/50"}`}
+                          className={`w-2.5 h-2.5 rounded-full transition-all ${i === imgIndex ? "bg-accent scale-125" : "bg-white/50"}`}
                           onClick={() => setImgIndex(i)}
                           aria-label={`Photo ${i + 1}`}
                         />
@@ -211,12 +211,12 @@ const LogementDetail = () => {
                   </div>
 
                   {images.length > 1 && (
-                    <div className="flex gap-2 overflow-x-auto pb-1">
+                    <div className="flex gap-2 overflow-x-auto pb-1.5 pt-0.5 no-scrollbar">
                       {images.map((img: string, i: number) => (
                         <button
                           key={i}
-                          className={`w-24 h-16 rounded-sm overflow-hidden border-2 flex-shrink-0 transition-all ${
-                            i === imgIndex ? "border-accent opacity-100" : "border-transparent opacity-60 hover:opacity-100"
+                          className={`w-20 sm:w-24 h-14 sm:h-16 rounded-sm overflow-hidden border-2 flex-shrink-0 transition-all ${
+                            i === imgIndex ? "border-accent opacity-100 ring-1 ring-accent" : "border-transparent opacity-60 hover:opacity-100"
                           }`}
                           onClick={() => setImgIndex(i)}
                         >
@@ -289,8 +289,8 @@ const LogementDetail = () => {
               </div>
 
               {/* Colonne droite : Sélecteur d'unités & Bloc de réservation */}
-              <div className="lg:col-span-5 xl:col-span-4 space-y-4">
-                <div className="bg-card border border-border rounded-sm p-6 shadow-sm lg:sticky lg:top-28 space-y-5">
+              <div id="reservation-section" className="lg:col-span-5 xl:col-span-4 space-y-4">
+                <div className="bg-card border border-border rounded-sm p-4 sm:p-6 shadow-sm lg:sticky lg:top-28 space-y-5">
                   
                   <div className="border-b border-border pb-3 flex items-center justify-between">
                     <h2 className="font-serif text-lg font-normal text-foreground">
@@ -481,8 +481,43 @@ const LogementDetail = () => {
             </div>
           </div>
         </div>
+
+        {/* ── Barre d'Action Rapide Mobile (Sticky Bottom) ── */}
+        <div className="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-card/95 backdrop-blur-md border-t border-border p-3 px-4 shadow-elevated flex items-center justify-between gap-3">
+          <div className="min-w-0">
+            <span className="text-[10px] font-ui uppercase tracking-wider text-muted-foreground block truncate">
+              {selectedChambre && currentChambre ? currentChambre.nom : "À partir de"}
+            </span>
+            <span className="font-mono text-base font-bold text-accent">
+              {selectedChambre && totalAPayer > 0
+                ? `${totalAPayer.toLocaleString()} F`
+                : chambres.length > 0
+                ? `${Math.min(...chambres.map((c: any) => c.prix_zeyna || c.prix_bailleur || 0)).toLocaleString()} F`
+                : "Sur demande"}
+            </span>
+          </div>
+          <Button
+            size="sm"
+            className="bg-accent hover:bg-accent/90 text-white rounded-sm font-ui text-xs uppercase tracking-wider font-semibold h-11 px-5 shadow-gold shrink-0 transition-premium"
+            onClick={() => {
+              if (selectedChambre) {
+                handleReserve();
+              } else {
+                const el = document.getElementById("reservation-section");
+                if (el) {
+                  el.scrollIntoView({ behavior: "smooth" });
+                }
+              }
+            }}
+            disabled={reserving}
+          >
+            {reserving ? "Patientez..." : selectedChambre ? "Réserver maintenant" : "Choisir une chambre"}
+          </Button>
+        </div>
       </div>
-      <Footer />
+      <div className="pb-16 lg:pb-0">
+        <Footer />
+      </div>
     </div>
   );
 };

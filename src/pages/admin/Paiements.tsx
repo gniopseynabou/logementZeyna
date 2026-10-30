@@ -1,4 +1,4 @@
-﻿import { useState } from "react";
+import { useState } from "react";
 import { invalidateGroups } from "@/lib/invalidate-helpers";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { confirmAdminPayment, getAdminPayments, getAdminPaymentStats } from "@/services/payment-service";
@@ -112,8 +112,8 @@ const AdminPaiements = () => {
                   <p className="text-xs text-muted-foreground">Réf: {p.reference} · {p.methode?.replace("_", " ")}</p>
                   <p className="text-xs text-muted-foreground">{new Date(p.created_at).toLocaleDateString("fr-FR")}</p>
                 </div>
-                <div className="flex items-center gap-3">
-                  <div className="text-right">
+                <div className="flex flex-wrap sm:flex-nowrap items-center justify-between sm:justify-end gap-3 pt-2 sm:pt-0 border-t sm:border-t-0">
+                  <div className="text-left sm:text-right">
                     <p className="text-lg font-bold text-accent font-ui">{p.montant.toLocaleString()} FCFA</p>
                     <Badge variant={p.est_confirme ? "default" : "secondary"}>
                       {p.est_confirme ? "Confirmé" : "En attente"}
@@ -123,6 +123,7 @@ const AdminPaiements = () => {
                     <Button
                       variant="outline"
                       size="sm"
+                      className="h-9"
                       onClick={() => {
                         const res = (p as any).reservations;
                         const html = generateRecuPaiementHTML({
@@ -153,7 +154,7 @@ const AdminPaiements = () => {
                   {showConfirmBtn && (
                     <Button
                       size="sm"
-                      className="bg-gradient-gold text-accent-foreground"
+                      className="bg-accent hover:bg-accent/90 text-white font-ui uppercase tracking-wider text-xs font-semibold h-9 shadow-gold hover:shadow-none transition-premium"
                       disabled={confirmPaiement.isPending}
                       onClick={() => confirmPaiement.mutate(p.id)}
                     >
@@ -223,7 +224,7 @@ const AdminPaiements = () => {
         </div>
 
         <Tabs value={tab} onValueChange={handleTabChange}>
-          <TabsList className="grid grid-cols-1 sm:grid-cols-3 w-full max-w-xl">
+          <TabsList className="grid grid-cols-1 sm:grid-cols-3 w-full max-w-xl h-auto p-1 gap-1">
             <TabsTrigger value="en_attente">
               En attente ({stats?.en_attente ?? "…"})
             </TabsTrigger>

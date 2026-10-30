@@ -21,29 +21,29 @@ export const FinalCTA = () => {
               Engagement & Disponibilité
             </span>
           </div>
-          <h2 className="font-serif text-3xl sm:text-5xl lg:text-6xl font-normal tracking-tight text-white leading-[1.12]">
+          <h2 className="font-serif text-2xl sm:text-4xl lg:text-5xl font-normal tracking-tight text-white leading-[1.15]">
             Étudier sereinement à l'UGB, <br />
             <span className="italic text-accent">ou rentabiliser vos biens sans litige.</span>
           </h2>
-          <p className="text-white/70 mt-4 text-base sm:text-lg leading-relaxed font-light">
+          <p className="text-white/70 mt-3 sm:mt-4 text-sm sm:text-base leading-relaxed font-light">
             Rejoignez le premier écosystème locatif formalisé de Saint-Louis du Sénégal.
           </p>
         </div>
 
         {/* Diptyque d'Action Spécifique */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8 max-w-5xl">
           
           {/* Option 1 : Pour les Étudiants */}
-          <div className="rounded-md border border-white/15 bg-white/[0.04] backdrop-blur-md p-8 sm:p-10 flex flex-col justify-between hover:border-accent transition-premium">
+          <div className="rounded-md border border-white/15 bg-white/[0.04] backdrop-blur-md p-6 sm:p-10 flex flex-col justify-between hover:border-accent transition-premium">
             <div>
-              <div className="w-12 h-12 rounded-sm bg-accent/20 text-accent flex items-center justify-center mb-6">
-                <GraduationCap className="h-6 w-6" />
+              <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-sm bg-accent/20 text-accent flex items-center justify-center mb-5 sm:mb-6">
+                <GraduationCap className="h-5 w-5 sm:h-6 sm:w-6" />
               </div>
               <span className="overline text-accent mb-2 block">Futurs & Actuels Étudiants</span>
-              <h3 className="font-serif text-2xl font-normal text-white mb-3">
+              <h3 className="font-serif text-xl sm:text-2xl font-normal text-white mb-2.5 sm:mb-3">
                 Trouver & réserver ma chambre
               </h3>
-              <p className="text-white/70 text-sm leading-relaxed font-light mb-8">
+              <p className="text-white/70 text-xs sm:text-sm leading-relaxed font-light mb-6 sm:mb-8">
                 Parcourez les logements audités à Sanar, Bango et Khor. Bloquez votre attribution dès aujourd'hui avec votre caution seule.
               </p>
             </div>
@@ -60,16 +60,16 @@ export const FinalCTA = () => {
           </div>
 
           {/* Option 2 : Pour les Propriétaires Bailleurs */}
-          <div className="rounded-md border border-white/15 bg-white/[0.04] backdrop-blur-md p-8 sm:p-10 flex flex-col justify-between hover:border-accent transition-premium">
+          <div className="rounded-md border border-white/15 bg-white/[0.04] backdrop-blur-md p-6 sm:p-10 flex flex-col justify-between hover:border-accent transition-premium">
             <div>
-              <div className="w-12 h-12 rounded-sm bg-white/10 text-white flex items-center justify-center mb-6">
-                <Building2 className="h-6 w-6" />
+              <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-sm bg-white/10 text-white flex items-center justify-center mb-5 sm:mb-6">
+                <Building2 className="h-5 w-5 sm:h-6 sm:w-6" />
               </div>
               <span className="overline text-white/50 mb-2 block">Propriétaires Bailleurs</span>
-              <h3 className="font-serif text-2xl font-normal text-white mb-3">
+              <h3 className="font-serif text-xl sm:text-2xl font-normal text-white mb-2.5 sm:mb-3">
                 Confier mes logements à Zeyna
               </h3>
-              <p className="text-white/70 text-sm leading-relaxed font-light mb-8">
+              <p className="text-white/70 text-xs sm:text-sm leading-relaxed font-light mb-6 sm:mb-8">
                 Sécurisez vos revenus locatifs, déléguez la gestion des baux et bénéficiez de reversements ponctuels garantis par contrat-cadre.
               </p>
             </div>

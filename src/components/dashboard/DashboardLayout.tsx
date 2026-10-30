@@ -233,7 +233,7 @@ const DashboardLayout = ({ children }: { children: ReactNode }) => {
             />
             {/* Drawer */}
             <motion.aside
-              className="fixed inset-y-0 left-0 w-72 z-50 lg:hidden shadow-2xl"
+              className="fixed inset-y-0 left-0 w-[min(288px,85vw)] z-50 lg:hidden shadow-2xl"
               variants={sidebarVariants}
               initial="hidden"
               animate="visible"

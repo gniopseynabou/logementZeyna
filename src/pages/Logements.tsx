@@ -161,10 +161,10 @@ const Logements = () => {
               />
             </div>
 
-            <div className="flex flex-wrap items-center gap-2">
+            <div className="flex items-center gap-2 w-full lg:w-auto">
               <Button
                 variant={showFilters ? "default" : "outline"}
-                className={`h-11 rounded-sm text-xs font-ui uppercase tracking-wider font-semibold gap-2 ${
+                className={`flex-1 sm:flex-none h-11 rounded-sm text-xs font-ui uppercase tracking-wider font-semibold gap-2 transition-premium ${
                   showFilters ? "bg-accent text-white hover:bg-accent/90" : "border-border text-foreground hover:bg-muted"
                 }`}
                 onClick={() => setShowFilters(!showFilters)}
@@ -173,7 +173,7 @@ const Logements = () => {
                 Filtres {showFilters ? "actifs" : ""}
               </Button>
 
-              <div className="flex items-center border border-border rounded-sm overflow-hidden bg-card">
+              <div className="flex items-center border border-border rounded-sm overflow-hidden bg-card shrink-0">
                 <Button
                   variant={viewMode === "grid" ? "default" : "ghost"}
                   size="icon"
@@ -198,13 +198,13 @@ const Logements = () => {
           </div>
 
           {/* Raccourcis / Filtres express */}
-          <div className="flex flex-wrap items-center gap-2 mb-6">
-            <span className="text-xs uppercase font-ui tracking-wider text-muted-foreground mr-1">
+          <div className="flex items-center gap-2 mb-6 overflow-x-auto pb-2 -mx-4 px-4 sm:mx-0 sm:px-0 sm:flex-wrap no-scrollbar">
+            <span className="text-xs uppercase font-ui tracking-wider text-muted-foreground mr-1 shrink-0 hidden sm:inline">
               Afficher :
             </span>
             <button
               onClick={() => { setDisponibilite("all"); setModeFilter("all"); setQuartier("all"); }}
-              className={`px-3 py-1 text-xs rounded-sm border font-ui transition-all ${
+              className={`whitespace-nowrap h-9 px-3.5 text-xs rounded-sm border font-ui transition-all shrink-0 flex items-center ${
                 disponibilite === "all" && modeFilter === "all" && quartier === "all"
                   ? "bg-basalt text-white border-basalt"
                   : "bg-card text-muted-foreground border-border hover:border-accent"
@@ -214,7 +214,7 @@ const Logements = () => {
             </button>
             <button
               onClick={() => setDisponibilite(disponibilite === "disponible" ? "all" : "disponible")}
-              className={`px-3 py-1 text-xs rounded-sm border font-ui transition-all ${
+              className={`whitespace-nowrap h-9 px-3.5 text-xs rounded-sm border font-ui transition-all shrink-0 flex items-center ${
                 disponibilite === "disponible"
                   ? "bg-accent text-white border-accent"
                   : "bg-card text-muted-foreground border-border hover:border-accent"
@@ -224,7 +224,7 @@ const Logements = () => {
             </button>
             <button
               onClick={() => setQuartier(quartier === "Sanar" ? "all" : "Sanar")}
-              className={`px-3 py-1 text-xs rounded-sm border font-ui transition-all ${
+              className={`whitespace-nowrap h-9 px-3.5 text-xs rounded-sm border font-ui transition-all shrink-0 flex items-center ${
                 quartier.toLowerCase().includes("sanar")
                   ? "bg-accent text-white border-accent"
                   : "bg-card text-muted-foreground border-border hover:border-accent"
@@ -234,7 +234,7 @@ const Logements = () => {
             </button>
             <button
               onClick={() => setModeFilter(modeFilter === "individuel" ? "all" : "individuel")}
-              className={`px-3 py-1 text-xs rounded-sm border font-ui transition-all ${
+              className={`whitespace-nowrap h-9 px-3.5 text-xs rounded-sm border font-ui transition-all shrink-0 flex items-center ${
                 modeFilter === "individuel"
                   ? "bg-basalt text-white border-basalt"
                   : "bg-card text-muted-foreground border-border hover:border-accent"
@@ -244,7 +244,7 @@ const Logements = () => {
             </button>
             <button
               onClick={() => setModeFilter(modeFilter === "collectif" ? "all" : "collectif")}
-              className={`px-3 py-1 text-xs rounded-sm border font-ui transition-all ${
+              className={`whitespace-nowrap h-9 px-3.5 text-xs rounded-sm border font-ui transition-all shrink-0 flex items-center ${
                 modeFilter === "collectif"
                   ? "bg-basalt text-white border-basalt"
                   : "bg-card text-muted-foreground border-border hover:border-accent"

@@ -59,7 +59,7 @@ export const ManifestoComparison = () => {
         <div className="rounded-md border border-border bg-card shadow-elevated overflow-hidden">
           
           {/* Header du tableau */}
-          <div className="grid grid-cols-1 md:grid-cols-12 border-b border-border text-xs font-ui uppercase tracking-wider font-semibold">
+          <div className="hidden md:grid md:grid-cols-12 border-b border-border text-xs font-ui uppercase tracking-wider font-semibold">
             <div className="md:col-span-4 p-4 sm:p-5 bg-muted/40 text-muted-foreground flex items-center gap-2">
               <span>Points de vigilance</span>
             </div>
@@ -81,20 +81,30 @@ export const ManifestoComparison = () => {
                 className="grid grid-cols-1 md:grid-cols-12 hover:bg-muted/20 transition-premium text-xs sm:text-sm"
               >
                 {/* Critère */}
-                <div className="md:col-span-4 p-4 sm:p-5 font-serif font-medium text-foreground bg-muted/15 flex items-center">
-                  {row.criterion}
+                <div className="md:col-span-4 p-4 sm:p-5 font-serif font-medium text-foreground bg-muted/25 md:bg-muted/15 flex items-center">
+                  <span className="text-sm font-semibold">{row.criterion}</span>
                 </div>
 
                 {/* Marché informel */}
                 <div className="md:col-span-4 p-4 sm:p-5 border-t md:border-t-0 md:border-l border-border/60 text-muted-foreground flex items-start gap-2.5">
                   <X className="h-4 w-4 text-destructive shrink-0 mt-0.5" />
-                  <span className="leading-relaxed">{row.informal}</span>
+                  <div className="space-y-0.5">
+                    <span className="md:hidden text-[10px] font-ui uppercase font-bold tracking-wider text-destructive block">
+                      Marché informel :
+                    </span>
+                    <span className="leading-relaxed">{row.informal}</span>
+                  </div>
                 </div>
 
                 {/* Standard Zeyna */}
-                <div className="md:col-span-4 p-4 sm:p-5 border-t md:border-t-0 md:border-l border-border/60 text-foreground bg-malachite/[0.02] flex items-start gap-2.5">
+                <div className="md:col-span-4 p-4 sm:p-5 border-t md:border-t-0 md:border-l border-border/60 text-foreground bg-malachite/[0.04] flex items-start gap-2.5">
                   <Check className="h-4 w-4 text-malachite shrink-0 mt-0.5" />
-                  <span className="leading-relaxed font-medium">{row.zeyna}</span>
+                  <div className="space-y-0.5">
+                    <span className="md:hidden text-[10px] font-ui uppercase font-bold tracking-wider text-malachite block">
+                      Standard Zeyna :
+                    </span>
+                    <span className="leading-relaxed font-medium">{row.zeyna}</span>
+                  </div>
                 </div>
               </div>
             ))}
