@@ -1,4 +1,4 @@
-﻿import { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { getPublicLogements } from "@/services/logement-service";
@@ -7,8 +7,10 @@ import Footer from "@/components/landing/Footer";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { StatusBadge } from "@/components/ui/status-badge";
+import { SkeletonLogementCard } from "@/components/ui/skeleton";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { MapPin, Users, Search, Grid3X3, List, SlidersHorizontal, ShieldCheck, Zap } from "lucide-react";
+import { MapPin, Users, Search, Grid3X3, List, SlidersHorizontal, ShieldCheck, Zap, ArrowRight } from "lucide-react";
 import logement1 from "@/assets/logement-1.jpg";
 import logement2 from "@/assets/logement-2.jpg";
 import logement3 from "@/assets/logement-3.jpg";
@@ -348,30 +350,30 @@ const Logements = () => {
 
           {/* Liste des résultats */}
           {isLoading ? (
-            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
+            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {[1, 2, 3, 4, 5, 6].map((i) => (
-                <div key={i} className="h-96 bg-card animate-pulse rounded-sm border border-border" />
+                <SkeletonLogementCard key={i} />
               ))}
             </div>
           ) : filtered.length === 0 ? (
-            <div className="bg-card border border-border rounded-sm p-12 text-center max-w-lg mx-auto my-12">
-              <h3 className="font-serif text-xl font-normal text-foreground mb-2">Aucun logement trouvé</h3>
-              <p className="text-muted-foreground text-sm mb-6">
+            <div className="bg-card border border-border rounded-md p-12 text-center max-w-lg mx-auto my-12 shadow-premium">
+              <h3 className="font-serif text-xl font-semibold text-foreground mb-2">Aucun logement trouvé</h3>
+              <p className="text-muted-foreground text-sm mb-6 leading-relaxed">
                 Aucune résidence ne correspond exactement à vos critères. Essayez d'élargir la zone géographique ou les limites de budget.
               </p>
               <Button onClick={resetAllFilters} variant="outline" className="rounded-sm font-ui text-xs uppercase tracking-wider">
-                Afficher tous les logements
+                Afficher tout le répertoire
               </Button>
             </div>
           ) : (
             <>
               {viewMode === "grid" ? (
-                <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
+                <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
                   {paginated.map((logement) => (
                     <Link
                       to={`/logements/${logement.id}`}
                       key={logement.id}
-                      className="group flex flex-col bg-card border border-border hover:border-accent/80 transition-all duration-300 rounded-sm overflow-hidden"
+                      className="group flex flex-col bg-card border border-border hover:border-accent/40 transition-premium rounded-md overflow-hidden shadow-premium hover:shadow-elevated"
                     >
                       {/* Image */}
                       <div className="relative aspect-[16/10] overflow-hidden bg-muted">
@@ -380,34 +382,29 @@ const Logements = () => {
                           alt={logement.nom}
                           className="w-full h-full object-cover group-hover:scale-[1.03] transition-transform duration-700 ease-out"
                         />
-                        <div className="absolute inset-0 bg-black/10 group-hover:bg-transparent transition-colors duration-300" />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent opacity-60 group-hover:opacity-40 transition-premium" />
 
                         {/* Badges d'état */}
-                        <div className="absolute top-3.5 left-3.5 flex items-center gap-1.5">
-                          <span
-                            className={`px-2.5 py-1 text-[11px] font-semibold font-ui uppercase tracking-wider backdrop-blur-md ${
-                              logement.available
-                                ? "bg-white/95 text-basalt border border-black/10"
-                                : "bg-basalt/85 text-white/90 border border-white/20"
-                            }`}
-                          >
-                            {logement.available ? "Disponible" : "Complet"}
-                          </span>
-                          <span className="px-2 py-1 text-[11px] font-ui uppercase tracking-wider bg-black/50 text-white backdrop-blur-md">
+                        <div className="absolute top-3 left-3 flex items-center gap-1.5">
+                          <StatusBadge
+                            status={logement.available ? "disponible" : "complet"}
+                            size="xs"
+                          />
+                          <span className="px-2 py-0.5 text-[10px] font-ui uppercase tracking-wider bg-black/60 text-white backdrop-blur-md rounded-sm border border-white/10 font-semibold">
                             {logement.type}
                           </span>
                         </div>
 
                         {/* Badges de mode de réservation */}
-                        <div className="absolute bottom-3 left-3.5 right-3.5 flex flex-wrap gap-1.5">
+                        <div className="absolute bottom-2.5 left-3 right-3 flex flex-wrap gap-1.5">
                           {logement.hasIndividuel && (
-                            <span className="px-2 py-0.5 text-[10px] font-ui bg-basalt/80 text-white/95 backdrop-blur-sm">
+                            <span className="px-2 py-0.5 text-[10px] font-ui font-medium bg-black/75 text-white/95 backdrop-blur-sm rounded-sm">
                               Place individuelle
                             </span>
                           )}
                           {logement.hasCollectif && (
-                            <span className="px-2 py-0.5 text-[10px] font-ui bg-accent/90 text-white backdrop-blur-sm">
-                              Chambre collective
+                            <span className="px-2 py-0.5 text-[10px] font-ui font-medium bg-accent/90 text-white backdrop-blur-sm rounded-sm">
+                              Chambre partagée
                             </span>
                           )}
                         </div>
@@ -416,17 +413,17 @@ const Logements = () => {
                       {/* Corps de la carte */}
                       <div className="p-5 flex flex-col flex-grow justify-between">
                         <div>
-                          <h3 className="font-serif text-xl font-normal text-foreground group-hover:text-accent transition-colors leading-snug">
+                          <h3 className="font-serif text-lg font-semibold text-foreground group-hover:text-accent transition-premium leading-snug">
                             {logement.nom}
                           </h3>
-                          <div className="flex items-center gap-1.5 text-muted-foreground text-xs mt-2">
+                          <div className="flex items-center gap-1.5 text-muted-foreground text-xs mt-1.5">
                             <MapPin className="h-3.5 w-3.5 text-accent shrink-0" />
                             <span className="truncate">{logement.adresse}, {logement.ville}</span>
                           </div>
                         </div>
 
                         {/* Bloc financier architectural */}
-                        <div className="mt-5 pt-4 border-t border-border flex items-end justify-between">
+                        <div className="mt-5 pt-3.5 border-t border-border/70 flex items-end justify-between">
                           <div className="text-xs text-muted-foreground">
                             <div className="flex items-center gap-1 font-ui font-medium text-foreground">
                               <Users className="h-3.5 w-3.5 text-muted-foreground" />
@@ -434,17 +431,17 @@ const Logements = () => {
                             </div>
                             {logement.minCaution > 0 && (
                               <div className="text-[11px] text-muted-foreground mt-1">
-                                Caution : <span className="font-semibold text-foreground">{logement.minCaution.toLocaleString()} F</span>
+                                Caution : <span className="font-mono font-semibold text-foreground">{logement.minCaution.toLocaleString("fr-FR")} F</span>
                               </div>
                             )}
                           </div>
 
                           <div className="text-right">
-                            <span className="text-[10px] uppercase font-ui tracking-wider text-muted-foreground block">
+                            <span className="overline text-[9px] block">
                               Loyer mensuel
                             </span>
-                            <span className="text-lg font-bold font-ui text-accent">
-                              {logement.minPrice > 0 ? `${logement.minPrice.toLocaleString()} F` : "Sur demande"}
+                            <span className="text-base font-bold font-mono text-accent">
+                              {logement.minPrice > 0 ? `${logement.minPrice.toLocaleString("fr-FR")} F` : "Sur demande"}
                             </span>
                           </div>
                         </div>
@@ -458,48 +455,47 @@ const Logements = () => {
                     <Link
                       to={`/logements/${logement.id}`}
                       key={logement.id}
-                      className="group flex flex-col sm:flex-row bg-card border border-border hover:border-accent/80 transition-all rounded-sm overflow-hidden"
+                      className="group flex flex-col sm:flex-row bg-card border border-border hover:border-accent/40 transition-premium rounded-md overflow-hidden shadow-premium hover:shadow-elevated"
                     >
-                      <div className="w-full sm:w-64 h-52 relative overflow-hidden bg-muted shrink-0">
+                      <div className="w-full sm:w-60 h-48 relative overflow-hidden bg-muted shrink-0">
                         <img
                           src={logement.images[0]}
                           alt={logement.nom}
                           className="w-full h-full object-cover group-hover:scale-[1.03] transition-transform duration-700 ease-out"
                         />
-                        <span
-                          className={`absolute top-3 left-3 px-2 py-0.5 text-[10px] font-semibold font-ui uppercase tracking-wider backdrop-blur-md ${
-                            logement.available ? "bg-white/95 text-basalt" : "bg-basalt/85 text-white/90"
-                          }`}
-                        >
-                          {logement.available ? "Disponible" : "Complet"}
-                        </span>
+                        <div className="absolute top-3 left-3">
+                          <StatusBadge
+                            status={logement.available ? "disponible" : "complet"}
+                            size="xs"
+                          />
+                        </div>
                       </div>
 
                       <div className="p-5 flex-1 flex flex-col justify-between">
                         <div>
                           <div className="flex items-start justify-between gap-4">
                             <div>
-                              <h3 className="font-serif text-xl font-normal text-foreground group-hover:text-accent transition-colors">
+                              <h3 className="font-serif text-lg font-semibold text-foreground group-hover:text-accent transition-premium">
                                 {logement.nom}
                               </h3>
-                              <div className="flex items-center gap-1.5 text-muted-foreground text-xs mt-1.5">
+                              <div className="flex items-center gap-1.5 text-muted-foreground text-xs mt-1">
                                 <MapPin className="h-3.5 w-3.5 text-accent shrink-0" />
                                 <span>{logement.adresse}, {logement.ville}</span>
                               </div>
                             </div>
-                            <Badge variant="outline" className="rounded-sm font-ui text-[11px] uppercase">
+                            <span className="px-2 py-0.5 rounded-sm border border-border text-[10px] font-ui font-semibold uppercase tracking-wider text-muted-foreground bg-muted/40">
                               {logement.type}
-                            </Badge>
+                            </span>
                           </div>
 
                           {logement.description && (
-                            <p className="text-muted-foreground text-xs line-clamp-2 mt-3 leading-relaxed">
+                            <p className="text-muted-foreground text-xs line-clamp-2 mt-2.5 leading-relaxed">
                               {logement.description}
                             </p>
                           )}
                         </div>
 
-                        <div className="mt-4 pt-4 border-t border-border flex items-center justify-between">
+                        <div className="mt-4 pt-3.5 border-t border-border/70 flex items-center justify-between">
                           <div className="flex items-center gap-4 text-xs">
                             <span className="flex items-center gap-1 font-ui text-foreground font-medium">
                               <Users className="h-3.5 w-3.5 text-muted-foreground" />
@@ -507,17 +503,17 @@ const Logements = () => {
                             </span>
                             {logement.minCaution > 0 && (
                               <span className="text-muted-foreground text-[11px]">
-                                Caution : <strong className="text-foreground">{logement.minCaution.toLocaleString()} F</strong>
+                                Caution : <strong className="font-mono text-foreground">{logement.minCaution.toLocaleString("fr-FR")} F</strong>
                               </span>
                             )}
                           </div>
 
                           <div className="text-right">
-                            <span className="text-[10px] uppercase font-ui tracking-wider text-muted-foreground block">
+                            <span className="overline text-[9px] block">
                               Loyer mensuel
                             </span>
-                            <span className="text-lg font-bold font-ui text-accent">
-                              {logement.minPrice > 0 ? `${logement.minPrice.toLocaleString()} F` : "Sur demande"}
+                            <span className="text-base font-bold font-mono text-accent">
+                              {logement.minPrice > 0 ? `${logement.minPrice.toLocaleString("fr-FR")} F` : "Sur demande"}
                             </span>
                           </div>
                         </div>
@@ -529,7 +525,7 @@ const Logements = () => {
 
               {/* Pagination */}
               {totalPages > 1 && (
-                <div className="flex justify-center gap-1.5 mt-12 pt-6 border-t border-border">
+                <div className="flex justify-center gap-1.5 mt-10 pt-6 border-t border-border/70">
                   {Array.from({ length: totalPages }, (_, i) => (
                     <Button
                       key={i}

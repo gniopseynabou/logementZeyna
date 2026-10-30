@@ -10,15 +10,15 @@ const svgVariants = {
     pathLength: 1,
     opacity: 1,
     transition: {
-      pathLength: { type: "spring", duration: 2, bounce: 0 },
-      opacity: { duration: 0.5 }
+      pathLength: { type: "spring", duration: 0.9, bounce: 0 },
+      opacity: { duration: 0.4 }
     }
   }
 };
 
 const ZLogoAnimation = () => {
   return (
-    <div className="relative w-full max-w-[180px] md:max-w-sm mx-auto flex items-center justify-center aspect-square">
+    <div className="relative w-full max-w-[160px] md:max-w-xs mx-auto flex items-center justify-center aspect-square">
       {/* Lignes architecturales qui dessinent la structure */}
       <motion.svg
         viewBox="0 0 200 200"
@@ -42,15 +42,15 @@ const ZLogoAnimation = () => {
         />
       </motion.svg>
 
-      {/* Révélation du logo ZEYNA après l'animation */}
+      {/* Révélation vive du logo ZEYNA */}
       <motion.div
-        initial={{ opacity: 0, scale: 0.95 }}
+        initial={{ opacity: 0, scale: 0.92 }}
         animate={{ opacity: 1, scale: 1 }}
-        transition={{ delay: 2.2, duration: 1, ease: [0.22, 1, 0.36, 1] }}
-        className="relative z-10 bg-gradient-navy p-4 md:p-6 rounded-full border-0 md:border border-accent/20 hover:scale-105 transition-transform duration-300"
+        transition={{ delay: 0.2, duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+        className="relative z-10 bg-gradient-navy p-3.5 md:p-5 rounded-full border border-accent/20 hover:scale-105 transition-premium"
       >
         <Link to="/" className="block cursor-pointer">
-          <img src={logo} alt="Zeyna" className="w-24 md:w-32 h-auto" />
+          <img src={logo} alt="Zeyna" className="w-20 md:w-28 h-auto" />
         </Link>
       </motion.div>
     </div>
@@ -62,27 +62,35 @@ export const AuthLayout = () => {
 
   return (
     <div className="min-h-screen flex flex-col md:flex-row bg-background overflow-hidden">
-      {/* Panneau visuel abstrait (Gauche sur desktop, Haut sur mobile) */}
-      <div className="w-full md:w-1/2 lg:w-5/12 bg-gradient-navy text-primary-foreground relative flex flex-col justify-center p-6 lg:p-12 border-b md:border-b-0 md:border-r border-accent/20 shrink-0">
-        <div className="absolute top-4 left-4 md:top-6 md:left-6 z-20">
-          <Link to="/" className="inline-flex items-center gap-2 text-primary-foreground/60 hover:text-accent transition-colors text-xs md:text-sm font-medium">
-            <ArrowLeft className="h-4 w-4" /> <span className="hidden sm:inline">Retour</span>
+      {/* Panneau visuel architectural (Gauche sur desktop, Haut sur mobile) */}
+      <div className="w-full md:w-1/2 lg:w-5/12 bg-gradient-navy text-primary-foreground relative flex flex-col justify-between p-6 lg:p-10 border-b md:border-b-0 md:border-r border-accent/20 shrink-0">
+        <div className="z-20">
+          <Link to="/" className="inline-flex items-center gap-2 text-primary-foreground/70 hover:text-accent transition-premium text-xs md:text-sm font-ui">
+            <ArrowLeft className="h-4 w-4" /> <span>Retour à l'accueil</span>
           </Link>
         </div>
 
-        <div className="flex-1 flex flex-col justify-center items-center mt-6 md:mt-0">
+        <div className="flex flex-col justify-center items-center my-6 md:my-0">
           <ZLogoAnimation />
           <motion.div
-            initial={{ opacity: 0, y: 10 }}
+            initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 2.5, duration: 0.8, ease: "easeOut" }}
-            className="mt-4 md:mt-8 text-center hidden md:block"
+            transition={{ delay: 0.35, duration: 0.5, ease: "easeOut" }}
+            className="mt-4 md:mt-6 text-center hidden md:block"
           >
-            <h2 className="font-serif text-xl md:text-2xl font-bold tracking-wide">L'Excellence du Logement</h2>
-            <p className="text-primary-foreground/60 mt-2 max-w-sm mx-auto text-sm">
-              Une plateforme moderne et sécurisée pour gérer et trouver vos espaces de vie.
+            <span className="overline text-accent/80 mb-1 block">Habitat Étudiant Certifié</span>
+            <h2 className="font-serif text-xl lg:text-2xl font-bold tracking-tight text-white">
+              L'Intendance Sécurisée à Saint-Louis
+            </h2>
+            <p className="text-primary-foreground/60 mt-2 max-w-sm mx-auto text-xs leading-relaxed">
+              Baux opposables, caution protégée sur compte séquestre et accompagnement de proximité pour l'UGB.
             </p>
           </motion.div>
+        </div>
+
+        <div className="hidden md:flex items-center justify-between text-[11px] text-primary-foreground/40 font-ui pt-4 border-t border-white/10">
+          <span>Campus UGB · Sanar · Bango · Khor</span>
+          <span>© Zeyna</span>
         </div>
       </div>
 

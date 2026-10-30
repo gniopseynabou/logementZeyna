@@ -1,17 +1,27 @@
-﻿import { useState } from "react";
+import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, MapPin, ShieldCheck, CheckCircle2, Search } from "lucide-react";
+import {
+  ArrowRight,
+  MapPin,
+  ShieldCheck,
+  CheckCircle2,
+  Search,
+  Lock,
+  Building2,
+  FileText,
+  BadgeCheck,
+} from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { getHeroStats } from "@/services/public-content-service";
 import heroBg from "@/assets/hero-bg.jpg";
 
 const CAMPUS_DISTRICTS = [
-  { label: "Sanar (Campus UGB)", query: "Sanar" },
-  { label: "Bango", query: "Bango" },
-  { label: "Khor", query: "Khor" },
-  { label: "Balacoss", query: "Balacoss" },
-  { label: "Île Nord / Sud", query: "Île" },
+  { label: "Sanar (Campus UGB)", query: "Sanar", sub: "À 5 min à pied des amphis" },
+  { label: "Bango", query: "Bango", sub: "Quartier calme & résidentiel" },
+  { label: "Khor", query: "Khor", sub: "Sur la ligne de bus universitaire" },
+  { label: "Balacoss", query: "Balacoss", sub: "Centre-ville & commodités" },
+  { label: "Île Nord / Sud", query: "Île", sub: "Cadre historique du fleuve" },
 ];
 
 const HeroSection = () => {
@@ -33,142 +43,160 @@ const HeroSection = () => {
   };
 
   return (
-    <section className="relative min-h-[92vh] flex items-center bg-basalt text-white overflow-hidden pt-24 pb-16">
-      {/* Background photo avec traitement architectural sombre */}
+    <section className="relative min-h-[94vh] flex items-center bg-basalt text-white overflow-hidden pt-28 pb-16 lg:pt-32 lg:pb-24 border-b border-white/10">
+      {/* ── Toile photographique d'ancrage avec double filtre minéral et quadrillage cadastral ── */}
       <div className="absolute inset-0 z-0">
         <img
           src={heroBg}
-          alt="Logement étudiant à Saint-Louis du Sénégal — campus UGB et Sanar"
-          className="w-full h-full object-cover object-center opacity-100 filter contrast-100 saturate-100"
+          alt="Campus Université Gaston Berger et résidences étudiantes à Sanar, Saint-Louis du Sénégal"
+          className="w-full h-full object-cover object-center opacity-35 filter contrast-110 saturate-75"
           fetchpriority="high"
         />
-        {/* Voiles et filtres de lumière minérale */}
-        <div className="absolute inset-0 bg-gradient-to-t from-basalt via-basalt/10 to-transparent" />
-        <div className="absolute inset-0 bg-gradient-to-r from-basalt via-basalt/10 to-transparent" />
+        {/* Voiles de contraste et filtres minéraux */}
+        <div className="absolute inset-0 bg-gradient-to-t from-basalt via-basalt/80 to-basalt/40" />
+        <div className="absolute inset-0 bg-gradient-to-r from-basalt via-basalt/70 to-transparent" />
+        
+        {/* Trame cadastrale géométrique d'arpentage */}
+        <div className="absolute inset-0 bg-grid-cadastre-dark opacity-40 pointer-events-none" />
       </div>
 
-      {/* Ligne d'accent architecturale */}
-      <div className="absolute left-0 top-0 bottom-0 w-[2px] bg-accent/70" />
+      {/* ── Ligne d'accent architecturale signature Zeyna ── */}
+      <div className="absolute left-0 top-0 bottom-0 w-[3px] bg-accent" />
 
-      {/* Conteneur principal */}
+      {/* ── Contenu Principal ── */}
       <div className="relative z-10 container mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid lg:grid-cols-12 gap-12 lg:gap-8 items-center">
+        <div className="grid lg:grid-cols-12 gap-12 lg:gap-10 items-center">
           
-          {/* Colonne éditoriale principale */}
-          <div className="lg:col-span-7 xl:col-span-8 space-y-6">
-            
-            {/* Surtitre institutionnel */}
-            <div className="inline-flex items-center gap-2.5 px-3 py-1.5 bg-white/5 border border-white/10 rounded-sm">
-              <span className="w-1.5 h-1.5 rounded-full bg-accent animate-pulse" />
-              <MapPin className="h-3.5 w-3.5 text-accent" />
-              <span className="font-ui text-xs font-semibold tracking-widest uppercase text-white/80">
-                Saint-Louis du Sénégal & UGB
-              </span>
+          {/* Colonne Gauche (7 col) : Manifeste Éditorial & Moteur de Secteur */}
+          <div className="lg:col-span-7 xl:col-span-8 space-y-7">
+
+            {/* Titre Monumental */}
+            <div className="space-y-2">
+              <h1 className="font-serif text-3xl sm:text-5xl lg:text-6xl font-normal tracking-tight text-white leading-[1.12]">
+                Le logement étudiant à Saint-Louis. <br />
+                <span className="italic font-normal text-accent">Garanti par contrat, protégé par séquestre.</span>
+              </h1>
             </div>
 
-            {/* Titre monumental */}
-            <h1 className="font-serif text-4xl sm:text-5xl md:text-6xl font-normal tracking-tight text-white leading-[1.1]">
-              L’habitat étudiant, <br />
-              <span className="font-semibold italic text-accent">maîtrisé avec rigueur.</span>
-            </h1>
-
-            {/* Chapeau explicatif */}
-            <p className="text-white/70 text-base sm:text-lg leading-relaxed max-w-2xl font-light">
-              Zeyna sélectionne, normalise et administre des chambres et studios pour les étudiants de l'Université Gaston Berger (UGB). Logements hors campus à Sanar, Bango, Khor — réservation transparente et caution sécurisée.
+            {/* Chapeau descriptif sans complaisance */}
+            <p className="text-white/75 text-base sm:text-lg leading-relaxed max-w-2xl font-light">
+              Finies les cautions détournées et les visites informelles sans garantie. Zeyna audite chaque chambre hors campus entre Sanar, Bango et Khor, bloque votre place avec la <strong>caution seule</strong> et sécurise votre bail pour toute l'année universitaire à l'UGB.
             </p>
 
-            {/* Moteur de recherche rapide intégré */}
-            <form onSubmit={handleQuickSearch} className="max-w-xl flex flex-col sm:flex-row gap-2 pt-2">
-              <div className="relative flex-1">
-                <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-white/40" />
-                <input
-                  type="text"
-                  placeholder="Quartier (Sanar, Bango, Khor...), ou nom..."
-                  value={quickQuery}
-                  onChange={(e) => setQuickQuery(e.target.value)}
-                  className="w-full bg-white/10 border border-white/20 text-white placeholder-white/40 text-sm pl-10 pr-4 py-3 rounded-sm focus:outline-none focus:border-accent transition-colors"
-                />
+            {/* Barre de Recherche Cadastrale */}
+            <form onSubmit={handleQuickSearch} className="max-w-2xl pt-2">
+              <div className="bg-white/10 p-1.5 rounded-md border border-white/20 backdrop-blur-md flex flex-col sm:flex-row gap-2 shadow-2xl focus-within:border-accent transition-premium">
+                <div className="relative flex-1 flex items-center">
+                  <Search className="absolute left-3.5 h-4 w-4 text-white/40" />
+                  <input
+                    type="text"
+                    placeholder="Quartier recherché (Sanar, Bango, Khor, Île...) ou mot-clé..."
+                    value={quickQuery}
+                    onChange={(e) => setQuickQuery(e.target.value)}
+                    className="w-full bg-transparent text-white placeholder-white/40 text-sm pl-10 pr-4 py-2.5 focus:outline-none font-ui"
+                  />
+                </div>
+                <Button
+                  type="submit"
+                  className="bg-accent hover:bg-accent/90 text-white rounded-sm px-7 h-11 font-ui text-xs uppercase tracking-wider font-semibold shrink-0 shadow-gold hover:shadow-none transition-premium"
+                >
+                  Vérifier les disponibilités
+                </Button>
               </div>
-              <Button type="submit" className="bg-accent hover:bg-accent/90 text-white rounded-sm px-6 h-12 font-ui text-xs uppercase tracking-wider font-semibold">
-                Explorer
-              </Button>
             </form>
 
-            {/* Pastilles directes vers les pôles de l'UGB */}
-            <div className="pt-2">
-              <p className="text-xs uppercase tracking-widest text-white/40 font-ui mb-2 font-medium">Secteurs clés :</p>
+            {/* Sélecteurs de Secteurs Stratégiques avec distance UGB */}
+            <div className="space-y-2.5 pt-1">
+              <p className="text-[11px] uppercase tracking-widest text-white/50 font-ui font-semibold">
+                Secteurs audités à proximité de l'Université Gaston Berger :
+              </p>
               <div className="flex flex-wrap gap-2">
                 {CAMPUS_DISTRICTS.map((district) => (
                   <Link
                     key={district.query}
                     to={`/logements?quartier=${encodeURIComponent(district.query)}`}
-                    className="text-xs px-3 py-1 bg-white/5 hover:bg-accent/20 border border-white/10 hover:border-accent text-white/80 hover:text-white rounded-sm transition-all font-ui"
+                    className="group px-3 py-1.5 bg-white/[0.04] hover:bg-accent/15 border border-white/10 hover:border-accent text-white/80 hover:text-white rounded-sm transition-premium flex items-center gap-1.5 font-ui text-xs"
+                    title={district.sub}
                   >
-                    {district.label}
+                    <MapPin className="h-3 w-3 text-accent group-hover:scale-110 transition-premium" />
+                    <span>{district.label}</span>
                   </Link>
                 ))}
               </div>
             </div>
 
-            {/* Piliers de confiance & règles fondamentales */}
+            {/* 3 Règles Fondamentales d'Équité */}
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-6 border-t border-white/10 max-w-2xl">
+              <div className="flex items-start gap-2.5">
+                <Lock className="h-4 w-4 text-accent shrink-0 mt-0.5" />
+                <div className="text-xs">
+                  <div className="font-semibold text-white font-ui">Caution seule exigée</div>
+                  <div className="text-white/50">Pour bloquer fermement la chambre</div>
+                </div>
+              </div>
+              <div className="flex items-start gap-2.5">
+                <FileText className="h-4 w-4 text-accent shrink-0 mt-0.5" />
+                <div className="text-xs">
+                  <div className="font-semibold text-white font-ui">Bail numérique opposable</div>
+                  <div className="text-white/50">Quittance certifiée à chaque versement</div>
+                </div>
+              </div>
               <div className="flex items-start gap-2.5">
                 <ShieldCheck className="h-4 w-4 text-accent shrink-0 mt-0.5" />
                 <div className="text-xs">
-                  <div className="font-semibold text-white">Caution seule exigée</div>
-                  <div className="text-white/50">Pour bloquer la réservation</div>
-                </div>
-              </div>
-              <div className="flex items-start gap-2.5">
-                <CheckCircle2 className="h-4 w-4 text-accent shrink-0 mt-0.5" />
-                <div className="text-xs">
-                  <div className="font-semibold text-white">Modes vérifiés</div>
-                  <div className="text-white/50">Place seule ou chambre entière</div>
-                </div>
-              </div>
-              <div className="flex items-start gap-2.5">
-                <CheckCircle2 className="h-4 w-4 text-accent shrink-0 mt-0.5" />
-                <div className="text-xs">
-                  <div className="font-semibold text-white">Bail & Reçu traçable</div>
-                  <div className="text-white/50">Délivrés dès validation</div>
+                  <div className="font-semibold text-white font-ui">Logements inspectés</div>
+                  <div className="text-white/50">Eau, Woyofal et serrurerie vérifiés</div>
                 </div>
               </div>
             </div>
 
           </div>
 
-          {/* Colonne latérale : Cartouche architectural & Stats réelles */}
+          {/* Colonne Droite (5 col) : Le Cartouche de Caution Séquestre & Métriques en Direct */}
           <div className="lg:col-span-5 xl:col-span-4">
-            <div className="border border-white/15 bg-white/[0.04] backdrop-blur-md p-6 sm:p-8 rounded-sm space-y-6">
+            <div className="relative rounded-md border border-white/20 bg-white/[0.05] backdrop-blur-xl p-6 sm:p-8 space-y-6 shadow-2xl accent-line-top">
               
+              {/* En-tête du cartouche */}
               <div className="border-b border-white/10 pb-4">
-                <span className="text-[11px] font-ui tracking-widest uppercase text-accent font-semibold block mb-1">
-                  Intendance & Médiation
-                </span>
-                <h3 className="font-serif text-xl font-normal text-white">
-                  Pourquoi passer par Zeyna ?
+                <div className="flex items-center justify-between">
+                  <span className="text-[10px] font-ui tracking-widest uppercase text-accent font-bold">
+                    Garantie d'Intendance
+                  </span>
+                  <span className="text-[10px] font-mono text-white/50">REF-SN-SL-2026</span>
+                </div>
+                <h3 className="font-serif text-xl font-normal text-white mt-1">
+                  Le Protocole Séquestre Zeyna
                 </h3>
               </div>
 
-              <div className="space-y-4 text-xs text-white/70 leading-relaxed">
-                <p>
-                  Finies les visites fantômes et les cautions non remboursées. Chaque bailleur signe un accord formel et chaque locataire dispose d'un contrat clair avec reçu opposable.
-                </p>
-                <div className="bg-white/5 p-3 rounded-sm border border-white/10 text-white/80">
-                  <span className="text-accent font-semibold block mb-0.5">Étudiants de l'UGB :</span>
-                  Accédez à des logements proches des lignes de bus et du campus Sanar, équipés et sécurisés.
+              {/* Arguments clés */}
+              <div className="space-y-3.5 text-xs text-white/70 leading-relaxed font-light">
+                <div className="flex items-start gap-3 bg-white/[0.03] p-3 rounded-sm border border-white/10">
+                  <ShieldCheck className="h-4 w-4 text-malachite shrink-0 mt-0.5" />
+                  <div>
+                    <strong className="text-white font-medium block">Zéro avance de loyer avant l'entrée</strong>
+                    <span>Votre loyer ne commence qu'à la date effective de remise des clés.</span>
+                  </div>
+                </div>
+
+                <div className="flex items-start gap-3 bg-white/[0.03] p-3 rounded-sm border border-white/10">
+                  <Lock className="h-4 w-4 text-accent shrink-0 mt-0.5" />
+                  <div>
+                    <strong className="text-white font-medium block">Caution protégée et tracée</strong>
+                    <span>Consignée sur un compte séquestre dédié, intégralement restituable selon l'état des lieux de sortie.</span>
+                  </div>
                 </div>
               </div>
 
-              {/* Stats en direct si disponibles */}
+              {/* Métriques réelles du parc (en JetBrains Mono) */}
               {!isError && stats && stats.length > 0 && (
                 <div className="grid grid-cols-2 gap-4 pt-4 border-t border-white/10">
                   {stats.slice(0, 4).map((stat) => (
                     <div key={stat.id} className="space-y-0.5">
-                      <div className="text-2xl font-bold font-ui text-accent tracking-tight">
+                      <div className="text-2xl font-bold font-mono text-accent tracking-tight">
                         {stat.valeur}
                       </div>
-                      <div className="text-[11px] text-white/60 font-medium leading-tight">
+                      <div className="text-[11px] text-white/60 font-medium font-ui leading-tight">
                         {stat.label}
                       </div>
                     </div>
@@ -176,13 +204,20 @@ const HeroSection = () => {
                 </div>
               )}
 
+              {/* Bouton d'action directe vers l'inventaire */}
               <div className="pt-2">
-                <Button asChild className="w-full bg-accent hover:bg-accent/90 text-white rounded-sm h-11 font-ui text-xs uppercase tracking-wider font-semibold">
+                <Button
+                  asChild
+                  className="w-full bg-accent hover:bg-accent/90 text-white rounded-sm h-12 font-ui text-xs uppercase tracking-wider font-semibold shadow-gold hover:shadow-none transition-premium"
+                >
                   <Link to="/logements" className="flex items-center justify-center gap-2">
-                    Consulter les disponibilités
+                    Consulter le répertoire des chambres
                     <ArrowRight className="h-4 w-4" />
                   </Link>
                 </Button>
+                <p className="text-[10px] text-center text-white/40 mt-2.5 font-ui">
+                  Réservations ouvertes pour l'année universitaire en cours à l'UGB
+                </p>
               </div>
 
             </div>
@@ -195,4 +230,3 @@ const HeroSection = () => {
 };
 
 export default HeroSection;
-

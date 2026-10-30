@@ -1,4 +1,4 @@
-﻿import { useState } from "react";
+import { useState } from "react";
 import Navbar from "@/components/landing/Navbar";
 import Footer from "@/components/landing/Footer";
 import SEOHead from "@/components/SEOHead";
@@ -26,8 +26,8 @@ import { generatePolitiqueCautionHTML, printDocument } from "@/lib/contract-temp
 
 const FAQ_ITEMS = [
   {
-    q: "Quels sont les moyens de paiement acceptés sur Zeyna ?",
-    a: "Nous acceptons les solutions de paiement mobile leaders au Sénégal (Wave, Orange Money), ainsi que les virements bancaires et règlements directs en agence avec reçu officiel immédiat.",
+    q: "Comment s'effectue le paiement de la caution et des loyers sur Zeyna ?",
+    a: "Le règlement s'effectue par transfert direct via Wave ou Orange Money sur le numéro officiel de Zeyna, ou par virement bancaire. Une fois le transfert réalisé, vous renseignez simplement votre référence de transaction sur la plateforme. Dès confirmation par notre administration, votre reçu officiel et votre contrat sont validés.",
   },
   {
     q: "Dans quel délai ma caution est-elle restituée à mon départ ?",
@@ -85,7 +85,7 @@ const PaiementEtGaranties = () => {
 
             <p className="text-muted-foreground text-base sm:text-lg max-w-3xl mx-auto leading-relaxed">
               Chez <strong>Les Logements de Zeyna</strong>, la confiance repose sur des règles claires :
-              fonds de caution séquestrés, quittances libératoires instantanées, contrats conformes au COCC
+              fonds de caution séquestrés, quittances libératoires délivrées dès vérification, contrats conformes au COCC
               et reversements traçables pour les bailleurs.
             </p>
 
@@ -120,10 +120,10 @@ const PaiementEtGaranties = () => {
                 <div className="p-3.5 bg-primary/10 text-primary rounded-2xl w-fit">
                   <Smartphone className="h-6 w-6" />
                 </div>
-                <h3 className="font-serif font-bold text-lg">Paiement Mobile & Reçus Immédiats</h3>
+                <h3 className="font-serif font-bold text-lg">Transfert Direct & Reçus Vérifiés</h3>
                 <p className="text-sm text-muted-foreground leading-relaxed">
-                  Réglez votre caution et vos loyers facilement par <strong>Wave</strong> ou <strong>Orange Money</strong>.
-                  Chaque transaction génère automatiquement une quittance libératoire infalsifiable téléchargeable.
+                  Effectuez votre transfert de caution ou de loyer par <strong>Wave</strong> ou <strong>Orange Money</strong>, puis transmettez votre référence de transaction.
+                  Dès vérification par l'intendance, une quittance libératoire certifiée est immédiatement émise dans votre espace.
                 </p>
                 <ul className="text-xs space-y-2 text-foreground/80 pt-2 border-t border-border">
                   <li className="flex items-center gap-2">

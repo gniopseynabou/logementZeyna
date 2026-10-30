@@ -1,6 +1,8 @@
 import { Link } from "react-router-dom";
 import { MapPin, Users, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { StatusBadge } from "@/components/ui/status-badge";
+import { SkeletonLogementCard } from "@/components/ui/skeleton";
 import { useQuery } from "@tanstack/react-query";
 import { getPopularLogements } from "@/services/logement-service";
 import logement1 from "@/assets/logement-1.jpg";
@@ -46,10 +48,10 @@ const PopularLogements = () => {
   if (isLoading) {
     return (
       <section className="py-24 bg-sand-50/60 border-b border-border/40">
-        <div className="container mx-auto px-4">
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {[1, 2, 3].map((i) => (
-              <div key={i} className="h-96 bg-muted/60 animate-pulse rounded-sm border border-border" />
+              <SkeletonLogementCard key={i} />
             ))}
           </div>
         </div>
@@ -76,8 +78,11 @@ const PopularLogements = () => {
   }
 
   return (
-    <section className="py-24 lg:py-32 bg-sand-50/40 border-b border-border/50">
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+    <section className="py-24 lg:py-32 bg-background border-b border-border/60 relative overflow-hidden">
+      {/* ── Trame d'arpentage très discrète en arrière-plan ── */}
+      <div className="absolute inset-0 bg-grid-cadastre opacity-20 pointer-events-none" />
+
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         
         {/* En-tête architectural */}
         <div className="flex flex-col md:flex-row items-start md:items-end justify-between mb-14 border-b border-border pb-8 gap-6">
@@ -100,12 +105,12 @@ const PopularLogements = () => {
         </div>
 
         {/* Grille de cartes architecturales */}
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {displayLogements.map((logement) => (
             <Link
               to={`/logements/${logement.id}`}
               key={logement.id}
-              className="group flex flex-col bg-card border border-border hover:border-accent/80 transition-all duration-300 rounded-sm overflow-hidden"
+              className="group flex flex-col bg-card border border-border hover:border-accent/40 transition-premium rounded-md overflow-hidden shadow-premium hover:shadow-elevated"
             >
               {/* Cadre Visuel */}
               <div className="relative aspect-[16/10] overflow-hidden bg-muted">
@@ -114,34 +119,29 @@ const PopularLogements = () => {
                   alt={logement.nom}
                   className="w-full h-full object-cover group-hover:scale-[1.03] transition-transform duration-700 ease-out"
                 />
-                <div className="absolute inset-0 bg-black/15 group-hover:bg-transparent transition-colors duration-300" />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent opacity-60 group-hover:opacity-40 transition-premium" />
 
                 {/* État de disponibilité */}
-                <div className="absolute top-3.5 left-3.5 flex items-center gap-1.5">
-                  <span
-                    className={`px-2.5 py-1 text-[11px] font-semibold font-ui uppercase tracking-wider backdrop-blur-md ${
-                      logement.available
-                        ? "bg-white/95 text-basalt border border-black/10"
-                        : "bg-basalt/85 text-white/90 border border-white/20"
-                    }`}
-                  >
-                    {logement.available ? "Disponible" : "Complet"}
-                  </span>
-                  <span className="px-2 py-1 text-[11px] font-ui uppercase tracking-wider bg-black/50 text-white backdrop-blur-md">
+                <div className="absolute top-3 left-3 flex items-center gap-1.5">
+                  <StatusBadge
+                    status={logement.available ? "disponible" : "complet"}
+                    size="xs"
+                  />
+                  <span className="px-2 py-0.5 text-[10px] font-ui uppercase tracking-wider bg-black/60 text-white backdrop-blur-md rounded-sm border border-white/10 font-semibold">
                     {logement.type}
                   </span>
                 </div>
 
                 {/* Badges de mode de réservation */}
-                <div className="absolute bottom-3 left-3.5 right-3.5 flex flex-wrap gap-1.5">
+                <div className="absolute bottom-2.5 left-3 right-3 flex flex-wrap gap-1.5">
                   {logement.hasIndividuel && (
-                    <span className="px-2 py-0.5 text-[10px] font-ui bg-basalt/80 text-white/95 backdrop-blur-sm">
+                    <span className="px-2 py-0.5 text-[10px] font-ui font-medium bg-black/75 text-white/95 backdrop-blur-sm rounded-sm">
                       Place individuelle
                     </span>
                   )}
                   {logement.hasCollectif && (
-                    <span className="px-2 py-0.5 text-[10px] font-ui bg-accent/90 text-white backdrop-blur-sm">
-                      Chambre collective
+                    <span className="px-2 py-0.5 text-[10px] font-ui font-medium bg-accent/90 text-white backdrop-blur-sm rounded-sm">
+                      Chambre partagée
                     </span>
                   )}
                 </div>
@@ -150,18 +150,18 @@ const PopularLogements = () => {
               {/* Détails & Typographie */}
               <div className="p-5 flex flex-col flex-grow justify-between">
                 <div>
-                  <h3 className="font-serif text-xl font-normal text-foreground group-hover:text-accent transition-colors leading-snug">
+                  <h3 className="font-serif text-lg font-semibold text-foreground group-hover:text-accent transition-premium leading-snug">
                     {logement.nom}
                   </h3>
 
-                  <div className="flex items-center gap-1.5 text-muted-foreground text-xs mt-2">
+                  <div className="flex items-center gap-1.5 text-muted-foreground text-xs mt-1.5">
                     <MapPin className="h-3.5 w-3.5 text-accent shrink-0" />
                     <span className="truncate">{logement.adresse}, {logement.ville}</span>
                   </div>
                 </div>
 
                 {/* Séparation et données financières */}
-                <div className="mt-5 pt-4 border-t border-border flex items-end justify-between">
+                <div className="mt-5 pt-3.5 border-t border-border/70 flex items-end justify-between">
                   <div className="text-xs text-muted-foreground">
                     <div className="flex items-center gap-1 font-ui font-medium text-foreground">
                       <Users className="h-3.5 w-3.5 text-muted-foreground" />
@@ -169,17 +169,17 @@ const PopularLogements = () => {
                     </div>
                     {logement.minCaution > 0 && (
                       <div className="text-[11px] text-muted-foreground mt-1">
-                        Caution : <span className="font-semibold text-foreground">{logement.minCaution.toLocaleString()} F</span>
+                        Caution : <span className="font-mono font-semibold text-foreground">{logement.minCaution.toLocaleString("fr-FR")} F</span>
                       </div>
                     )}
                   </div>
 
                   <div className="text-right">
-                    <span className="text-[10px] uppercase font-ui tracking-wider text-muted-foreground block">
+                    <span className="overline text-[9px] block">
                       Loyer mensuel
                     </span>
-                    <span className="text-lg font-bold font-ui text-accent">
-                      {logement.minPrice > 0 ? `${logement.minPrice.toLocaleString()} F` : "Sur demande"}
+                    <span className="text-base font-bold font-mono text-accent">
+                      {logement.minPrice > 0 ? `${logement.minPrice.toLocaleString("fr-FR")} F` : "Sur demande"}
                     </span>
                   </div>
                 </div>

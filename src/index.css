@@ -5,94 +5,150 @@
 
 @layer base {
   :root {
-    /* Cream background */
-    --background: 40 20% 98%;
-    --foreground: 0 0% 10%;
+    /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+       ZEYNA DESIGN SYSTEM — LIGHT MODE
+       ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+
+    /* Surfaces */
+    --background: 42 25% 98%;       /* Craie chaude #FAFAF8 */
+    --foreground: 20 8% 12%;        /* Charbon doux */
+    --parchment: 38 20% 95%;        /* Parchemin — surfaces alt */
 
     --card: 0 0% 100%;
-    --card-foreground: 0 0% 10%;
+    --card-foreground: 20 8% 12%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 0 0% 10%;
+    --popover-foreground: 20 8% 12%;
 
-    /* Noir/Gris très profond #111111 */
-    --primary: 0 0% 7%;
-    --primary-foreground: 40 20% 98%;
+    /* Primary — Basalt (noir institutionnel) */
+    --primary: 0 0% 8%;
+    --primary-foreground: 42 25% 98%;
 
-    --secondary: 40 10% 92%;
-    --secondary-foreground: 0 0% 7%;
+    /* Secondary — Sable neutre */
+    --secondary: 40 12% 93%;
+    --secondary-foreground: 0 0% 10%;
 
-    --muted: 40 5% 90%;
-    --muted-foreground: 40 5% 45%;
+    /* Muted — Gris chaud contrasté */
+    --muted: 38 10% 91%;
+    --muted-foreground: 35 8% 38%;
 
-    /* Or ZEYNA #c6a25b */
-    --accent: 40 48% 57%;
+    /* Or Zeyna — Accent signature */
+    --accent: 38 54% 50%;           /* #C4933F — or légèrement plus profond */
     --accent-foreground: 0 0% 100%;
 
-    --destructive: 0 84% 60%;
+    /* Malachite — Succès / Disponible / Confirmé */
+    --malachite: 153 56% 27%;       /* #1B6B4A */
+    --malachite-light: 153 42% 92%; /* Fond de badge succès */
+    --malachite-dark: 153 60% 20%;  /* Hover */
+    --malachite-foreground: 0 0% 100%;
+
+    /* Warning — En attente */
+    --warning: 32 90% 35%;          /* Ocre Terre */
+    --warning-light: 38 80% 93%;    /* Fond de badge warning */
+    --warning-foreground: 0 0% 100%;
+
+    /* Destructive */
+    --destructive: 0 72% 42%;       /* Cinabre */
     --destructive-foreground: 0 0% 100%;
 
-    --border: 40 10% 88%;
-    --input: 40 10% 88%;
-    --ring: 40 48% 57%;
+    /* Bordures & Inputs */
+    --border: 38 12% 88%;
+    --input: 38 12% 88%;
+    --ring: 38 54% 50%;
 
-    --radius: 0.5rem;
+    /* ── Rayon global ── */
+    --radius: 0.375rem;             /* 6px — style architectural sobre */
 
-    /* Brand tokens */
-    --gold: 40 48% 57%;
-    --gold-light: 40 50% 70%;
-    --gold-dark: 40 50% 40%;
+    /* ── Tokens de marque ── */
+    --gold: 38 54% 50%;
+    --gold-light: 38 52% 67%;
+    --gold-dark: 38 56% 36%;
     --charcoal: 0 0% 10%;
-    --charcoal-light: 0 0% 15%;
-    --cream: 40 20% 98%;
+    --charcoal-light: 0 0% 16%;
+    --cream: 42 25% 98%;
+    --warm-gray: 35 6% 48%;
 
-    --sidebar-background: 0 0% 7%;
-    --sidebar-foreground: 40 20% 98%;
-    --sidebar-primary: 40 48% 57%;
-    --sidebar-primary-foreground: 0 0% 7%;
-    --sidebar-accent: 0 0% 15%;
-    --sidebar-accent-foreground: 40 20% 98%;
-    --sidebar-border: 0 0% 15%;
-    --sidebar-ring: 40 48% 57%;
+    /* ── Sidebar — Fond sombre institutionnel ── */
+    --sidebar-background: 220 14% 9%;    /* #131620 — bleu-ardoise profond */
+    --sidebar-foreground: 38 15% 88%;
+    --sidebar-primary: 38 54% 50%;
+    --sidebar-primary-foreground: 220 14% 9%;
+    --sidebar-accent: 220 12% 15%;
+    --sidebar-accent-foreground: 38 15% 88%;
+    --sidebar-border: 220 10% 16%;
+    --sidebar-ring: 38 54% 50%;
+
+    /* ── Élévation / Ombres ── */
+    --shadow-1: 0 1px 3px rgba(0,0,0,0.04), 0 4px 12px rgba(0,0,0,0.04);
+    --shadow-2: 0 2px 8px rgba(0,0,0,0.06), 0 8px 24px rgba(0,0,0,0.08);
+    --shadow-gold: 0 0 0 1px hsl(38 54% 50% / 0.15), 0 4px 16px rgba(0,0,0,0.08);
   }
 
+  /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+     ZEYNA DESIGN SYSTEM — DARK MODE
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
   .dark {
-    --background: 0 0% 5%;
-    --foreground: 40 20% 95%;
+    --background: 220 16% 7%;       /* #0E1018 — ardoise nocturne */
+    --foreground: 38 15% 92%;
 
-    --card: 0 0% 8%;
-    --card-foreground: 40 20% 95%;
+    --parchment: 220 14% 11%;       /* Surface alt en dark */
+    --card: 220 14% 10%;
+    --card-foreground: 38 15% 92%;
 
-    --popover: 0 0% 8%;
-    --popover-foreground: 40 20% 95%;
+    --popover: 220 14% 10%;
+    --popover-foreground: 38 15% 92%;
 
-    --primary: 40 48% 57%;
-    --primary-foreground: 0 0% 5%;
+    /* Primary — Or en dark (inversé) */
+    --primary: 38 54% 55%;
+    --primary-foreground: 220 16% 7%;
 
-    --secondary: 0 0% 15%;
-    --secondary-foreground: 40 20% 95%;
+    --secondary: 220 12% 17%;
+    --secondary-foreground: 38 15% 88%;
 
-    --muted: 0 0% 15%;
-    --muted-foreground: 40 10% 60%;
+    --muted: 220 12% 14%;
+    --muted-foreground: 38 12% 72%;
 
-    --accent: 40 48% 57%;
-    --accent-foreground: 0 0% 100%;
+    --accent: 38 54% 55%;
+    --accent-foreground: 220 16% 7%;
 
-    --destructive: 0 62% 30%;
-    --destructive-foreground: 30 40% 98%;
+    /* Malachite dark */
+    --malachite: 153 48% 40%;
+    --malachite-light: 153 30% 14%;
+    --malachite-dark: 153 52% 50%;
+    --malachite-foreground: 0 0% 100%;
 
-    --border: 0 0% 20%;
-    --input: 0 0% 20%;
-    --ring: 40 48% 57%;
+    /* Warning dark */
+    --warning: 32 82% 55%;
+    --warning-light: 32 40% 14%;
+    --warning-foreground: 220 16% 7%;
 
-    --sidebar-background: 0 0% 3%;
-    --sidebar-foreground: 0 0% 95%;
-    --sidebar-primary: 40 48% 57%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 0 0% 12%;
-    --sidebar-accent-foreground: 0 0% 95%;
-    --sidebar-border: 0 0% 15%;
-    --sidebar-ring: 40 48% 57%;
+    --destructive: 0 60% 50%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 220 10% 18%;
+    --input: 220 10% 18%;
+    --ring: 38 54% 55%;
+
+    --gold: 38 54% 55%;
+    --gold-light: 38 52% 70%;
+    --gold-dark: 38 56% 42%;
+    --charcoal: 38 15% 92%;
+    --cream: 220 16% 7%;
+    --warm-gray: 35 8% 55%;
+    --parchment: 220 14% 11%;
+
+    --sidebar-background: 220 18% 5%;
+    --sidebar-foreground: 38 15% 88%;
+    --sidebar-primary: 38 54% 55%;
+    --sidebar-primary-foreground: 220 18% 5%;
+    --sidebar-accent: 220 14% 12%;
+    --sidebar-accent-foreground: 38 15% 88%;
+    --sidebar-border: 220 12% 13%;
+    --sidebar-ring: 38 54% 55%;
+
+    --shadow-1: 0 1px 3px rgba(0,0,0,0.2), 0 4px 12px rgba(0,0,0,0.15);
+    --shadow-2: 0 2px 8px rgba(0,0,0,0.25), 0 8px 24px rgba(0,0,0,0.2);
+    --shadow-gold: 0 0 0 1px hsl(38 54% 55% / 0.2), 0 4px 16px rgba(0,0,0,0.3);
   }
 }
 
@@ -101,61 +157,202 @@
     @apply border-border;
   }
 
+  html {
+    scroll-behavior: smooth;
+  }
+
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground antialiased;
     font-family: 'DM Sans', sans-serif;
+    font-feature-settings: "kern" 1, "liga" 1;
   }
 
   h1, h2, h3, h4 {
     font-family: 'Playfair Display', serif;
+    @apply tracking-tight;
   }
 
-  /* UI elements: buttons, badges, labels, prices */
+  h5, h6 {
+    font-family: 'DM Sans', sans-serif;
+    @apply font-semibold;
+  }
+
+  /* UI elements */
   button, [role="button"], .badge, .label-ui, .price {
     font-family: 'Space Grotesk', sans-serif;
+  }
+
+  /* Montants financiers et codes */
+  .font-mono, [data-mono], .amount, .code-ref {
+    font-family: 'JetBrains Mono', monospace;
+    font-feature-settings: "tnum" 1;  /* Chiffres tabulaires */
+  }
+
+  /* Préférences de réduction des animations */
+  @media (prefers-reduced-motion: reduce) {
+    *, ::before, ::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
   }
 }
 
 @layer utilities {
+  /* ── Typographie ── */
   .font-ui {
     font-family: 'Space Grotesk', sans-serif;
   }
 
+  .font-mono {
+    font-family: 'JetBrains Mono', monospace;
+    font-feature-settings: "tnum" 1;
+  }
+
+  /* ── Couleurs de marque ── */
   .text-gradient-gold {
     @apply text-accent;
   }
 
-  .bg-gradient-teal {
-    @apply bg-basalt text-white;
-  }
-
   .bg-gradient-navy {
-    @apply bg-basalt text-white;
-  }
-
-  .bg-gradient-gold {
-    @apply bg-accent text-white;
+    background-color: hsl(220 14% 9%);
+    color: white;
   }
 
   .bg-gradient-hero {
-    @apply bg-basalt;
+    background-color: hsl(220 14% 9%);
   }
 
+  /* ── Ombres ── */
   .shadow-premium {
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05), 0 8px 24px -4px rgba(0, 0, 0, 0.06);
+    box-shadow: var(--shadow-1);
+  }
+
+  .shadow-elevated {
+    box-shadow: var(--shadow-2);
   }
 
   .shadow-gold {
-    box-shadow: 0 4px 20px -2px hsl(38 46% 52% / 0.18);
+    box-shadow: var(--shadow-gold);
   }
 
+  .shadow-focus {
+    box-shadow: 0 0 0 2px hsl(var(--ring) / 0.4);
+  }
+
+  /* ── Surfaces ── */
   .surface-architectural {
     background-color: hsl(var(--card));
     border: 1px solid hsl(var(--border));
   }
 
+  .surface-parchment {
+    background-color: hsl(var(--parchment));
+    border: 1px solid hsl(var(--border));
+  }
+
   .border-subtle {
-    border-color: hsl(var(--border) / 0.7);
+    border-color: hsl(var(--border) / 0.6);
+  }
+
+  /* ── La Ligne Or — signature visuelle Zeyna ── */
+  .accent-line-left {
+    @apply relative;
+  }
+  .accent-line-left::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 2px;
+    background-color: hsl(var(--accent));
+    border-radius: 0 2px 2px 0;
+  }
+
+  .accent-line-top {
+    @apply relative;
+  }
+  .accent-line-top::before {
+    content: '';
+    position: absolute;
+    left: 0; right: 0; top: 0;
+    height: 2px;
+    background-color: hsl(var(--accent));
+  }
+
+  /* ── Textures & Arrière-plans Architecturaux Subtils ── */
+  .bg-grid-cadastre {
+    background-size: 40px 40px;
+    background-image: 
+      linear-gradient(to right, hsl(var(--border) / 0.45) 1px, transparent 1px),
+      linear-gradient(to bottom, hsl(var(--border) / 0.45) 1px, transparent 1px);
+  }
+
+  .bg-grid-cadastre-dark {
+    background-size: 48px 48px;
+    background-image: 
+      linear-gradient(to right, rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+  }
+
+  .bg-dots-cadastre {
+    background-image: radial-gradient(hsl(var(--accent) / 0.18) 1px, transparent 1px);
+    background-size: 24px 24px;
+  }
+
+  .bg-mineral-gradient {
+    background: linear-gradient(
+      180deg,
+      hsl(var(--background)) 0%,
+      hsl(var(--parchment)) 100%
+    );
+  }
+
+  .bg-sand-gradient {
+    background: linear-gradient(
+      135deg,
+      hsl(var(--background)) 0%,
+      hsl(38 20% 94%) 50%,
+      hsl(var(--background)) 100%
+    );
+  }
+
+  /* ── Data card Zeyna ── */
+  .data-card {
+    background-color: hsl(var(--card));
+    border: 1px solid hsl(var(--border));
+    box-shadow: var(--shadow-1);
+    border-radius: var(--radius);
+    transition: box-shadow 0.2s cubic-bezier(0.22, 1, 0.36, 1),
+                border-color 0.2s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .data-card:hover {
+    box-shadow: var(--shadow-2);
+    border-color: hsl(var(--accent) / 0.25);
+  }
+
+  /* ── Transitions ── */
+  .transition-premium {
+    transition: all 0.2s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  /* ── Overline label ── */
+  .overline {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: hsl(var(--muted-foreground));
+  }
+
+  /* ── Metric display ── */
+  .metric-value {
+    font-family: 'JetBrains Mono', monospace;
+    font-feature-settings: "tnum" 1;
+    font-weight: 600;
+    letter-spacing: -0.02em;
   }
 }
+
 

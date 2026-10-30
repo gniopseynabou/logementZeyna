@@ -473,7 +473,7 @@ const LogementDetail = () => {
                   </Button>
 
                   <p className="text-[11px] text-center text-muted-foreground">
-                    Après validation administrative, vous disposerez de 24h pour régler la caution via Mobile Money ou carte.
+                    Après validation administrative, vous disposerez de 24h pour effectuer le transfert de caution (Wave / Orange Money) et transmettre votre référence.
                   </p>
                 </div>
               </div>

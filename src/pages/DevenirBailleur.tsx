@@ -1,4 +1,4 @@
-﻿import { useState } from "react";
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
@@ -19,7 +19,7 @@ import SEOHead from "@/components/SEOHead";
 const avantages = [
   { icon: TrendingUp, titre: "Visibilité maximale",    desc: "Vos logements présentés à des milliers d'étudiants en recherche active à Saint-Louis." },
   { icon: Phone,      titre: "Gestion simplifiée",     desc: "Réservations, paiements et contrats centralisés dans un seul tableau de bord." },
-  { icon: Shield,     titre: "Paiements sécurisés",    desc: "Orange Money, Wave - vos loyers garantis et reversés directement." },
+  { icon: Shield,     titre: "Reversements tracés",    desc: "Orange Money, Wave - vos loyers collectés avec reçu et reversés selon vos instructions." },
   { icon: Handshake,  titre: "Partenariat humain",     desc: "Notre équipe vous accompagne à chaque étape et reste disponible." },
 ];
 
