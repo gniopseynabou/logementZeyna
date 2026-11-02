@@ -74,7 +74,7 @@ const EditClientProfileDialog = ({
       </div>
       <div className="space-y-1.5">
         <Label>Téléphone</Label>
-        <Input value={telephone} onChange={(e) => setTelephone(e.target.value)} placeholder="+221 77 432 64 86" />
+        <Input value={telephone} onChange={(e) => setTelephone(e.target.value)} placeholder="+221 78 432 64 86" />
       </div>
       <div className="flex gap-2 pt-1">
         <Button type="button" variant="outline" className="flex-1" onClick={onClose}>

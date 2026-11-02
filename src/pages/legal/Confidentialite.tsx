@@ -24,7 +24,7 @@ const Confidentialite = () => {
                 <li><strong>Nom ou raison sociale :</strong> Les Logements de ZEYNA</li>
                 <li><strong>Adresse :</strong> Saint-Louis, Sénégal</li>
                 <li><strong>E-mail :</strong> zeydagroup01@gmail.com</li>
-                <li><strong>Téléphone :</strong> +221 77 432 64 86</li>
+                <li><strong>Téléphone :</strong> +221 78 432 64 86</li>
               </ul>
             </>
           )

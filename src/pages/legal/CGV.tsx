@@ -15,7 +15,7 @@ const CGV = () => {
                 <li><strong>Nom officiel ou raison sociale :</strong> Les Logements de ZEYNA</li>
                 <li><strong>Nom commercial :</strong> Les Logements de ZEYNA</li>
                 <li><strong>Adresse :</strong> Saint-Louis, Sénégal</li>
-                <li><strong>Téléphone :</strong> +221 77 432 64 86</li>
+                <li><strong>Téléphone :</strong> +221 78 432 64 86</li>
                 <li><strong>E-mail :</strong> zeydagroup01@gmail.com</li>
               </ul>
             </>
@@ -201,7 +201,7 @@ const CGV = () => {
               <p>Toute réclamation peut être adressée à :</p>
               <ul className="list-disc pl-5 space-y-2 mt-4 mb-4">
                 <li><strong>E-mail :</strong> zeydagroup01@gmail.com</li>
-                <li><strong>Téléphone :</strong> +221 77 432 64 86</li>
+                <li><strong>Téléphone :</strong> +221 78 432 64 86</li>
               </ul>
               <p>L’étudiant est invité à préciser la référence de son contrat, la nature du problème et les informations utiles à son traitement. ZEYNA assure le suivi de la demande et cherche, lorsque cela est possible, une solution adaptée.</p>
             </>

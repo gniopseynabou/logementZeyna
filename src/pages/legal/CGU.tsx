@@ -154,7 +154,7 @@ const CGU = () => {
               <p>Pour toute difficulté liée à l’utilisation de la plateforme, l’utilisateur peut contacter ZEYNA :</p>
               <ul className="list-disc pl-5 space-y-2 mt-4 mb-4">
                 <li><strong>E-mail :</strong> zeydagroup01@gmail.com</li>
-                <li><strong>Téléphone :</strong> +221 77 432 64 86</li>
+                <li><strong>Téléphone :</strong> +221 78 432 64 86</li>
               </ul>
               <p>ZEYNA examine les demandes et assure leur suivi dans la mesure de ses obligations et des informations nécessaires à leur traitement.</p>
             </>

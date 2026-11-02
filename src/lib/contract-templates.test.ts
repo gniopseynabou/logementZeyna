@@ -34,7 +34,7 @@ describe("SEC-001 : Protection XSS sur les Contrats", () => {
       client: {
         prenom: '<img src=x onerror="alert(1)">',
         nom: "Hacker<script>steal()</script>",
-        telephone: "+221 77 432 64 86",
+        telephone: "+221 78 432 64 86",
       },
       logement: {
         nom: "Logement <script>alert(2)</script>",

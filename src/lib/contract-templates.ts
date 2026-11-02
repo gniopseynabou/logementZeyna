@@ -41,7 +41,7 @@ export const getCompanyInfo = () => ({
   adresse: "Saint-Louis, Sénégal",
   representant: "Direction Générale",
   email: "zeydagroup01@gmail.com",
-  telephone: "+221 77 432 64 86",
+  telephone: "+221 78 432 64 86",
 });
 
 

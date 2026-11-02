@@ -15,7 +15,7 @@ const MentionsLegales = () => {
                 <li><strong>Nom commercial :</strong> Les Logements de ZEYNA</li>
                 <li><strong>Forme juridique :</strong> SAS</li>
                 <li><strong>Adresse :</strong> Saint-Louis, Sénégal</li>
-                <li><strong>Téléphone :</strong> +221 77 432 64 86</li>
+                <li><strong>Téléphone :</strong> +221 78 432 64 86</li>
                 <li><strong>Adresse e-mail :</strong> zeydagroup01@gmail.com</li>
                 <li><strong>Site Internet :</strong> www.logements-zeyna.site</li>
               </ul>
@@ -101,7 +101,7 @@ const MentionsLegales = () => {
               <p>Pour toute question concernant la plateforme ou les présentes mentions légales :</p>
               <ul className="list-disc pl-5 space-y-2 mt-4">
                 <li><strong>E-mail :</strong> zeydagroup01@gmail.com</li>
-                <li><strong>Téléphone :</strong> +221 77 432 64 86</li>
+                <li><strong>Téléphone :</strong> +221 78 432 64 86</li>
                 <li><strong>Adresse :</strong> Saint-Louis, Sénégal</li>
               </ul>
             </>
