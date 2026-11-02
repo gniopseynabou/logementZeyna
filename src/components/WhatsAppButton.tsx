@@ -6,9 +6,9 @@ interface WhatsAppButtonProps {
   defaultMessage?: string;
 }
 
-const DEFAULT_PHONE = "221774326486";
+const DEFAULT_PHONE = "221784326486";
 const DEFAULT_MSG =
-  "Bonjour Les Logements de Zeyna, je souhaite avoir des renseignements sur un logement étudiant à Saint-Louis / UGB.";
+  "Bonjour Les Logements de Zeyna ! Je suis à la recherche d’un logement étudiant à Saint-Louis, à proximité de l’UGB. Pourriez-vous m’aider à trouver un logement disponible et me communiquer les informations sur les tarifs et les conditions de location ? Merci !";
 
 export const WhatsAppButton: React.FC<WhatsAppButtonProps> = ({
   phoneNumber = DEFAULT_PHONE,
