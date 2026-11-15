@@ -59,18 +59,10 @@ const FAQ = () => {
           <div className="lg:col-span-4 space-y-6 lg:sticky lg:top-32">
             <div className="inline-flex items-center gap-2 px-3 py-1 bg-accent/10 border border-accent/20 rounded-sm">
               <HelpCircle className="h-3.5 w-3.5 text-accent" />
-              <span className="text-xs font-ui font-semibold uppercase tracking-widest text-accent">
+              <span className="font-semibold uppercase tracking-widest">
                 Renseignements & Droits
               </span>
             </div>
-
-            <h2 className="font-serif text-3xl sm:text-4xl font-normal text-foreground tracking-tight leading-tight">
-              Questions fondamentales sur votre location.
-            </h2>
-
-            <p className="text-muted-foreground text-sm sm:text-base leading-relaxed font-light">
-              La clarté contractuelle est notre premier devoir envers les étudiants et les familles.
-            </p>
 
             {/* Cartouche d'assistance permanente */}
             <div className="p-6 rounded-md bg-card border border-border shadow-premium space-y-4">
@@ -78,9 +70,6 @@ const FAQ = () => {
                 <ShieldCheck className="h-4 w-4 text-malachite" />
                 <span>Une question spécifique sur un contrat ?</span>
               </div>
-              <p className="text-xs text-muted-foreground leading-relaxed">
-                Notre bureau d'intendance à Saint-Louis vous répond du lundi au samedi.
-              </p>
               <div className="pt-2 flex flex-col gap-2">
                 <a
                   href="tel:+221784326486"

@@ -93,9 +93,6 @@ const PopularLogements = () => {
                 Sélection Résidentielle
               </p>
             </div>
-            <h2 className="font-serif text-3xl sm:text-4xl font-normal text-foreground tracking-tight">
-              Nos adresses les plus demandées
-            </h2>
           </div>
           <Button asChild variant="outline" className="rounded-sm border-foreground text-foreground hover:bg-foreground hover:text-background font-ui text-xs uppercase tracking-wider font-semibold h-11 px-6 shrink-0">
             <Link to="/logements" className="flex items-center gap-2">

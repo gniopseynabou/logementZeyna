@@ -14,14 +14,13 @@ import {
 } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { getHeroStats } from "@/services/public-content-service";
-import heroBg from "@/assets/hero-bg.jpg";
+import heroBg from "@/assets/campus-ugb.jpg";
 
 const CAMPUS_DISTRICTS = [
   { label: "Sanar (Campus UGB)", query: "Sanar", sub: "À 5 min à pied des amphis" },
+  { label: "Boudiouck", query: "Boudiouck", sub: "À 5 min à pied des amphis" },
+  { label: "Ngalelle", query: "Ngalelle", sub: "À 5 min à pied des amphis" },
   { label: "Bango", query: "Bango", sub: "Quartier calme & résidentiel" },
-  { label: "Khor", query: "Khor", sub: "Sur la ligne de bus universitaire" },
-  { label: "Balacoss", query: "Balacoss", sub: "Centre-ville & commodités" },
-  { label: "Île Nord / Sud", query: "Île", sub: "Cadre historique du fleuve" },
 ];
 
 const HeroSection = () => {
@@ -49,15 +48,15 @@ const HeroSection = () => {
         <img
           src={heroBg}
           alt="Campus Université Gaston Berger et résidences étudiantes à Sanar, Saint-Louis du Sénégal"
-          className="w-full h-full object-cover object-center opacity-35 filter contrast-110 saturate-75"
+          className="w-full h-full object-cover object-center"
           fetchpriority="high"
         />
         {/* Voiles de contraste et filtres minéraux */}
-        <div className="absolute inset-0 bg-gradient-to-t from-basalt via-basalt/80 to-basalt/40" />
-        <div className="absolute inset-0 bg-gradient-to-r from-basalt via-basalt/70 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-t from-basalt" />
+        <div className="absolute inset-0 bg-gradient-to-r" />
         
         {/* Trame cadastrale géométrique d'arpentage */}
-        <div className="absolute inset-0 bg-grid-cadastre-dark opacity-40 pointer-events-none" />
+        <div className="absolute" />
       </div>
 
       {/* ── Ligne d'accent architecturale signature Zeyna ── */}
@@ -73,15 +72,10 @@ const HeroSection = () => {
             {/* Titre Monumental */}
             <div className="space-y-2">
               <h1 className="font-serif text-3xl sm:text-5xl lg:text-6xl font-normal tracking-tight text-white leading-[1.12]">
-                Le logement étudiant à Saint-Louis. <br />
-                <span className="italic font-normal text-accent">Garanti par contrat, protégé par séquestre.</span>
+                Bienvenue à Saint-Louis. <br />
               </h1>
+              <p>Trouver votre logement etudiant pres du campus </p>
             </div>
-
-            {/* Chapeau descriptif sans complaisance */}
-            <p className="text-white/75 text-base sm:text-lg leading-relaxed max-w-2xl font-light">
-              Finies les cautions détournées et les visites informelles sans garantie. Zeyna audite chaque chambre hors campus entre Sanar, Bango et Khor, bloque votre place avec la <strong>caution seule</strong> et sécurise votre bail pour toute l'année universitaire à l'UGB.
-            </p>
 
             {/* Barre de Recherche Cadastrale */}
             <form onSubmit={handleQuickSearch} className="max-w-2xl pt-2">
@@ -125,72 +119,15 @@ const HeroSection = () => {
               </div>
             </div>
 
-            {/* 3 Règles Fondamentales d'Équité */}
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-6 border-t border-white/10 max-w-2xl">
-              <div className="flex items-start gap-2.5">
-                <Lock className="h-4 w-4 text-accent shrink-0 mt-0.5" />
-                <div className="text-xs">
-                  <div className="font-semibold text-white font-ui">Caution seule exigée</div>
-                  <div className="text-white/50">Pour bloquer fermement la chambre</div>
-                </div>
-              </div>
-              <div className="flex items-start gap-2.5">
-                <FileText className="h-4 w-4 text-accent shrink-0 mt-0.5" />
-                <div className="text-xs">
-                  <div className="font-semibold text-white font-ui">Bail numérique opposable</div>
-                  <div className="text-white/50">Quittance certifiée à chaque versement</div>
-                </div>
-              </div>
-              <div className="flex items-start gap-2.5">
-                <ShieldCheck className="h-4 w-4 text-accent shrink-0 mt-0.5" />
-                <div className="text-xs">
-                  <div className="font-semibold text-white font-ui">Logements inspectés</div>
-                  <div className="text-white/50">Eau, Woyofal et serrurerie vérifiés</div>
-                </div>
-              </div>
-            </div>
-
           </div>
 
           {/* Colonne Droite (5 col) : Le Cartouche de Caution Séquestre & Métriques en Direct */}
           <div className="lg:col-span-5 xl:col-span-4">
             <div className="relative rounded-md border border-white/20 bg-white/[0.05] backdrop-blur-xl p-6 sm:p-8 space-y-6 shadow-2xl accent-line-top">
-              
-              {/* En-tête du cartouche */}
-              <div className="border-b border-white/10 pb-4">
-                <div className="flex items-center justify-between">
-                  <span className="text-[10px] font-ui tracking-widest uppercase text-accent font-bold">
-                    Garantie d'Intendance
-                  </span>
-                  <span className="text-[10px] font-mono text-white/50">REF-SN-SL-2026</span>
-                </div>
-                <h3 className="font-serif text-xl font-normal text-white mt-1">
-                  Le Protocole Séquestre Zeyna
-                </h3>
-              </div>
-
-              {/* Arguments clés */}
-              <div className="space-y-3.5 text-xs text-white/70 leading-relaxed font-light">
-                <div className="flex items-start gap-3 bg-white/[0.03] p-3 rounded-sm border border-white/10">
-                  <ShieldCheck className="h-4 w-4 text-malachite shrink-0 mt-0.5" />
-                  <div>
-                    <strong className="text-white font-medium block">Zéro avance de loyer avant l'entrée</strong>
-                    <span>Votre loyer ne commence qu'à la date effective de remise des clés.</span>
-                  </div>
-                </div>
-
-                <div className="flex items-start gap-3 bg-white/[0.03] p-3 rounded-sm border border-white/10">
-                  <Lock className="h-4 w-4 text-accent shrink-0 mt-0.5" />
-                  <div>
-                    <strong className="text-white font-medium block">Caution protégée et tracée</strong>
-                    <span>Consignée sur un compte séquestre dédié, intégralement restituable selon l'état des lieux de sortie.</span>
-                  </div>
-                </div>
-              </div>
 
               {/* Métriques réelles du parc (en JetBrains Mono) */}
               {!isError && stats && stats.length > 0 && (
-                <div className="grid grid-cols-2 gap-4 pt-4 border-t border-white/10">
+                <div className="grid grid-cols-3 gap-4 pt-4 border-t border-white/10">
                   {stats.slice(0, 4).map((stat) => (
                     <div key={stat.id} className="space-y-0.5">
                       <div className="text-2xl font-bold font-mono text-accent tracking-tight">
@@ -215,9 +152,6 @@ const HeroSection = () => {
                     <ArrowRight className="h-4 w-4" />
                   </Link>
                 </Button>
-                <p className="text-[10px] text-center text-white/40 mt-2.5 font-ui">
-                  Réservations ouvertes pour l'année universitaire en cours à l'UGB
-                </p>
               </div>
 
             </div>

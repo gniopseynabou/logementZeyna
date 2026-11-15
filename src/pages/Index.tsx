@@ -82,26 +82,30 @@ const Index = memo(() => {
         </Suspense>
       </ErrorBoundary>
 
-      {/* ── 4. Le Protocole en Trois Actes ── */}
+      
+      {/* ── 4. Le Protocole en Trois Actes ── 
       <ErrorBoundary>
         <Suspense fallback={<SectionLoader />}>
           <HowItWorks />
         </Suspense>
       </ErrorBoundary>
+      */}
 
-      {/* ── 5. Le Manifeste du Tiers de Confiance : Pratique Informelle vs Standard Zeyna ── */}
+      {/* ── 5. Le Manifeste du Tiers de Confiance : Pratique Informelle vs Standard Zeyna ── 
       <ErrorBoundary>
         <Suspense fallback={<SectionLoader />}>
           <ManifestoComparison />
         </Suspense>
       </ErrorBoundary>
+      */}
 
-      {/* ── 6. Preuves de Rigueur : Retours d'Expérience Consignés ── */}
+      {/* ── 6. Preuves de Rigueur : Retours d'Expérience Consignés ── 
       <ErrorBoundary>
         <Suspense fallback={<SectionLoader />}>
           <Testimonials />
         </Suspense>
       </ErrorBoundary>
+      */}
 
       {/* ── 7. Renseignements & Droits : FAQ Cadastrale ── */}
       <ErrorBoundary>
